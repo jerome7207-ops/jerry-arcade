@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jerry's Game Arcade</title>
+  <meta name="description" content="Play chess, boxing, and learn chess - all free in your browser!">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Russo+One&family=Bebas+Neue&family=Nunito:wght@400;700;800&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Russo One',sans-serif;background:#0a0a1a;min-height:100vh;color:#fff;overflow-x:hidden}
+    
+    /* Navigation */
+    .main-nav{position:fixed;top:0;left:0;right:0;background:rgba(10,10,26,0.95);backdrop-filter:blur(10px);z-index:1000;padding:10px 20px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;border-bottom:2px solid rgba(255,255,255,0.1)}
+    .nav-btn{padding:10px 20px;border:2px solid rgba(255,255,255,0.3);background:transparent;color:#fff;border-radius:25px;cursor:pointer;font-family:'Russo One',sans-serif;font-size:12px;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px}
+    .nav-btn:hover{border-color:#ffd700;color:#ffd700}
+    .nav-btn.active{background:#ffd700;color:#000;border-color:#ffd700}
+    .nav-btn.chess{--color:#ffd700}.nav-btn.chess.active{background:#ffd700}
+    .nav-btn.learn{--color:#4ade80}.nav-btn.learn.active{background:#4ade80}
+    .nav-btn.knockout{--color:#ef4444}.nav-btn.knockout.active{background:#ef4444}
+    
+    /* Game Containers */
+    .game-container{display:none;padding-top:70px;min-height:100vh}
+    .game-container.active{display:block}
+    
+    /* ==================== ARCADE HOME ==================== */
+    #arcade{background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3a 100%)}
+    .arcade-content{max-width:1000px;margin:0 auto;padding:40px 20px}
+    .arcade-header{text-align:center;padding:40px 0}
+    .arcade-logo{font-family:'Press Start 2P',cursive;font-size:clamp(20px,5vw,40px);background:linear-gradient(180deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+    .arcade-tagline{color:#888;font-size:13px;letter-spacing:3px}
+    .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;margin-top:40px}
+    .game-card{background:linear-gradient(145deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:2px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;cursor:pointer;transition:all 0.4s}
+    .game-card:hover{transform:translateY(-8px);border-color:var(--accent);box-shadow:0 20px 40px var(--glow)}
+    .game-preview{height:150px;display:flex;align-items:center;justify-content:center;font-size:60px;background:var(--bg)}
+    .game-info{padding:20px}
+    .game-title{font-size:20px;color:var(--accent);margin-bottom:8px}
+    .game-desc{color:#888;font-size:13px;line-height:1.5}
+    .card-chess{--accent:#ffd700;--glow:rgba(255,215,0,0.2);--bg:linear-gradient(135deg,#1a1a2e,#2d2d44)}
+    .card-learn{--accent:#4ade80;--glow:rgba(74,222,128,0.2);--bg:linear-gradient(135deg,#0d2818,#1a3d2e)}
+    .card-knockout{--accent:#ef4444;--glow:rgba(239,68,68,0.2);--bg:linear-gradient(135deg,#2d1a1a,#441a1a)}
+    
+    /* ==================== V2 CHESS ==================== */
+    #chess{background:linear-gradient(135deg,#0a0a12 0%,#1a1a2e 50%,#0d1f2d 100%)}
+    .chess-container{max-width:900px;margin:0 auto;padding:20px}
+    .chess-title-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 70px);text-align:center;padding:20px}
+    .chess-logo{font-family:'Orbitron',sans-serif;font-size:clamp(28px,6vw,48px);background:linear-gradient(135deg,#ffd700,#ff6b35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+    .circuits{display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px;margin-top:30px}
+    .circuit-btn{padding:18px;border:2px solid;border-radius:12px;background:rgba(0,0,0,0.3);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s}
+    .circuit-btn:hover:not(.locked){transform:scale(1.02);box-shadow:0 0 30px currentColor}
+    .circuit-btn.locked{opacity:0.4;cursor:not-allowed}
+    .circuit-btn.bronze{border-color:#cd7f32;color:#cd7f32}
+    .circuit-btn.silver{border-color:#c0c0c0;color:#c0c0c0}
+    .circuit-btn.gold{border-color:#ffd700;color:#ffd700}
+    .circuit-btn.champion{border-color:#ff4444;color:#ff4444}
+    
+    .opponent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;padding:20px 0}
+    .opp-card{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:15px;padding:18px;cursor:pointer;transition:all 0.3s}
+    .opp-card:hover{border-color:var(--color);box-shadow:0 10px 30px var(--glow)}
+    .opp-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .opp-avatar{font-size:40px;width:55px;height:55px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);border-radius:50%}
+    .opp-name{font-family:'Orbitron',sans-serif;font-size:15px;color:var(--color)}
+    .opp-title{font-size:11px;color:#888}
+    .opp-stats{display:flex;gap:12px;font-size:12px;color:#aaa;margin-bottom:8px}
+    .opp-intro{font-size:12px;color:#666;line-height:1.4;font-style:italic}
+    
+    .game-header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:rgba(0,0,0,0.4);border-radius:12px;margin-bottom:15px;flex-wrap:wrap;gap:10px}
+    .player-info{display:flex;align-items:center;gap:8px}
+    .player-avatar{font-size:28px}
+    .player-name{font-weight:700;font-size:14px}
+    
+    .taunt-container{min-height:70px;display:flex;align-items:center;justify-content:center;padding:10px}
+    .taunt-bubble{background:#fff;color:#333;padding:10px 18px;border-radius:18px;font-size:13px;max-width:350px;text-align:center;position:relative}
+    .taunt-bubble::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);border:8px solid transparent;border-top-color:#fff}
+    
+    .board-container{display:flex;justify-content:center;padding:10px 0}
+    .chess-board{display:grid;grid-template-columns:repeat(8,1fr);border:3px solid #444;border-radius:4px;overflow:hidden;width:min(100%,360px);aspect-ratio:1}
+    .square{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,5vw,36px);cursor:pointer;transition:all 0.15s;user-select:none}
+    .square.light{background:#f0d9b5}
+    .square.dark{background:#b58863}
+    .square.selected{background:#7fff7f !important}
+    .square.valid-move{background:radial-gradient(circle,rgba(0,200,0,0.4) 20%,transparent 20%),inherit}
+    .square.last-move{box-shadow:inset 0 0 0 3px rgba(255,255,0,0.5)}
+    .square.check{background:#ff6b6b !important}
+    
+    .game-controls{display:flex;gap:10px;justify-content:center;padding:20px 0;flex-wrap:wrap}
+    .ctrl-btn{padding:10px 20px;border:2px solid;border-radius:8px;background:transparent;font-size:13px;font-weight:700;cursor:pointer}
+    .ctrl-btn.back{border-color:#3b82f6;color:#3b82f6}
+    .ctrl-btn.resign{border-color:#ef4444;color:#ef4444}
+    
+    /* ==================== CHESS ACADEMY ==================== */
+    #learn{background:linear-gradient(135deg,#0d2818 0%,#1a3d2e 50%,#0f2922 100%)}
+    .learn-container{max-width:750px;margin:0 auto;padding:20px}
+    .learn-header{text-align:center;padding:30px 0}
+    .learn-logo{font-family:'Nunito',sans-serif;font-size:clamp(24px,5vw,36px);font-weight:800;color:#4ade80}
+    .progress-section{background:rgba(0,0,0,0.3);border-radius:12px;padding:18px;margin-bottom:25px}
+    .progress-header{display:flex;justify-content:space-between;margin-bottom:8px}
+    .progress-bar{height:10px;background:rgba(255,255,255,0.1);border-radius:8px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#4ade80,#22c55e);border-radius:8px;transition:width 0.5s}
+    .level-badge{display:inline-block;background:#4ade80;color:#0d2818;padding:4px 12px;border-radius:15px;font-weight:700;font-size:12px;margin-top:8px}
+    
+    .lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:25px}
+    .lesson-card{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:15px;cursor:pointer;transition:all 0.3s;position:relative}
+    .lesson-card:hover{border-color:#4ade80}
+    .lesson-card.completed{border-color:#22c55e;background:rgba(34,197,94,0.1)}
+    .lesson-card.locked{opacity:0.4;pointer-events:none}
+    .lesson-num{font-size:11px;color:#666;margin-bottom:4px}
+    .lesson-title{font-weight:700;font-size:14px;margin-bottom:4px}
+    .lesson-desc{font-size:12px;color:#888}
+    .lesson-status{position:absolute;top:12px;right:12px;font-size:16px}
+    
+    .content-area{background:rgba(0,0,0,0.3);border-radius:15px;padding:25px;margin-bottom:20px}
+    .content-title{font-size:22px;font-weight:800;color:#4ade80;margin-bottom:18px}
+    .content-text{line-height:1.7;color:#d1d5db;margin-bottom:18px}
+    .content-text strong{color:#4ade80}
+    
+    .demo-board{display:grid;grid-template-columns:repeat(8,1fr);width:min(100%,280px);margin:15px auto;border:2px solid #4ade80;border-radius:4px;overflow:hidden}
+    .demo-square{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4vw,24px)}
+    .demo-square.light{background:#f0d9b5}
+    .demo-square.dark{background:#b58863}
+    .demo-square.highlight{background:#7fff7f !important}
+    
+    .quiz-section{background:rgba(74,222,128,0.1);border:2px solid #4ade80;border-radius:12px;padding:20px;margin-top:18px}
+    .quiz-title{font-weight:700;color:#4ade80;margin-bottom:12px}
+    .quiz-options{display:flex;flex-direction:column;gap:8px}
+    .quiz-option{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.2);border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:left;font-size:14px}
+    .quiz-option:hover{border-color:#4ade80}
+    .quiz-option.correct{border-color:#22c55e;background:rgba(34,197,94,0.3)}
+    .quiz-option.wrong{border-color:#ef4444;background:rgba(239,68,68,0.3)}
+    .quiz-feedback{margin-top:12px;padding:12px;border-radius:8px;display:none;font-size:13px}
+    .quiz-feedback.show{display:block}
+    .quiz-feedback.correct{background:rgba(34,197,94,0.2);color:#4ade80}
+    .quiz-feedback.wrong{background:rgba(239,68,68,0.2);color:#f87171}
+    
+    .nav-buttons{display:flex;gap:12px;justify-content:center;margin-top:18px}
+    .nav-btn{padding:12px 25px;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer}
+    .nav-btn.next{background:linear-gradient(135deg,#4ade80,#22c55e);color:#0d2818}
+    .nav-btn.prev{background:transparent;border:2px solid #666;color:#999}
+    
+    /* ==================== V2 KNOCKOUT ==================== */
+    #knockout{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%)}
+    .knockout-container{max-width:500px;margin:0 auto;min-height:calc(100vh - 70px);display:flex;flex-direction:column}
+    .knockout-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,10vw,56px);color:#ef4444;text-shadow:0 0 30px rgba(239,68,68,0.5);text-align:center;padding:30px 0 10px}
+    .knockout-subtitle{color:#888;font-size:12px;text-align:center;letter-spacing:3px;margin-bottom:30px}
+    
+    .ko-circuit-list{display:flex;flex-direction:column;gap:12px;padding:0 20px;max-width:350px;margin:0 auto;width:100%}
+    .ko-circuit-btn{padding:18px;border:3px solid;border-radius:10px;background:rgba(0,0,0,0.5);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;transition:all 0.3s}
+    .ko-circuit-btn:hover:not(.locked){box-shadow:0 0 25px var(--glow)}
+    .ko-circuit-btn.locked{opacity:0.3;cursor:not-allowed}
+    .ko-circuit-btn.minor{--glow:rgba(74,222,128,0.4);border-color:#4ade80;color:#4ade80}
+    .ko-circuit-btn.major{--glow:rgba(59,130,246,0.4);border-color:#3b82f6;color:#3b82f6}
+    .ko-circuit-btn.world{--glow:rgba(249,115,22,0.4);border-color:#f97316;color:#f97316}
+    .ko-circuit-btn.champ{--glow:rgba(239,68,68,0.5);border-color:#ef4444;color:#ef4444}
+    
+    .ko-opponent-list{flex:1;overflow-y:auto;padding:20px}
+    .ko-opp-card{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.3s}
+    .ko-opp-card:hover{border-color:var(--color)}
+    
+    .fight-screen{display:flex;flex-direction:column;height:calc(100vh - 70px)}
+    .hud{padding:10px 15px;background:rgba(0,0,0,0.8)}
+    .health-bars{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .health-section{flex:1}
+    .health-label{font-size:10px;color:#888;margin-bottom:2px;display:flex;justify-content:space-between}
+    .health-bar{height:18px;background:#333;border-radius:3px;overflow:hidden}
+    .health-fill{height:100%;transition:width 0.3s;border-radius:3px}
+    .health-fill.player{background:linear-gradient(90deg,#22c55e,#4ade80)}
+    .health-fill.enemy{background:linear-gradient(90deg,#ef4444,#f87171)}
+    .health-fill.low{animation:lowHealth 0.5s infinite}
+    @keyframes lowHealth{0%,100%{opacity:1}50%{opacity:0.5}}
+    
+    .arena{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+    .opponent-display{position:relative;text-align:center}
+    .opponent-sprite{font-size:100px;transition:all 0.15s;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5))}
+    .opponent-sprite.hit{transform:translateX(15px);filter:brightness(2)}
+    .opponent-sprite.attacking{transform:scale(1.2) translateY(20px)}
+    .opponent-sprite.stunned{animation:stun 0.3s infinite}
+    .opponent-sprite.down{transform:rotate(90deg) translateY(40px);opacity:0.5}
+    @keyframes stun{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+    
+    .ko-taunt{position:absolute;top:-50px;left:50%;transform:translateX(-50%);background:#fff;color:#333;padding:8px 14px;border-radius:12px;font-size:12px;max-width:180px;text-align:center;opacity:0;transition:opacity 0.3s}
+    .ko-taunt.show{opacity:1}
+    
+    .attack-indicator{position:absolute;top:15px;font-size:20px;font-weight:bold;color:#ef4444;opacity:0}
+    .attack-indicator.show{opacity:1;animation:flash 0.3s infinite}
+    @keyframes flash{0%,100%{opacity:1}50%{opacity:0.3}}
+    
+    .player-gloves{position:absolute;bottom:80px;display:flex;justify-content:center;gap:80px;width:100%}
+    .glove{font-size:50px;transition:all 0.1s}
+    .glove.punching-left{transform:translateX(60px) translateY(-40px) rotate(-20deg) scale(1.2)}
+    .glove.punching-right{transform:translateX(-60px) translateY(-40px) rotate(20deg) scale(1.2)}
+    
+    .controls{background:rgba(0,0,0,0.9);padding:12px}
+    .control-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+    .ko-ctrl-btn{padding:16px 8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;border:none;border-radius:8px;cursor:pointer;transition:all 0.1s}
+    .ko-ctrl-btn:active{transform:scale(0.95)}
+    .ko-ctrl-btn.dodge{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+    .ko-ctrl-btn.block{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
+    .ko-ctrl-btn.punch{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+    .ko-ctrl-btn.body{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+    .ko-ctrl-btn.special{background:linear-gradient(135deg,#ffd700,#f59e0b);color:#333}
+    .ko-ctrl-btn:disabled{opacity:0.3}
+    
+    /* Modal */
+    .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:1001;padding:20px}
+    .modal-overlay.show{display:flex}
+    .modal{background:linear-gradient(145deg,#1a1a2e,#0d1f2d);border:2px solid #ffd700;border-radius:20px;padding:35px;text-align:center;max-width:380px;width:100%}
+    .modal-icon{font-size:70px;margin-bottom:18px}
+    .modal-title{font-family:'Orbitron',sans-serif;font-size:26px;margin-bottom:8px}
+    .modal-msg{color:#aaa;margin-bottom:25px;font-size:14px;line-height:1.5}
+    .modal-btn{padding:12px 35px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin:4px}
+    .modal-btn.primary{background:linear-gradient(135deg,#ffd700,#f59e0b);color:#000}
+    .modal-btn.secondary{background:transparent;border:2px solid #666;color:#fff}
+    
+    .back-link{color:#888;font-size:13px;padding:15px 20px;display:inline-block;cursor:pointer}
+    .back-link:hover{color:#fff}
+    
+    @media(max-width:500px){
+      .main-nav{gap:5px;padding:8px 10px}
+      .nav-btn{padding:8px 12px;font-size:10px}
+      .game-header{flex-direction:column;text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="main-nav">
+  <button class="nav-btn active" onclick="showGame('arcade')">🎮 Arcade</button>
+  <button class="nav-btn chess" onclick="showGame('chess')">♟️ Chess</button>
+  <button class="nav-btn learn" onclick="showGame('learn')">📚 Learn</button>
+  <button class="nav-btn knockout" onclick="showGame('knockout')">🥊 Knockout</button>
+</nav>
+
+<!-- Arcade Home -->
+<div id="arcade" class="game-container active">
+  <div class="arcade-content">
+    <header class="arcade-header">
+      <h1 class="arcade-logo">JERRY'S ARCADE</h1>
+      <p class="arcade-tagline">Free Browser Games • No Download Required</p>
+    </header>
+    <div class="games-grid">
+      <div class="game-card card-chess" onclick="showGame('chess')">
+        <div class="game-preview">♟️</div>
+        <div class="game-info">
+          <h2 class="game-title">V2 Chess Championship</h2>
+          <p class="game-desc">Battle 10 unique AI opponents! Climb through Bronze, Silver, Gold circuits to become World Champion.</p>
+        </div>
+      </div>
+      <div class="game-card card-learn" onclick="showGame('learn')">
+        <div class="game-preview">📚</div>
+        <div class="game-info">
+          <h2 class="game-title">Chess Academy</h2>
+          <p class="game-desc">Learn chess from scratch! 27 interactive lessons take you from beginner to confident player.</p>
+        </div>
+      </div>
+      <div class="game-card card-knockout" onclick="showGame('knockout')">
+        <div class="game-preview">🥊</div>
+        <div class="game-info">
+          <h2 class="game-title">V2 Knockout</h2>
+          <p class="game-desc">Classic arcade boxing! Learn opponent patterns, dodge attacks, and knock them out!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chess Game -->
+<div id="chess" class="game-container"></div>
+
+<!-- Learn Chess -->
+<div id="learn" class="game-container"></div>
+
+<!-- Knockout Game -->
+<div id="knockout" class="game-container"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="globalModal">
+  <div class="modal">
+    <div class="modal-icon" id="modalIcon">🏆</div>
+    <h2 class="modal-title" id="modalTitle">Victory!</h2>
+    <p class="modal-msg" id="modalMsg"></p>
+    <button class="modal-btn primary" id="modalPrimary">Play Again</button>
+    <button class="modal-btn secondary" id="modalSecondary">Back</button>
+  </div>
+</div>
+
+<script>
+// ==================== NAVIGATION ====================
+function showGame(gameId) {
+  document.querySelectorAll('.game-container').forEach(g => g.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(gameId).classList.add('active');
+  document.querySelector(`.nav-btn[onclick="showGame('${gameId}')"]`).classList.add('active');
+  
+  if (gameId === 'chess' && !chessInitialized) initChess();
+  if (gameId === 'learn' && !learnInitialized) initLearn();
+  if (gameId === 'knockout' && !knockoutInitialized) initKnockout();
+}
+
+function showModal(icon, title, msg, primaryText, primaryAction, secondaryText, secondaryAction) {
+  document.getElementById('modalIcon').textContent = icon;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalTitle').style.color = icon === '🏆' ? '#4ade80' : '#ef4444';
+  document.getElementById('modalMsg').textContent = msg;
+  document.getElementById('modalPrimary').textContent = primaryText;
+  document.getElementById('modalPrimary').onclick = () => { hideModal(); primaryAction(); };
+  document.getElementById('modalSecondary').textContent = secondaryText;
+  document.getElementById('modalSecondary').onclick = () => { hideModal(); secondaryAction(); };
+  document.getElementById('globalModal').classList.add('show');
+}
+
+function hideModal() {
+  document.getElementById('globalModal').classList.remove('show');
+}
+
+// ==================== CHESS GAME ====================
+let chessInitialized = false;
+const PIECES = {K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const INIT_BOARD = [['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
+const PIECE_VALUES = {p:100,n:320,b:330,r:500,q:900,k:20000};
+
+const CHESS_OPPONENTS = {
+  timmy:{name:"Timmy Tumbles",title:"The Nervous Wreck",avatar:"😰",rating:400,record:"1-99",circuit:"bronze",depth:1,randomness:0.6,color:"#cd7f32",intro:"99 losses. His one win was a heart attack.",taunts:{start:["Please don't hurt my pieces!","My therapist was WRONG."],capture:["MOM! I TOOK ONE!"],lose:["Ouch!"],victory:["I WON?! MOM!"],defeat:["Loss 100..."]}},
+  betty:{name:"Betty Blunder",title:"Dunning-Kruger Queen",avatar:"💅",rating:550,record:"12-88",circuit:"bronze",depth:1,randomness:0.5,color:"#cd7f32",intro:"Thinks she's Magnus Carlsen.",taunts:{start:["ANOTHER fan?","Try not to be impressed."],capture:["GENIUS!"],lose:["That was a SACRIFICE!"],victory:["BOW TO THE QUEEN!"],defeat:["You got SO lucky."]}},
+  pete:{name:"Old Pete",title:"The Rambling Postman",avatar:"👴",rating:680,record:"234-412",circuit:"bronze",depth:2,randomness:0.4,color:"#cd7f32",intro:"Playing since '62. Margaret married Derek.",taunts:{start:["Reminds me of '62..."],capture:["Still got it!"],lose:["Eh, lost worse."],victory:["Age beats youth!"],defeat:["Good game, youngster."]}},
+  carlos:{name:"Carlos 'Triple Shot'",title:"Espresso Express",avatar:"☕",rating:850,record:"389-298",circuit:"silver",depth:2,randomness:0.3,color:"#c0c0c0",intro:"15 espressos daily. VIBRATES constantly.",taunts:{start:["HAD 8 ESPRESSOS!"],capture:["ZOOM! DELETED!"],lose:["MORE COFFEE!"],victory:["COFFEE POWER!"],defeat:["Someone poisoned my coffee..."]}},
+  yuki:{name:"Yuki Tanaka",title:"Silent Prodigy",avatar:"🎒",rating:1050,record:"512-234",circuit:"silver",depth:3,randomness:0.2,color:"#c0c0c0",intro:"12 years old. Says nothing. Judges everything.",taunts:{start:["..."],capture:["..."],lose:["..."],victory:["...adequate."],defeat:["...interesting."]}},
+  viktor:{name:"Viktor Volkov",title:"Soviet Hammer",avatar:"🔨",rating:1250,record:"1203-456",circuit:"silver",depth:3,randomness:0.15,color:"#c0c0c0",intro:"Trained in Cold War. Still thinks it's 1985.",taunts:{start:["In Soviet Russia, chess plays YOU."],capture:["FOR MOTHERLAND!"],lose:["Lucky capitalist!"],victory:["SOVIET PREVAILS!"],defeat:["Cold War truly over..."]}},
+  valentina:{name:"Valentina Rosetti",title:"Italian Fury",avatar:"👸",rating:1500,record:"1567-489",circuit:"gold",depth:4,randomness:0.1,color:"#ffd700",intro:"3-time Italian Champ. DO NOT touch Regina.",taunts:{start:["BUONGIORNO! Meet REGINA!"],capture:["MAGNIFICO!"],lose:["Regina is DISPLEASED!"],victory:["VIVA ITALIA!"],defeat:["The hurricane rests..."]}},
+  kenji:{name:"Kenji 'Ghost'",title:"Twitch Legend",avatar:"👻",rating:1700,record:"2105-312",circuit:"gold",depth:4,randomness:0.08,color:"#ffd700",intro:"2M followers. Speaks in emotes.",taunts:{start:["Chat says hi. Kappa."],capture:["GET REKT! EZ Clap!"],lose:["Sadge..."],victory:["GGEZ! W!"],defeat:["Unlucky. Sadge."]}},
+  ophelia:{name:"Dr. Ophelia Stone",title:"Mind Reader",avatar:"🔮",rating:1900,record:"1890-245",circuit:"gold",depth:4,randomness:0.05,color:"#ffd700",intro:"PhD Psychology. Knows your next move.",taunts:{start:["Your expressions reveal anxiety."],capture:["Predicted 4 moves ago."],lose:["Testing your confidence."],victory:["As data predicted."],defeat:["Statistically anomalous..."]}},
+  marcus:{name:"Marcus 'The Mind'",title:"THE GRANDMASTER",avatar:"🧠",rating:2200,record:"2847-52",circuit:"champion",depth:5,randomness:0,color:"#ff4444",intro:"2,847 WINS. 52 LOSSES. THE FINAL BOSS.",taunts:{start:["I studied all your games."],capture:["As predicted on move 7."],lose:["Interesting. You found that."],victory:["The Mind remains unbroken."],defeat:["Loss 53. I won't forget you."]}}
+};
+
+const CHESS_CIRCUITS = {
+  bronze:{name:"🥉 Bronze Circuit",opponents:["timmy","betty","pete"],color:"#cd7f32",unlock:0},
+  silver:{name:"🥈 Silver Circuit",opponents:["carlos","yuki","viktor"],color:"#c0c0c0",unlock:3},
+  gold:{name:"🥇 Gold Circuit",opponents:["valentina","kenji","ophelia"],color:"#ffd700",unlock:6},
+  champion:{name:"🏆 Championship",opponents:["marcus"],color:"#ff4444",unlock:9}
+};
+
+let chess = {screen:'title',board:null,selected:null,validMoves:[],turn:'white',lastMove:null,opponent:null,wins:parseInt(localStorage.getItem('v2chess_wins')||'0'),taunt:'',gameOver:false};
+
+function initChess() {
+  chessInitialized = true;
+  renderChess();
+}
+
+function renderChess() {
+  const el = document.getElementById('chess');
+  if (chess.screen === 'title') {
+    el.innerHTML = `
+      <div class="chess-container">
+        <div class="chess-title-screen">
+          <h1 class="chess-logo">V2 CHESS</h1>
+          <p style="color:#888;font-size:13px">Championship Edition</p>
+          <div class="circuits">
+            ${Object.entries(CHESS_CIRCUITS).map(([k,c]) => `
+              <button class="circuit-btn ${k} ${chess.wins < c.unlock ? 'locked' : ''}" onclick="chessSelectCircuit('${k}')">
+                ${c.name} ${chess.wins < c.unlock ? '🔒 ' + c.unlock + ' wins' : '→'}
+              </button>
+            `).join('')}
+          </div>
+          <p style="margin-top:25px;color:#555;font-size:12px">Your Wins: ${chess.wins}</p>
+        </div>
+      </div>
+    `;
+  } else if (chess.screen === 'opponents') {
+    const circuit = CHESS_CIRCUITS[chess.currentCircuit];
+    el.innerHTML = `
+      <div class="chess-container">
+        <span class="back-link" onclick="chess.screen='title';renderChess()">← Back</span>
+        <h2 style="text-align:center;color:${circuit.color};font-family:'Orbitron',sans-serif">${circuit.name}</h2>
+        <div class="opponent-grid">
+          ${circuit.opponents.map(k => {
+            const o = CHESS_OPPONENTS[k];
+            return `
+              <div class="opp-card" style="--color:${o.color};--glow:${o.color}33" onclick="chessStartGame('${k}')">
+                <div class="opp-header">
+                  <div class="opp-avatar">${o.avatar}</div>
+                  <div><div class="opp-name">${o.name}</div><div class="opp-title">${o.title}</div></div>
+                </div>
+                <div class="opp-stats"><span>⭐${o.rating}</span><span>📊${o.record}</span></div>
+                <p class="opp-intro">"${o.intro}"</p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else if (chess.screen === 'game') {
+    const o = CHESS_OPPONENTS[chess.opponent];
+    el.innerHTML = `
+      <div class="chess-container">
+        <div class="game-header">
+          <div class="player-info"><span class="player-avatar">${o.avatar}</span><span class="player-name" style="color:${o.color}">${o.name}</span></div>
+          <div style="color:#888;font-size:12px">${chess.turn === 'white' ? 'Your Turn' : 'Thinking...'}</div>
+          <div class="player-info"><span class="player-name">You</span><span class="player-avatar">👤</span></div>
+        </div>
+        <div class="taunt-container">${chess.taunt ? `<div class="taunt-bubble">${chess.taunt}</div>` : ''}</div>
+        <div class="board-container">
+          <div class="chess-board">
+            ${chess.board.map((row,r) => row.map((p,c) => {
+              const light = (r+c)%2===0;
+              const sel = chess.selected && chess.selected[0]===r && chess.selected[1]===c;
+              const valid = chess.validMoves.some(([mr,mc]) => mr===r && mc===c);
+              const last = chess.lastMove && ((chess.lastMove.from[0]===r && chess.lastMove.from[1]===c) || (chess.lastMove.to[0]===r && chess.lastMove.to[1]===c));
+              let cls = `square ${light?'light':'dark'}`;
+              if(sel) cls += ' selected';
+              if(valid) cls += ' valid-move';
+              if(last) cls += ' last-move';
+              return `<div class="${cls}" onclick="chessClick(${r},${c})">${p ? PIECES[p] : ''}</div>`;
+            }).join('')).join('')}
+          </div>
+        </div>
+        <div class="game-controls">
+          <button class="ctrl-btn back" onclick="chess.screen='opponents';renderChess()">← Back</button>
+          <button class="ctrl-btn resign" onclick="chessResign()">🏳 Resign</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.chessSelectCircuit = function(c) {
+  if (chess.wins < CHESS_CIRCUITS[c].unlock) return;
+  chess.currentCircuit = c;
+  chess.screen = 'opponents';
+  renderChess();
+};
+
+window.chessStartGame = function(opp) {
+  chess.opponent = opp;
+  chess.board = JSON.parse(JSON.stringify(INIT_BOARD));
+  chess.selected = null;
+  chess.validMoves = [];
+  chess.turn = 'white';
+  chess.lastMove = null;
+  chess.gameOver = false;
+  chess.taunt = CHESS_OPPONENTS[opp].taunts.start[0];
+  chess.screen = 'game';
+  renderChess();
+};
+
+function isWhite(p) { return p && p === p.toUpperCase(); }
+function isBlack(p) { return p && p === p.toLowerCase(); }
+
+function getValidMoves(board, r, c) {
+  const p = board[r][c];
+  if (!p) return [];
+  const moves = [];
+  const t = p.toLowerCase();
+  const w = isWhite(p);
+  const dir = w ? -1 : 1;
+  
+  const add = (nr, nc) => {
+    if (nr>=0 && nr<8 && nc>=0 && nc<8) {
+      const target = board[nr][nc];
+      if (!target || (w ? isBlack(target) : isWhite(target))) {
+        moves.push([nr, nc]);
+        return !target;
+      }
+    }
+    return false;
+  };
+  
+  const slide = (dr, dc) => { for(let i=1;i<8;i++) if(!add(r+dr*i,c+dc*i)) break; };
+  
+  switch(t) {
+    case 'p':
+      if(!board[r+dir]?.[c]) { moves.push([r+dir,c]); if(r===(w?6:1) && !board[r+dir*2]?.[c]) moves.push([r+dir*2,c]); }
+      [-1,1].forEach(dc => { const tg=board[r+dir]?.[c+dc]; if(tg && (w?isBlack(tg):isWhite(tg))) moves.push([r+dir,c+dc]); });
+      break;
+    case 'n': [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>add(r+dr,c+dc)); break;
+    case 'b': [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(([dr,dc])=>slide(dr,dc)); break;
+    case 'r': [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc])=>slide(dr,dc)); break;
+    case 'q': [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].forEach(([dr,dc])=>slide(dr,dc)); break;
+    case 'k': [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].forEach(([dr,dc])=>add(r+dr,c+dc)); break;
+  }
+  return moves;
+}
+
+function findKing(board, w) {
+  const k = w ? 'K' : 'k';
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) if(board[r][c]===k) return [r,c];
+  return null;
+}
+
+function isInCheck(board, w) {
+  const kp = findKing(board, w);
+  if(!kp) return false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    const p = board[r][c];
+    if(p && (w ? isBlack(p) : isWhite(p))) {
+      if(getValidMoves(board,r,c).some(([mr,mc])=>mr===kp[0]&&mc===kp[1])) return true;
+    }
+  }
+  return false;
+}
+
+function makeMove(board, from, to) {
+  const nb = board.map(r=>[...r]);
+  const p = nb[from[0]][from[1]];
+  nb[to[0]][to[1]] = p;
+  nb[from[0]][from[1]] = null;
+  if(p?.toLowerCase()==='p' && ((isWhite(p)&&to[0]===0)||(isBlack(p)&&to[0]===7))) nb[to[0]][to[1]] = isWhite(p)?'Q':'q';
+  return nb;
+}
+
+function hasLegalMoves(board, w) {
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    const p = board[r][c];
+    if(p && (w?isWhite(p):isBlack(p))) {
+      for(const [mr,mc] of getValidMoves(board,r,c)) {
+        if(!isInCheck(makeMove(board,[r,c],[mr,mc]),w)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function evaluateBoard(board) {
+  let score = 0;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    const p = board[r][c];
+    if(!p) continue;
+    let v = PIECE_VALUES[p.toLowerCase()] || 0;
+    if([3,4].includes(r) && [3,4].includes(c)) v += 20;
+    score += isWhite(p) ? -v : v;
+  }
+  return score;
+}
+
+function minimax(board, depth, alpha, beta, max) {
+  if(depth===0) return [evaluateBoard(board), null];
+  const w = !max;
+  let best = null, bestScore = max ? -Infinity : Infinity;
+  const moves = [];
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    const p = board[r][c];
+    if(p && (w?isWhite(p):isBlack(p))) {
+      for(const [mr,mc] of getValidMoves(board,r,c)) {
+        const tb = makeMove(board,[r,c],[mr,mc]);
+        if(!isInCheck(tb,w)) moves.push({from:[r,c],to:[mr,mc],board:tb});
+      }
+    }
+  }
+  if(!moves.length) return [isInCheck(board,w)?(max?-50000:50000):0, null];
+  for(const m of moves) {
+    const [sc] = minimax(m.board, depth-1, alpha, beta, !max);
+    if(max) { if(sc>bestScore){bestScore=sc;best=m;} alpha=Math.max(alpha,sc); }
+    else { if(sc<bestScore){bestScore=sc;best=m;} beta=Math.min(beta,sc); }
+    if(beta<=alpha) break;
+  }
+  return [bestScore, best];
+}
+
+function getAIMove() {
+  const o = CHESS_OPPONENTS[chess.opponent];
+  if(Math.random() < o.randomness) {
+    const moves = [];
+    for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+      const p = chess.board[r][c];
+      if(p && isBlack(p)) {
+        for(const [mr,mc] of getValidMoves(chess.board,r,c)) {
+          const tb = makeMove(chess.board,[r,c],[mr,mc]);
+          if(!isInCheck(tb,false)) moves.push({from:[r,c],to:[mr,mc]});
+        }
+      }
+    }
+    if(moves.length) return moves[Math.floor(Math.random()*moves.length)];
+  }
+  return minimax(chess.board, o.depth, -Infinity, Infinity, true)[1];
+}
+
+window.chessClick = function(r, c) {
+  if(chess.turn !== 'white' || chess.gameOver) return;
+  const p = chess.board[r][c];
+  
+  if(chess.validMoves.some(([mr,mc])=>mr===r&&mc===c)) {
+    const cap = chess.board[r][c];
+    chess.board = makeMove(chess.board, chess.selected, [r,c]);
+    chess.lastMove = {from:chess.selected,to:[r,c]};
+    chess.selected = null;
+    chess.validMoves = [];
+    if(cap) chess.taunt = CHESS_OPPONENTS[chess.opponent].taunts.lose[0];
+    
+    if(!hasLegalMoves(chess.board,false)) {
+      const win = isInCheck(chess.board,false);
+      chessEndGame(win?'win':'draw', win?CHESS_OPPONENTS[chess.opponent].taunts.defeat[0]:'Stalemate!');
+      return;
+    }
+    chess.turn = 'black';
+    renderChess();
+    setTimeout(chessAIMove, 600);
+    return;
+  }
+  
+  if(p && isWhite(p)) {
+    chess.selected = [r,c];
+    chess.validMoves = getValidMoves(chess.board,r,c).filter(([mr,mc])=>!isInCheck(makeMove(chess.board,[r,c],[mr,mc]),true));
+    renderChess();
+    return;
+  }
+  
+  chess.selected = null;
+  chess.validMoves = [];
+  renderChess();
+};
+
+function chessAIMove() {
+  if(chess.gameOver) return;
+  const m = getAIMove();
+  if(!m) { chessEndGame('win','AI has no moves!'); return; }
+  const cap = chess.board[m.to[0]][m.to[1]];
+  chess.board = makeMove(chess.board,m.from,m.to);
+  chess.lastMove = {from:m.from,to:m.to};
+  if(cap) chess.taunt = CHESS_OPPONENTS[chess.opponent].taunts.capture[0];
+  
+  if(!hasLegalMoves(chess.board,true)) {
+    const lose = isInCheck(chess.board,true);
+    chessEndGame(lose?'lose':'draw', lose?CHESS_OPPONENTS[chess.opponent].taunts.victory[0]:'Stalemate!');
+    return;
+  }
+  chess.turn = 'white';
+  renderChess();
+}
+
+function chessEndGame(result, msg) {
+  chess.gameOver = true;
+  if(result==='win') { chess.wins++; localStorage.setItem('v2chess_wins',chess.wins); }
+  showModal(result==='win'?'🏆':'💀', result==='win'?'VICTORY!':'DEFEAT', msg, 'Rematch', ()=>chessStartGame(chess.opponent), 'Back', ()=>{chess.screen='opponents';renderChess();});
+}
+
+window.chessResign = function() {
+  if(confirm('Resign?')) chessEndGame('lose', CHESS_OPPONENTS[chess.opponent].taunts.victory[0]);
+};
+
+// ==================== LEARN CHESS ====================
+let learnInitialized = false;
+const LESSONS = [
+  {id:1,level:1,title:"The Chessboard",desc:"64 squares",content:{title:"Welcome! 🎉",text:"<p>Chess uses an <strong>8×8 board</strong> with 64 squares. White on right!</p>",quiz:{q:"How many squares?",opts:["32","48","64","100"],correct:2,exp:"64 squares in an 8×8 grid!"}}},
+  {id:2,level:1,title:"The Pieces",desc:"Your army",content:{title:"Your Army 👑",text:"<p>Each player has <strong>16 pieces</strong>: 1 King, 1 Queen, 2 Rooks, 2 Bishops, 2 Knights, 8 Pawns.</p>",quiz:{q:"How many pawns?",opts:["4","6","8","10"],correct:2,exp:"8 pawns each!"}}},
+  {id:3,level:1,title:"The King",desc:"Most important",content:{title:"The King ♔",text:"<p>The King moves <strong>one square any direction</strong>. If trapped, you lose!</p>",quiz:{q:"Max squares a King can move to?",opts:["4","6","8","Unlimited"],correct:2,exp:"8 directions, one square each!"}}},
+  {id:4,level:2,title:"The Rook",desc:"Straight lines",content:{title:"The Rook ♖",text:"<p>Rooks move in <strong>straight lines</strong> - horizontal or vertical, any distance.</p>",quiz:{q:"Can Rooks move diagonally?",opts:["Yes","No"],correct:1,exp:"Rooks only move straight!"}}},
+  {id:5,level:2,title:"The Bishop",desc:"Diagonals",content:{title:"The Bishop ♗",text:"<p>Bishops move <strong>diagonally</strong> any distance. Each stays on one color!</p>",quiz:{q:"A Bishop on light squares can reach...",opts:["Any square","Only light","Only dark"],correct:1,exp:"Bishops stay on their starting color!"}}},
+  {id:6,level:2,title:"The Queen",desc:"Most powerful",content:{title:"The Queen ♕",text:"<p>The Queen combines Rook + Bishop - moves straight OR diagonal!</p>",quiz:{q:"Queen combines which pieces?",opts:["King+Knight","Rook+Bishop","Knight+Bishop"],correct:1,exp:"Rook (straight) + Bishop (diagonal)!"}}},
+  {id:7,level:3,title:"The Knight",desc:"Jumps in L",content:{title:"The Knight ♘",text:"<p>Knights jump in an <strong>L-shape</strong>: 2+1 squares. Only piece that jumps!</p>",quiz:{q:"Knight's shape?",opts:["T","L","X"],correct:1,exp:"L-shape: 2 squares + 1 perpendicular!"}}},
+  {id:8,level:3,title:"The Pawn",desc:"Small but mighty",content:{title:"The Pawn ♙",text:"<p>Pawns move forward 1 (or 2 first move), capture diagonally, promote at the end!</p>",quiz:{q:"Pawns promote to...",opts:["Only Queen","Any except King","Another pawn"],correct:1,exp:"Any piece except King - usually Queen!"}}},
+  {id:9,level:4,title:"Check",desc:"King attacked",content:{title:"Check! ⚠️",text:"<p><strong>Check</strong> = King under attack. You MUST escape by moving, blocking, or capturing.</p>",quiz:{q:"When in check you must...",opts:["Capture any piece","Escape the check","Skip turn"],correct:1,exp:"You MUST escape check!"}}},
+  {id:10,level:4,title:"Checkmate",desc:"Game over",content:{title:"Checkmate! 🏆",text:"<p><strong>Checkmate</strong> = Check with no escape. Game over!</p>",quiz:{q:"Checkmate means...",opts:["Game continues","Game ends"],correct:1,exp:"Checkmate ends the game - you win!"}}},
+];
+
+let learn = {screen:'home',currentLesson:null,step:0,completed:JSON.parse(localStorage.getItem('learn_completed')||'[]'),xp:parseInt(localStorage.getItem('learn_xp')||'0'),answered:false,correct:false};
+
+function initLearn() {
+  learnInitialized = true;
+  renderLearn();
+}
+
+function renderLearn() {
+  const el = document.getElementById('learn');
+  if(learn.screen === 'home') {
+    const progress = Math.min(100, (learn.xp / 500) * 100);
+    el.innerHTML = `
+      <div class="learn-container">
+        <header class="learn-header">
+          <h1 class="learn-logo">♟️ Chess Academy</h1>
+        </header>
+        <div class="progress-section">
+          <div class="progress-header"><span style="color:#4ade80;font-weight:700">Progress</span><span style="color:#888">${learn.xp} XP</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+          <span class="level-badge">${learn.xp < 100 ? 'Beginner' : learn.xp < 250 ? 'Novice' : learn.xp < 450 ? 'Student' : 'Player'}</span>
+        </div>
+        <div class="lesson-grid">
+          ${LESSONS.map((l,i) => {
+            const done = learn.completed.includes(l.id);
+            const locked = i > 0 && !learn.completed.includes(LESSONS[i-1].id);
+            return `
+              <div class="lesson-card ${done?'completed':''} ${locked?'locked':''}" onclick="${locked?'':(`learnStart(${l.id})`)}">
+                <span class="lesson-status">${done?'✅':locked?'🔒':'📖'}</span>
+                <div class="lesson-num">Lesson ${l.id}</div>
+                <div class="lesson-title">${l.title}</div>
+                <div class="lesson-desc">${l.desc}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else if(learn.screen === 'lesson') {
+    const l = LESSONS.find(x=>x.id===learn.currentLesson);
+    el.innerHTML = `
+      <div class="learn-container">
+        <span class="back-link" onclick="learn.screen='home';renderLearn()">← Back</span>
+        <div class="content-area">
+          <h1 class="content-title">${l.content.title}</h1>
+          <div class="content-text">${l.content.text}</div>
+        </div>
+        ${learn.step === 1 ? `
+          <div class="quiz-section">
+            <h3 class="quiz-title">🧠 Quick Quiz</h3>
+            <p style="margin-bottom:15px">${l.content.quiz.q}</p>
+            <div class="quiz-options">
+              ${l.content.quiz.opts.map((o,i) => `
+                <button class="quiz-option ${learn.answered?(i===l.content.quiz.correct?'correct':'wrong'):''}" onclick="learnAnswer(${i})" ${learn.answered?'disabled':''}>${o}</button>
+              `).join('')}
+            </div>
+            <div class="quiz-feedback ${learn.answered?'show':''} ${learn.correct?'correct':'wrong'}">
+              ${learn.answered ? (learn.correct?'✅ Correct! ':'❌ ') + l.content.quiz.exp : ''}
+            </div>
+          </div>
+        ` : ''}
+        <div class="nav-buttons">
+          ${learn.step === 0 ? `<button class="nav-btn next" onclick="learn.step=1;renderLearn()">Continue →</button>` : ''}
+          ${learn.step === 1 && learn.answered ? `<button class="nav-btn next" onclick="learnComplete()">Complete ✓</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.learnStart = function(id) {
+  learn.currentLesson = id;
+  learn.step = 0;
+  learn.answered = false;
+  learn.correct = false;
+  learn.screen = 'lesson';
+  renderLearn();
+};
+
+window.learnAnswer = function(i) {
+  if(learn.answered) return;
+  const l = LESSONS.find(x=>x.id===learn.currentLesson);
+  learn.answered = true;
+  learn.correct = i === l.content.quiz.correct;
+  renderLearn();
+};
+
+window.learnComplete = function() {
+  if(!learn.completed.includes(learn.currentLesson)) {
+    learn.completed.push(learn.currentLesson);
+    learn.xp += 50;
+    localStorage.setItem('learn_completed', JSON.stringify(learn.completed));
+    localStorage.setItem('learn_xp', learn.xp);
+  }
+  learn.screen = 'home';
+  renderLearn();
+};
+
+// ==================== KNOCKOUT ====================
+let knockoutInitialized = false;
+const KO_OPPONENTS = {
+  jimmy:{name:"Jimmy Jabs",title:"Rookie",avatar:"😅",health:100,damage:5,speed:2000,pattern:['left','right'],circuit:"minor",color:"#4ade80",taunts:{start:["Go easy?"],hit:["Ow!"],attack:["Here I come!"],victory:["I WON?!"],defeat:["Good fight..."]}},
+  tina:{name:"Tina Tornado",title:"Speedster",avatar:"💨",health:120,damage:8,speed:1500,pattern:['left','left','right'],circuit:"minor",color:"#4ade80",taunts:{start:["Can't hit me!"],hit:["Lucky!"],attack:["Too slow!"],victory:["EZ!"],defeat:["You're fast..."]}},
+  brick:{name:"Brick Bradley",title:"The Wall",avatar:"🧱",health:200,damage:12,speed:2500,pattern:['body','body','right'],circuit:"minor",color:"#4ade80",taunts:{start:["Brick strongest!"],hit:["Tickles."],attack:["BRICK SMASH!"],victory:["BRICK WINS!"],defeat:["Brick... broken?"]}},
+  miguel:{name:"Miguel Fury",title:"Technician",avatar:"🔥",health:150,damage:15,speed:1800,pattern:['left','right','body'],circuit:"major",color:"#3b82f6",taunts:{start:["Amateur hour over."],hit:["Not bad."],attack:["Textbook!"],victory:["Class dismissed."],defeat:["Respect."]}},
+  olga:{name:"Olga Iron Fist",title:"Crusher",avatar:"🔨",health:180,damage:20,speed:2200,pattern:['right','right','special'],circuit:"major",color:"#3b82f6",taunts:{start:["I break you."],hit:["Pain makes me stronger."],attack:["IRON FIST!"],victory:["Soviet power!"],defeat:["Strong fighter."]}},
+  thunder:{name:"Thunder Thompson",title:"The Storm",avatar:"⚡",health:200,damage:25,speed:1600,pattern:['left','right','left','special'],circuit:"world",color:"#f97316",taunts:{start:["Storm arrived!"],hit:["Tickled!"],attack:["THUNDER!"],victory:["UNDEFEATED!"],defeat:["Streak... ends?"]}},
+  titan:{name:"TITAN",title:"CHAMPION",avatar:"👑",health:250,damage:30,speed:1200,pattern:['left','right','body','special'],circuit:"champ",color:"#ef4444",taunts:{start:["You made it."],hit:["Interesting."],attack:["TITAN SMASH!"],victory:["Throne is mine."],defeat:["Crown is yours."]}}
+};
+
+const KO_CIRCUITS = {
+  minor:{name:"MINOR CIRCUIT",opponents:["jimmy","tina","brick"],color:"#4ade80",unlock:0},
+  major:{name:"MAJOR CIRCUIT",opponents:["miguel","olga"],color:"#3b82f6",unlock:3},
+  world:{name:"WORLD CIRCUIT",opponents:["thunder"],color:"#f97316",unlock:5},
+  champ:{name:"CHAMPIONSHIP",opponents:["titan"],color:"#ef4444",unlock:6}
+};
+
+let ko = {screen:'title',wins:parseInt(localStorage.getItem('ko_wins')||'0'),opponent:null,playerHP:100,enemyHP:100,stars:0,blocking:false,stunned:false,enemyStunned:false,attacking:false,currentAttack:null,patternIdx:0,taunt:'',showTaunt:false};
+let koTimer = null;
+
+function initKnockout() {
+  knockoutInitialized = true;
+  renderKnockout();
+}
+
+function renderKnockout() {
+  const el = document.getElementById('knockout');
+  if(ko.screen === 'title') {
+    el.innerHTML = `
+      <div class="knockout-container">
+        <h1 class="knockout-title">V2 KNOCKOUT</h1>
+        <p class="knockout-subtitle">ARCADE BOXING</p>
+        <div class="ko-circuit-list">
+          ${Object.entries(KO_CIRCUITS).map(([k,c]) => `
+            <button class="ko-circuit-btn ${k} ${ko.wins < c.unlock ? 'locked' : ''}" onclick="koSelectCircuit('${k}')">
+              ${c.name} ${ko.wins < c.unlock ? '🔒 ' + c.unlock : ''}
+            </button>
+          `).join('')}
+        </div>
+        <p style="text-align:center;color:#555;margin-top:25px;font-size:12px">Wins: ${ko.wins}</p>
+      </div>
+    `;
+  } else if(ko.screen === 'select') {
+    const circuit = KO_CIRCUITS[ko.currentCircuit];
+    el.innerHTML = `
+      <div class="knockout-container">
+        <span class="back-link" onclick="ko.screen='title';renderKnockout()">← Back</span>
+        <h2 style="text-align:center;color:${circuit.color};font-family:'Bebas Neue',sans-serif;font-size:24px">${circuit.name}</h2>
+        <div class="ko-opponent-list">
+          ${circuit.opponents.map(k => {
+            const o = KO_OPPONENTS[k];
+            return `
+              <div class="ko-opp-card" style="--color:${o.color}" onclick="koStartFight('${k}')">
+                <div class="opp-header">
+                  <div class="opp-avatar">${o.avatar}</div>
+                  <div><div class="opp-name" style="color:${o.color}">${o.name}</div><div class="opp-title">${o.title}</div></div>
+                </div>
+                <div class="opp-stats"><span>❤️${o.health}</span><span>💪${o.damage}</span></div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else if(ko.screen === 'fight') {
+    const o = KO_OPPONENTS[ko.opponent];
+    el.innerHTML = `
+      <div class="knockout-container">
+        <div class="fight-screen">
+          <div class="hud">
+            <div class="health-bars">
+              <div class="health-section">
+                <div class="health-label"><span>${o.name}</span><span>${Math.max(0,ko.enemyHP)}/${o.health}</span></div>
+                <div class="health-bar"><div class="health-fill enemy ${ko.enemyHP<30?'low':''}" style="width:${(ko.enemyHP/o.health)*100}%"></div></div>
+              </div>
+              <div class="health-section">
+                <div class="health-label"><span>YOU</span><span>${Math.max(0,ko.playerHP)}/100</span></div>
+                <div class="health-bar"><div class="health-fill player ${ko.playerHP<30?'low':''}" style="width:${ko.playerHP}%"></div></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#888"><span>Round 1</span><span style="color:#ffd700">${'⭐'.repeat(ko.stars)}${'☆'.repeat(3-ko.stars)}</span></div>
+          </div>
+          <div class="arena">
+            <div class="attack-indicator ${ko.currentAttack?'show':''}">${ko.currentAttack==='left'?'⬅️':ko.currentAttack==='right'?'➡️':ko.currentAttack==='body'?'⬇️':ko.currentAttack==='special'?'💥':''}</div>
+            <div class="opponent-display">
+              <div class="ko-taunt ${ko.showTaunt?'show':''}">${ko.taunt}</div>
+              <div class="opponent-sprite ${ko.enemyStunned?'stunned':''} ${ko.attacking?'attacking':''} ${ko.enemyHP<=0?'down':''}">${o.avatar}</div>
+            </div>
+            <div class="player-gloves"><div class="glove" id="gl">🥊</div><div class="glove" id="gr">🥊</div></div>
+          </div>
+          <div class="controls">
+            <div class="control-row">
+              <button class="ko-ctrl-btn dodge" onclick="koDodge('left')" ${ko.stunned?'disabled':''}>← DODGE</button>
+              <button class="ko-ctrl-btn block" onclick="koBlock()" ${ko.stunned?'disabled':''}>${ko.blocking?'🛡️':'BLOCK'}</button>
+              <button class="ko-ctrl-btn dodge" onclick="koDodge('right')" ${ko.stunned?'disabled':''}>DODGE →</button>
+            </div>
+            <div class="control-row">
+              <button class="ko-ctrl-btn punch" onclick="koPunch('left')" ${ko.stunned||ko.blocking?'disabled':''}>LEFT</button>
+              <button class="ko-ctrl-btn body" onclick="koPunch('body')" ${ko.stunned||ko.blocking?'disabled':''}>BODY</button>
+              <button class="ko-ctrl-btn punch" onclick="koPunch('right')" ${ko.stunned||ko.blocking?'disabled':''}>RIGHT</button>
+            </div>
+            <div class="control-row">
+              <button class="ko-ctrl-btn special" style="grid-column:span 3" onclick="koStar()" ${ko.stars===0||ko.stunned||ko.blocking?'disabled':''}>⭐ STAR (${ko.stars}/3)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.koSelectCircuit = function(c) {
+  if(ko.wins < KO_CIRCUITS[c].unlock) return;
+  ko.currentCircuit = c;
+  ko.screen = 'select';
+  renderKnockout();
+};
+
+window.koStartFight = function(opp) {
+  const o = KO_OPPONENTS[opp];
+  ko.opponent = opp;
+  ko.playerHP = 100;
+  ko.enemyHP = o.health;
+  ko.stars = 0;
+  ko.blocking = false;
+  ko.stunned = false;
+  ko.enemyStunned = false;
+  ko.attacking = false;
+  ko.currentAttack = null;
+  ko.patternIdx = 0;
+  ko.taunt = o.taunts.start[0];
+  ko.showTaunt = true;
+  ko.screen = 'fight';
+  renderKnockout();
+  setTimeout(() => { ko.showTaunt = false; renderKnockout(); koAttackLoop(); }, 1500);
+};
+
+function koAttackLoop() {
+  if(ko.screen !== 'fight' || ko.enemyStunned || ko.enemyHP <= 0) return;
+  const o = KO_OPPONENTS[ko.opponent];
+  const atk = o.pattern[ko.patternIdx % o.pattern.length];
+  ko.currentAttack = atk;
+  ko.attacking = false;
+  renderKnockout();
+  
+  koTimer = setTimeout(() => {
+    if(ko.screen !== 'fight' || ko.enemyStunned) return;
+    ko.attacking = true;
+    renderKnockout();
+    
+    setTimeout(() => {
+      if(ko.screen !== 'fight') return;
+      let dmg = o.damage;
+      if(atk === 'special') dmg *= 1.5;
+      if(ko.blocking && atk !== 'special') dmg = Math.floor(dmg * 0.2);
+      ko.playerHP -= dmg;
+      ko.attacking = false;
+      ko.currentAttack = null;
+      ko.patternIdx++;
+      
+      if(ko.playerHP <= 0) { koEnd('lose'); return; }
+      renderKnockout();
+      setTimeout(koAttackLoop, o.speed);
+    }, 200);
+  }, 500);
+}
+
+window.koPunch = function(type) {
+  if(ko.stunned || ko.blocking || ko.screen !== 'fight') return;
+  const g = document.getElementById(type==='right'?'gr':'gl');
+  if(g) { g.classList.add('punching-'+(type==='right'?'right':'left')); setTimeout(()=>g.classList.remove('punching-'+(type==='right'?'right':'left')),150); }
+  
+  let dmg = type==='body' ? 8 : 10;
+  if(ko.enemyStunned) dmg *= 2;
+  ko.enemyHP -= dmg;
+  if(Math.random() < 0.1) koStunEnemy();
+  if(Math.random() < 0.15 && ko.stars < 3) ko.stars++;
+  if(ko.enemyHP <= 0) { koEnd('win'); return; }
+  renderKnockout();
+};
+
+window.koStar = function() {
+  if(ko.stars === 0 || ko.stunned || ko.blocking) return;
+  ko.stars = 0;
+  ko.enemyHP -= 50;
+  koStunEnemy();
+  if(ko.enemyHP <= 0) { koEnd('win'); return; }
+  renderKnockout();
+};
+
+window.koDodge = function(dir) {
+  if(ko.stunned) return;
+  if(ko.currentAttack && ko.currentAttack !== 'body') {
+    ko.currentAttack = null;
+    if(ko.stars < 3) ko.stars++;
+    clearTimeout(koTimer);
+    setTimeout(koAttackLoop, 400);
+  }
+  renderKnockout();
+};
+
+window.koBlock = function() {
+  if(ko.stunned) return;
+  ko.blocking = !ko.blocking;
+  renderKnockout();
+};
+
+function koStunEnemy() {
+  ko.enemyStunned = true;
+  clearTimeout(koTimer);
+  ko.taunt = KO_OPPONENTS[ko.opponent].taunts.hit[0];
+  ko.showTaunt = true;
+  renderKnockout();
+  setTimeout(() => { ko.enemyStunned = false; ko.showTaunt = false; renderKnockout(); koAttackLoop(); }, 2500);
+}
+
+function koEnd(result) {
+  clearTimeout(koTimer);
+  const o = KO_OPPONENTS[ko.opponent];
+  if(result === 'win') { ko.wins++; localStorage.setItem('ko_wins', ko.wins); }
+  showModal(result==='win'?'🏆':'💀', result==='win'?'KNOCKOUT!':'TKO...', result==='win'?o.taunts.defeat[0]:o.taunts.victory[0], 'Rematch', ()=>koStartFight(ko.opponent), 'Back', ()=>{ko.screen='select';renderKnockout();});
+}
+</script>
+</body>
+</html>
