@@ -19,6 +19,7 @@
     .nav-btn.chess{--color:#ffd700}.nav-btn.chess.active{background:#ffd700}
     .nav-btn.learn{--color:#4ade80}.nav-btn.learn.active{background:#4ade80}
     .nav-btn.knockout{--color:#ef4444}.nav-btn.knockout.active{background:#ef4444}
+    .nav-btn.architect{--color:#a855f7}.nav-btn.architect.active{background:#a855f7}
     
     /* Game Containers */
     .game-container{display:none;padding-top:70px;min-height:100vh}
@@ -40,6 +41,7 @@
     .card-chess{--accent:#ffd700;--glow:rgba(255,215,0,0.2);--bg:linear-gradient(135deg,#1a1a2e,#2d2d44)}
     .card-learn{--accent:#4ade80;--glow:rgba(74,222,128,0.2);--bg:linear-gradient(135deg,#0d2818,#1a3d2e)}
     .card-knockout{--accent:#ef4444;--glow:rgba(239,68,68,0.2);--bg:linear-gradient(135deg,#2d1a1a,#441a1a)}
+    .card-architect{--accent:#a855f7;--glow:rgba(168,85,247,0.2);--bg:linear-gradient(135deg,#1a1a2e,#2d1a3d)}
     
     /* ==================== V2 CHESS ==================== */
     #chess{background:linear-gradient(135deg,#0a0a12 0%,#1a1a2e 50%,#0d1f2d 100%)}
@@ -200,7 +202,86 @@
     .ko-ctrl-btn.body{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
     .ko-ctrl-btn.special{background:linear-gradient(135deg,#ffd700,#f59e0b);color:#333}
     .ko-ctrl-btn:disabled{opacity:0.3}
-    
+
+    /* ==================== INFINITY ARCHITECT ==================== */
+    #architect{background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2a 50%,#0a1a2a 100%)}
+    .arch-container{max-width:800px;margin:0 auto;padding:20px;min-height:calc(100vh - 70px)}
+    .arch-title{font-family:'Orbitron',sans-serif;font-size:clamp(24px,5vw,40px);background:linear-gradient(135deg,#a855f7,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:5px}
+    .arch-subtitle{color:#888;font-size:12px;text-align:center;letter-spacing:3px;margin-bottom:25px}
+
+    .target-selector{background:rgba(168,85,247,0.1);border:2px solid rgba(168,85,247,0.3);border-radius:15px;padding:20px;margin-bottom:20px}
+    .target-label{color:#a855f7;font-size:14px;margin-bottom:10px;font-weight:700}
+    .target-slider{width:100%;height:8px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:4px;outline:none}
+    .target-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#a855f7;border-radius:50%;cursor:pointer}
+    .target-display{display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:#888}
+    .target-value{font-size:24px;color:#a855f7;font-family:'Orbitron',sans-serif;text-align:center;margin:10px 0}
+
+    .arch-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+    .arch-stat{background:rgba(0,0,0,0.3);border-radius:10px;padding:12px;text-align:center}
+    .arch-stat-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px}
+    .arch-stat-value{font-size:18px;font-family:'Orbitron',sans-serif;margin-top:4px}
+    .arch-stat-value.energy{color:#fbbf24}
+    .arch-stat-value.wave{color:#60a5fa}
+    .arch-stat-value.alert{color:#4ade80}
+    .arch-stat-value.alert.yellow{color:#fbbf24}
+    .arch-stat-value.alert.orange{color:#f97316}
+    .arch-stat-value.alert.red{color:#ef4444;animation:pulse 0.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+    .game-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;background:rgba(0,0,0,0.5);border:2px solid #a855f7;border-radius:8px;padding:4px;margin-bottom:15px;aspect-ratio:2/1}
+    .grid-cell{background:rgba(168,85,247,0.05);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,3vw,22px);cursor:pointer;transition:all 0.2s;position:relative;aspect-ratio:1}
+    .grid-cell:hover{background:rgba(168,85,247,0.2)}
+    .grid-cell.path{background:rgba(100,100,100,0.3)}
+    .grid-cell.core{background:linear-gradient(135deg,#a855f7,#6366f1);animation:corePulse 2s infinite}
+    @keyframes corePulse{0%,100%{box-shadow:0 0 10px #a855f7}50%{box-shadow:0 0 25px #a855f7}}
+    .grid-cell.tower{background:rgba(168,85,247,0.3);border:2px solid currentColor}
+    .grid-cell.tower.omega1{color:#94a3b8}
+    .grid-cell.tower.omega2{color:#60a5fa}
+    .grid-cell.tower.omega3{color:#4ade80}
+    .grid-cell.tower.omega4{color:#fbbf24}
+    .grid-cell.tower.omega5{color:#f472b6}
+    .grid-cell.tower.omega6{color:#a855f7}
+    .grid-cell .enemy{position:absolute;animation:moveEnemy 0.3s ease-out}
+    @keyframes moveEnemy{from{transform:scale(1.2)}to{transform:scale(1)}}
+
+    .tower-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+    .tower-btn{background:rgba(0,0,0,0.4);border:2px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;cursor:pointer;transition:all 0.2s;text-align:center}
+    .tower-btn:hover:not(.locked):not(.selected){border-color:rgba(255,255,255,0.3)}
+    .tower-btn.selected{border-color:var(--tower-color);box-shadow:0 0 15px var(--tower-color)}
+    .tower-btn.locked{opacity:0.4;cursor:not-allowed}
+    .tower-btn .tower-icon{font-size:24px;margin-bottom:4px}
+    .tower-btn .tower-name{font-size:10px;color:#aaa;margin-bottom:2px}
+    .tower-btn .tower-cost{font-size:11px;color:#fbbf24}
+    .tower-btn.omega1{--tower-color:#94a3b8}
+    .tower-btn.omega2{--tower-color:#60a5fa}
+    .tower-btn.omega3{--tower-color:#4ade80}
+    .tower-btn.omega4{--tower-color:#fbbf24}
+    .tower-btn.omega5{--tower-color:#f472b6}
+    .tower-btn.omega6{--tower-color:#a855f7}
+
+    .protocol-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+    .protocol-btn{background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(99,102,241,0.2));border:2px solid rgba(168,85,247,0.3);border-radius:8px;padding:10px 8px;cursor:pointer;transition:all 0.2s;font-size:11px;color:#a855f7;text-align:center}
+    .protocol-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(168,85,247,0.4),rgba(99,102,241,0.4))}
+    .protocol-btn:disabled{opacity:0.3;cursor:not-allowed}
+    .protocol-btn .proto-icon{font-size:18px;display:block;margin-bottom:4px}
+
+    .control-btns{display:flex;gap:10px;justify-content:center}
+    .arch-btn{padding:12px 25px;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s}
+    .arch-btn.start{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff}
+    .arch-btn.start:hover{transform:scale(1.05)}
+    .arch-btn.pause{background:rgba(255,255,255,0.1);color:#fff;border:2px solid rgba(255,255,255,0.2)}
+
+    .wave-indicator{text-align:center;padding:15px;background:rgba(0,0,0,0.3);border-radius:10px;margin-bottom:15px}
+    .wave-title{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:2px}
+    .wave-enemies{display:flex;justify-content:center;gap:8px;margin-top:8px;font-size:24px}
+
+    .level-select{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+    .level-btn{background:rgba(168,85,247,0.1);border:2px solid rgba(168,85,247,0.3);border-radius:12px;padding:18px;cursor:pointer;transition:all 0.3s;text-align:left}
+    .level-btn:hover:not(.locked){border-color:#a855f7;transform:translateY(-2px)}
+    .level-btn.locked{opacity:0.4;cursor:not-allowed}
+    .level-btn .level-name{font-family:'Orbitron',sans-serif;font-size:16px;color:#a855f7;margin-bottom:4px}
+    .level-btn .level-desc{font-size:12px;color:#888}
+
     /* Modal */
     .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:1001;padding:20px}
     .modal-overlay.show{display:flex}
@@ -230,6 +311,7 @@
   <button class="nav-btn chess" onclick="showGame('chess')">♟️ Chess</button>
   <button class="nav-btn learn" onclick="showGame('learn')">📚 Learn</button>
   <button class="nav-btn knockout" onclick="showGame('knockout')">🥊 Knockout</button>
+  <button class="nav-btn architect" onclick="showGame('architect')">🏛️ Architect</button>
 </nav>
 
 <!-- Arcade Home -->
@@ -261,6 +343,13 @@
           <p class="game-desc">Classic arcade boxing! Learn opponent patterns, dodge attacks, and knock them out!</p>
         </div>
       </div>
+      <div class="game-card card-architect" onclick="showGame('architect')">
+        <div class="game-preview">🏛️</div>
+        <div class="game-info">
+          <h2 class="game-title">Infinity Architect</h2>
+          <p class="game-desc">Auto-scaling tower defense! Deploy 6 defense layers to protect the core from endless waves.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -273,6 +362,9 @@
 
 <!-- Knockout Game -->
 <div id="knockout" class="game-container"></div>
+
+<!-- Infinity Architect Game -->
+<div id="architect" class="game-container"></div>
 
 <!-- Modal -->
 <div class="modal-overlay" id="globalModal">
@@ -296,6 +388,7 @@ function showGame(gameId) {
   if (gameId === 'chess' && !chessInitialized) initChess();
   if (gameId === 'learn' && !learnInitialized) initLearn();
   if (gameId === 'knockout' && !knockoutInitialized) initKnockout();
+  if (gameId === 'architect' && !architectInitialized) initArchitect();
 }
 
 function showModal(icon, title, msg, primaryText, primaryAction, secondaryText, secondaryAction) {
@@ -972,6 +1065,467 @@ function koEnd(result) {
   const o = KO_OPPONENTS[ko.opponent];
   if(result === 'win') { ko.wins++; localStorage.setItem('ko_wins', ko.wins); }
   showModal(result==='win'?'🏆':'💀', result==='win'?'KNOCKOUT!':'TKO...', result==='win'?o.taunts.defeat[0]:o.taunts.victory[0], 'Rematch', ()=>koStartFight(ko.opponent), 'Back', ()=>{ko.screen='select';renderKnockout();});
+}
+
+// ==================== INFINITY ARCHITECT ====================
+let architectInitialized = false;
+
+// Defense Layers (Towers) - Based on the 6 Omega Layers
+const TOWERS = {
+  omega1: { name: 'Ω-1 Foundation', icon: '🔷', cost: 50, damage: 8, range: 1, speed: 1000, desc: 'Foundation Laws - Basic defense', color: '#94a3b8' },
+  omega2: { name: 'Ω-2 Buffer', icon: '🔵', cost: 100, damage: 12, range: 2, speed: 800, desc: 'Auto-Scaling - Adapts to threats', color: '#60a5fa', special: 'scales' },
+  omega3: { name: 'Ω-3 Protocol', icon: '🟢', cost: 150, damage: 20, range: 2, speed: 1200, desc: 'Emergency triggers on danger', color: '#4ade80', special: 'burst' },
+  omega4: { name: 'Ω-4 Diagnostic', icon: '🟡', cost: 200, damage: 5, range: 3, speed: 600, desc: 'Reveals & debuffs enemies', color: '#fbbf24', special: 'debuff' },
+  omega5: { name: 'Ω-5 Crystal', icon: '🔮', cost: 250, damage: 15, range: 2, speed: 1500, desc: 'Crystallization - Slows enemies', color: '#f472b6', special: 'slow' },
+  omega6: { name: 'Ω-6 Override', icon: '⚡', cost: 400, damage: 50, range: 3, speed: 2000, desc: 'Architect Override - Ultimate', color: '#a855f7', special: 'chain' }
+};
+
+// Enemy Types (Threats to the system)
+const ENEMIES = {
+  glitch: { name: 'Glitch', icon: '👾', hp: 30, speed: 800, value: 10, desc: 'Fast, weak' },
+  leak: { name: 'Memory Leak', icon: '💧', hp: 80, speed: 1500, value: 20, desc: 'Slow, tanky' },
+  contradiction: { name: 'Contradiction', icon: '⚠️', hp: 50, speed: 1000, value: 25, desc: 'Splits when hit' },
+  pressure: { name: 'Symbolic Pressure', icon: '🌀', hp: 60, speed: 1200, value: 30, desc: 'Has shields' },
+  paradox: { name: 'Paradox', icon: '♾️', hp: 100, speed: 900, value: 50, desc: 'Phase shift' }
+};
+
+// Emergency Protocols (Special Abilities)
+const PROTOCOLS = {
+  alpha: { name: 'Alpha', icon: '🛡️', cost: 100, cooldown: 30000, desc: 'Repair all towers', effect: 'repair' },
+  beta: { name: 'Beta', icon: '❄️', cost: 150, cooldown: 45000, desc: 'Freeze all enemies', effect: 'freeze' },
+  zeta: { name: 'Zeta', icon: '💥', cost: 200, cooldown: 60000, desc: 'Massive damage blast', effect: 'blast' }
+};
+
+// Levels
+const ARCH_LEVELS = [
+  { id: 1, name: 'Genesis Protocol', desc: 'Learn the basics', waves: 5, gridSize: [8, 4], unlock: 0 },
+  { id: 2, name: 'Buffer Overflow', desc: 'Scaling threats', waves: 8, gridSize: [8, 4], unlock: 1 },
+  { id: 3, name: 'Memory Storm', desc: 'Relentless waves', waves: 12, gridSize: [8, 5], unlock: 2 },
+  { id: 4, name: 'Paradox Core', desc: 'Ultimate challenge', waves: 20, gridSize: [10, 5], unlock: 3 }
+];
+
+// Game State
+let arch = {
+  screen: 'menu',
+  level: null,
+  target: 100, // Fusion capacity target (auto-scaling)
+  energy: 200,
+  coreHP: 100,
+  wave: 0,
+  maxWaves: 5,
+  alert: 'green',
+  selectedTower: null,
+  towers: [],
+  enemies: [],
+  grid: [],
+  path: [],
+  running: false,
+  wins: parseInt(localStorage.getItem('arch_wins') || '0'),
+  protocolCooldowns: { alpha: 0, beta: 0, zeta: 0 }
+};
+
+let archTimer = null;
+let archEnemyTimer = null;
+
+function initArchitect() {
+  architectInitialized = true;
+  renderArchitect();
+}
+
+function getScaledValue(base, target) {
+  // Auto-scaling formula based on target
+  const scale = 1 + (target / 500);
+  return Math.floor(base * scale);
+}
+
+function generatePath(cols, rows) {
+  // Generate a path from left to right with some variation
+  const path = [];
+  let y = Math.floor(rows / 2);
+  for (let x = 0; x < cols; x++) {
+    path.push([x, y]);
+    if (x < cols - 1 && Math.random() > 0.6) {
+      const dy = Math.random() > 0.5 ? 1 : -1;
+      if (y + dy >= 0 && y + dy < rows) {
+        y += dy;
+        path.push([x, y]);
+      }
+    }
+  }
+  return path;
+}
+
+function generateWaveEnemies(waveNum, target) {
+  const enemies = [];
+  const types = Object.keys(ENEMIES);
+  const count = getScaledValue(3 + waveNum * 2, target);
+
+  for (let i = 0; i < count; i++) {
+    const typeIdx = Math.min(Math.floor(waveNum / 3), types.length - 1);
+    const type = types[Math.floor(Math.random() * (typeIdx + 1))];
+    const base = ENEMIES[type];
+    enemies.push({
+      id: `e${Date.now()}_${i}`,
+      type,
+      ...base,
+      hp: getScaledValue(base.hp, target / 2),
+      maxHp: getScaledValue(base.hp, target / 2),
+      pathIdx: 0,
+      x: 0,
+      y: arch.path[0][1],
+      debuffed: false,
+      slowed: false,
+      frozen: false,
+      delay: i * 800
+    });
+  }
+  return enemies;
+}
+
+function renderArchitect() {
+  const el = document.getElementById('architect');
+
+  if (arch.screen === 'menu') {
+    el.innerHTML = `
+      <div class="arch-container">
+        <h1 class="arch-title">INFINITY ARCHITECT</h1>
+        <p class="arch-subtitle">AUTO-SCALING DEFENSE SYSTEM</p>
+
+        <div class="target-selector">
+          <div class="target-label">⚡ Set Fusion Capacity Target</div>
+          <input type="range" class="target-slider" min="100" max="1000" step="100" value="${arch.target}" onchange="archSetTarget(this.value)">
+          <div class="target-value">${arch.target} FUSION</div>
+          <div class="target-display">
+            <span>Beginner (100)</span>
+            <span>Expert (500)</span>
+            <span>Infinite (1000)</span>
+          </div>
+          <p style="font-size:11px;color:#666;text-align:center;margin-top:10px">Higher targets = More resources + Harder enemies</p>
+        </div>
+
+        <p style="text-align:center;color:#888;font-size:12px;margin-bottom:15px">Select Mission</p>
+        <div class="level-select">
+          ${ARCH_LEVELS.map(l => `
+            <div class="level-btn ${arch.wins < l.unlock ? 'locked' : ''}" onclick="archSelectLevel(${l.id})">
+              <div class="level-name">${l.unlock > arch.wins ? '🔒 ' : ''}${l.name}</div>
+              <div class="level-desc">${l.desc} • ${l.waves} waves</div>
+            </div>
+          `).join('')}
+        </div>
+        <p style="text-align:center;color:#555;font-size:12px;margin-top:20px">Victories: ${arch.wins}</p>
+      </div>
+    `;
+  } else if (arch.screen === 'game') {
+    const level = ARCH_LEVELS.find(l => l.id === arch.level);
+    const [cols, rows] = level.gridSize;
+
+    el.innerHTML = `
+      <div class="arch-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span class="back-link" onclick="archBack()">← Exit</span>
+          <span style="font-family:'Orbitron',sans-serif;color:#a855f7">${level.name}</span>
+        </div>
+
+        <div class="arch-stats">
+          <div class="arch-stat">
+            <div class="arch-stat-label">Energy</div>
+            <div class="arch-stat-value energy">⚡${arch.energy}</div>
+          </div>
+          <div class="arch-stat">
+            <div class="arch-stat-label">Wave</div>
+            <div class="arch-stat-value wave">${arch.wave}/${arch.maxWaves}</div>
+          </div>
+          <div class="arch-stat">
+            <div class="arch-stat-label">Core</div>
+            <div class="arch-stat-value alert ${arch.alert}">${arch.coreHP}%</div>
+          </div>
+        </div>
+
+        <div class="game-grid" style="grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${rows},1fr)">
+          ${arch.grid.map((row, y) => row.map((cell, x) => {
+            const isPath = arch.path.some(([px, py]) => px === x && py === y);
+            const isCore = x === cols - 1 && arch.path.some(([px, py]) => px === x && py === y);
+            const tower = arch.towers.find(t => t.x === x && t.y === y);
+            const enemiesHere = arch.enemies.filter(e => Math.floor(e.x) === x && Math.floor(e.y) === y && e.hp > 0);
+
+            let cls = 'grid-cell';
+            if (isCore) cls += ' core';
+            else if (isPath) cls += ' path';
+            if (tower) cls += ` tower ${tower.type}`;
+
+            let content = '';
+            if (isCore) content = '🏛️';
+            else if (tower) content = TOWERS[tower.type].icon;
+            if (enemiesHere.length > 0) content = enemiesHere.map(e => `<span class="enemy">${ENEMIES[e.type].icon}</span>`).join('');
+
+            return `<div class="${cls}" onclick="archCellClick(${x},${y})">${content}</div>`;
+          }).join('')).join('')}
+        </div>
+
+        <div class="tower-panel">
+          ${Object.entries(TOWERS).map(([k, t]) => `
+            <div class="tower-btn ${k} ${arch.selectedTower === k ? 'selected' : ''} ${arch.energy < t.cost ? 'locked' : ''}" onclick="archSelectTower('${k}')">
+              <div class="tower-icon">${t.icon}</div>
+              <div class="tower-name">${t.name}</div>
+              <div class="tower-cost">⚡${t.cost}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="protocol-panel">
+          ${Object.entries(PROTOCOLS).map(([k, p]) => {
+            const ready = arch.protocolCooldowns[k] <= Date.now() && arch.energy >= p.cost;
+            return `
+              <button class="protocol-btn" onclick="archUseProtocol('${k}')" ${ready ? '' : 'disabled'}>
+                <span class="proto-icon">${p.icon}</span>
+                ${p.name}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="control-btns">
+          ${!arch.running ?
+            `<button class="arch-btn start" onclick="archStartWave()">▶ Start Wave ${arch.wave + 1}</button>` :
+            `<button class="arch-btn pause" onclick="archPause()">⏸ Pause</button>`
+          }
+        </div>
+      </div>
+    `;
+  }
+}
+
+window.archSetTarget = function(val) {
+  arch.target = parseInt(val);
+  arch.energy = getScaledValue(200, arch.target);
+  renderArchitect();
+};
+
+window.archSelectLevel = function(id) {
+  const level = ARCH_LEVELS.find(l => l.id === id);
+  if (arch.wins < level.unlock) return;
+
+  arch.level = id;
+  arch.screen = 'game';
+  arch.wave = 0;
+  arch.maxWaves = level.waves;
+  arch.energy = getScaledValue(200, arch.target);
+  arch.coreHP = 100;
+  arch.alert = 'green';
+  arch.towers = [];
+  arch.enemies = [];
+  arch.selectedTower = null;
+  arch.running = false;
+  arch.protocolCooldowns = { alpha: 0, beta: 0, zeta: 0 };
+
+  const [cols, rows] = level.gridSize;
+  arch.grid = Array(rows).fill(null).map(() => Array(cols).fill(null));
+  arch.path = generatePath(cols, rows);
+
+  renderArchitect();
+};
+
+window.archSelectTower = function(type) {
+  if (arch.energy < TOWERS[type].cost) return;
+  arch.selectedTower = arch.selectedTower === type ? null : type;
+  renderArchitect();
+};
+
+window.archCellClick = function(x, y) {
+  if (!arch.selectedTower) return;
+
+  // Can't place on path or existing tower
+  const isPath = arch.path.some(([px, py]) => px === x && py === y);
+  const hasTower = arch.towers.some(t => t.x === x && t.y === y);
+  if (isPath || hasTower) return;
+
+  const tower = TOWERS[arch.selectedTower];
+  if (arch.energy < tower.cost) return;
+
+  arch.energy -= tower.cost;
+  arch.towers.push({
+    type: arch.selectedTower,
+    x, y,
+    lastFire: 0
+  });
+  arch.selectedTower = null;
+  renderArchitect();
+};
+
+window.archStartWave = function() {
+  if (arch.running) return;
+  arch.wave++;
+  arch.running = true;
+  arch.enemies = generateWaveEnemies(arch.wave, arch.target);
+
+  archGameLoop();
+  renderArchitect();
+};
+
+function archGameLoop() {
+  if (!arch.running || arch.screen !== 'game') return;
+
+  const now = Date.now();
+  const level = ARCH_LEVELS.find(l => l.id === arch.level);
+  const [cols] = level.gridSize;
+
+  // Move enemies
+  arch.enemies.forEach(e => {
+    if (e.hp <= 0 || e.frozen || e.delay > 0) {
+      e.delay = Math.max(0, e.delay - 100);
+      return;
+    }
+
+    const speed = e.slowed ? e.speed * 2 : e.speed;
+    if (e.pathIdx < arch.path.length - 1) {
+      e.pathIdx += 100 / speed;
+      if (e.pathIdx >= arch.path.length - 1) {
+        e.pathIdx = arch.path.length - 1;
+      }
+      const idx = Math.floor(e.pathIdx);
+      const [px, py] = arch.path[Math.min(idx, arch.path.length - 1)];
+      e.x = px;
+      e.y = py;
+    }
+
+    // Enemy reached core
+    if (e.pathIdx >= arch.path.length - 1 && e.hp > 0) {
+      arch.coreHP -= 10;
+      e.hp = 0;
+      updateAlert();
+    }
+  });
+
+  // Tower attacks
+  arch.towers.forEach(t => {
+    const tower = TOWERS[t.type];
+    if (now - t.lastFire < tower.speed) return;
+
+    // Find target in range
+    const target = arch.enemies.find(e => {
+      if (e.hp <= 0 || e.delay > 0) return false;
+      const dist = Math.abs(e.x - t.x) + Math.abs(e.y - t.y);
+      return dist <= tower.range;
+    });
+
+    if (target) {
+      t.lastFire = now;
+      let damage = tower.damage;
+
+      // Auto-scaling buff for omega2
+      if (tower.special === 'scales') {
+        damage = getScaledValue(damage, arch.target / 4);
+      }
+
+      // Debuff bonus for omega4
+      if (tower.special === 'debuff') {
+        target.debuffed = true;
+      }
+      if (target.debuffed) damage *= 1.5;
+
+      // Slow effect for omega5
+      if (tower.special === 'slow') {
+        target.slowed = true;
+      }
+
+      // Chain effect for omega6
+      if (tower.special === 'chain') {
+        arch.enemies.filter(e => {
+          const dist = Math.abs(e.x - target.x) + Math.abs(e.y - target.y);
+          return dist <= 1 && e.hp > 0;
+        }).forEach(e => e.hp -= damage / 2);
+      }
+
+      target.hp -= damage;
+      if (target.hp <= 0) {
+        arch.energy += target.value;
+      }
+    }
+  });
+
+  // Remove dead enemies
+  arch.enemies = arch.enemies.filter(e => e.hp > 0 || e.delay > 0);
+
+  // Check wave complete
+  if (arch.enemies.length === 0 && arch.running) {
+    arch.running = false;
+    if (arch.coreHP <= 0) {
+      archEndGame('lose');
+      return;
+    }
+    if (arch.wave >= arch.maxWaves) {
+      archEndGame('win');
+      return;
+    }
+  }
+
+  renderArchitect();
+
+  if (arch.running) {
+    archTimer = setTimeout(archGameLoop, 100);
+  }
+}
+
+function updateAlert() {
+  if (arch.coreHP > 70) arch.alert = 'green';
+  else if (arch.coreHP > 40) arch.alert = 'yellow';
+  else if (arch.coreHP > 20) arch.alert = 'orange';
+  else arch.alert = 'red';
+}
+
+window.archUseProtocol = function(key) {
+  const proto = PROTOCOLS[key];
+  if (arch.protocolCooldowns[key] > Date.now() || arch.energy < proto.cost) return;
+
+  arch.energy -= proto.cost;
+  arch.protocolCooldowns[key] = Date.now() + proto.cooldown;
+
+  switch(proto.effect) {
+    case 'repair':
+      arch.coreHP = Math.min(100, arch.coreHP + 30);
+      updateAlert();
+      break;
+    case 'freeze':
+      arch.enemies.forEach(e => e.frozen = true);
+      setTimeout(() => arch.enemies.forEach(e => e.frozen = false), 3000);
+      break;
+    case 'blast':
+      arch.enemies.forEach(e => e.hp -= 50);
+      arch.enemies = arch.enemies.filter(e => e.hp > 0);
+      break;
+  }
+  renderArchitect();
+};
+
+window.archPause = function() {
+  arch.running = false;
+  clearTimeout(archTimer);
+  renderArchitect();
+};
+
+window.archBack = function() {
+  arch.running = false;
+  clearTimeout(archTimer);
+  arch.screen = 'menu';
+  renderArchitect();
+};
+
+function archEndGame(result) {
+  arch.running = false;
+  clearTimeout(archTimer);
+  if (result === 'win') {
+    arch.wins++;
+    localStorage.setItem('arch_wins', arch.wins);
+  }
+  showModal(
+    result === 'win' ? '🏆' : '💀',
+    result === 'win' ? 'CORE DEFENDED!' : 'CORE BREACHED',
+    result === 'win' ? `Wave ${arch.wave} complete! The Infinity Architect prevails.` : 'System compromised. Defenses failed.',
+    'Play Again',
+    () => archSelectLevel(arch.level),
+    'Back',
+    () => { arch.screen = 'menu'; renderArchitect(); }
+  );
 }
 </script>
 </body>
