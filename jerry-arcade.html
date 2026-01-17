@@ -263,19 +263,22 @@
       <p class="arcade-tagline">Free Browser Games • No Download Required</p>
     </header>
 
-    <!-- N3L Engine Banner -->
+    <!-- N3L Engine Banner v2.0 -->
     <div class="n3l-banner" id="n3lBanner">
       <div class="n3l-info">
         <div class="n3l-icon">🧠</div>
         <div>
-          <div class="n3l-title">N3L Learning Loop Engine</div>
-          <div class="n3l-subtitle">Adaptive learning powered by the Learn → Practice → Test → Reinforce cycle</div>
+          <div class="n3l-title">N3L Learning Loop Engine <span style="font-size:9px;opacity:0.7">v2.0</span></div>
+          <div class="n3l-subtitle">Self-updating adaptive learning • Always improving</div>
+          <div id="n3lRecommendation" style="font-size:10px;color:#4ade80;margin-top:4px"></div>
         </div>
       </div>
       <div class="n3l-stats">
         <div class="n3l-stat"><span class="n3l-stat-value" id="n3lLoops">0</span>Loops</div>
         <div class="n3l-stat"><span class="n3l-stat-value" id="n3lStreak">0</span>Streak</div>
         <div class="n3l-stat"><span class="n3l-stat-value" id="n3lMastery">0%</span>Mastery</div>
+        <div class="n3l-stat"><span class="n3l-stat-value" id="n3lRetention">100%</span>Retention</div>
+        <div class="n3l-stat"><span class="n3l-stat-value" id="n3lVelocity">0</span>Velocity</div>
       </div>
       <div class="n3l-loop-indicator">
         <span>Stage:</span>
@@ -286,6 +289,7 @@
           <span title="Reinforce"></span>
         </div>
         <span id="n3lStageName">LEARN</span>
+        <span id="n3lUpdates" style="font-size:9px;opacity:0.6;margin-left:8px"></span>
       </div>
     </div>
 
@@ -336,22 +340,29 @@
 </div>
 
 <script>
-// ==================== N3L LEARNING LOOP ENGINE ====================
+// ==================== N3L LEARNING LOOP ENGINE v2.0 ====================
+// Self-Updating Adaptive Learning System
 const N3L_ENGINE = {
-  version: '1.0.0',
+  version: '2.0.0',
   active: true,
   name: 'N3L Learning Loop Engine',
+  updateInterval: null,
 
   // Core Loop Stages: Learn → Practice → Test → Reinforce
   stages: ['LEARN', 'PRACTICE', 'TEST', 'REINFORCE'],
 
-  // Engine Configuration
+  // Adaptive Configuration (self-adjusting)
   config: {
     adaptiveDifficulty: true,
     spaceRepetition: true,
     masteryThreshold: 0.8,
     streakBonus: 1.5,
-    reinforceInterval: 3
+    reinforceInterval: 3,
+    // Self-updating parameters
+    learningRate: 0.1,
+    decayRate: 0.05,
+    boostMultiplier: 1.2,
+    updateFrequency: 5000 // ms
   },
 
   // Engine State (persisted)
@@ -365,73 +376,267 @@ const N3L_ENGINE = {
     quizzesPassed: 0,
     practiceMinutes: 0,
     lastActivity: null,
-    achievements: []
+    achievements: [],
+    // v2.0 Enhanced tracking
+    sessionStart: null,
+    totalSessions: 0,
+    avgSessionLength: 0,
+    performanceHistory: [],
+    difficultyLevel: 1,
+    adaptiveBoost: 1.0,
+    learningVelocity: 0,
+    retentionScore: 100,
+    lastUpdate: null,
+    updateCount: 0
   })),
 
   // Save state to localStorage
   saveState() {
+    this.state.lastUpdate = Date.now();
+    this.state.updateCount++;
     localStorage.setItem('n3l_state', JSON.stringify(this.state));
   },
+
+  // ==================== SELF-UPDATING SYSTEM ====================
+
+  // Start the continuous update loop
+  startUpdateLoop() {
+    if (this.updateInterval) return;
+    this.state.sessionStart = Date.now();
+    this.state.totalSessions++;
+
+    // Continuous self-improvement loop
+    this.updateInterval = setInterval(() => {
+      this.selfUpdate();
+    }, this.config.updateFrequency);
+
+    console.log('🔄 N3L Update Loop Started');
+    this.selfUpdate(); // Initial update
+  },
+
+  // Stop the update loop
+  stopUpdateLoop() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
+      this.recordSessionEnd();
+      console.log('⏹️ N3L Update Loop Stopped');
+    }
+  },
+
+  // Core self-update function - runs continuously
+  selfUpdate() {
+    const now = Date.now();
+
+    // 1. Calculate time-based decay (knowledge fades without practice)
+    this.applyRetentionDecay();
+
+    // 2. Analyze recent performance and adjust difficulty
+    this.analyzePerformance();
+
+    // 3. Update adaptive boost based on learning velocity
+    this.updateAdaptiveBoost();
+
+    // 4. Check for new achievements
+    this.checkAchievements();
+
+    // 5. Calculate learning velocity (rate of improvement)
+    this.calculateLearningVelocity();
+
+    // 6. Auto-adjust configuration based on patterns
+    this.autoTuneConfig();
+
+    // 7. Save state and update display
+    this.saveState();
+    if (typeof updateN3LDisplay === 'function') {
+      updateN3LDisplay();
+    }
+
+    console.log(`🧠 N3L Self-Update #${this.state.updateCount} | Mastery: ${this.state.masteryScore}% | Velocity: ${this.state.learningVelocity.toFixed(2)} | Retention: ${this.state.retentionScore}%`);
+  },
+
+  // Apply retention decay - knowledge fades without reinforcement
+  applyRetentionDecay() {
+    if (this.state.lastActivity) {
+      const hoursSinceActivity = (Date.now() - this.state.lastActivity) / (1000 * 60 * 60);
+      if (hoursSinceActivity > 1) {
+        const decay = Math.min(hoursSinceActivity * this.config.decayRate, 5);
+        this.state.retentionScore = Math.max(50, this.state.retentionScore - decay);
+      }
+    }
+  },
+
+  // Analyze recent performance to identify patterns
+  analyzePerformance() {
+    const history = this.state.performanceHistory;
+    if (history.length < 3) return;
+
+    const recent = history.slice(-5);
+    const avgRecent = recent.reduce((a, b) => a + b, 0) / recent.length;
+
+    // Adjust difficulty based on performance
+    if (avgRecent > 0.8 && this.state.difficultyLevel < 5) {
+      this.state.difficultyLevel = Math.min(5, this.state.difficultyLevel + 0.1);
+    } else if (avgRecent < 0.5 && this.state.difficultyLevel > 1) {
+      this.state.difficultyLevel = Math.max(1, this.state.difficultyLevel - 0.1);
+    }
+  },
+
+  // Update adaptive boost multiplier
+  updateAdaptiveBoost() {
+    // Boost increases with streak, decreases with failures
+    const streakFactor = Math.min(this.state.streak * 0.1, 0.5);
+    const retentionFactor = this.state.retentionScore / 100;
+    this.state.adaptiveBoost = 1.0 + streakFactor * retentionFactor;
+  },
+
+  // Calculate learning velocity (rate of improvement over time)
+  calculateLearningVelocity() {
+    const history = this.state.performanceHistory;
+    if (history.length < 2) {
+      this.state.learningVelocity = 0;
+      return;
+    }
+
+    const recent = history.slice(-10);
+    const older = history.slice(-20, -10);
+
+    if (older.length === 0) {
+      this.state.learningVelocity = 0;
+      return;
+    }
+
+    const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+    const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
+
+    this.state.learningVelocity = (recentAvg - olderAvg) * 10;
+  },
+
+  // Auto-tune configuration based on learning patterns
+  autoTuneConfig() {
+    // Adjust learning rate based on velocity
+    if (this.state.learningVelocity > 0.5) {
+      this.config.learningRate = Math.min(0.2, this.config.learningRate + 0.01);
+    } else if (this.state.learningVelocity < -0.2) {
+      this.config.learningRate = Math.max(0.05, this.config.learningRate - 0.01);
+    }
+
+    // Adjust streak bonus based on difficulty level
+    this.config.streakBonus = 1.5 + (this.state.difficultyLevel - 1) * 0.2;
+  },
+
+  // Record session end statistics
+  recordSessionEnd() {
+    if (this.state.sessionStart) {
+      const sessionLength = (Date.now() - this.state.sessionStart) / (1000 * 60); // minutes
+      this.state.avgSessionLength = (
+        (this.state.avgSessionLength * (this.state.totalSessions - 1) + sessionLength) /
+        this.state.totalSessions
+      );
+      this.state.sessionStart = null;
+      this.saveState();
+    }
+  },
+
+  // ==================== CORE LEARNING FUNCTIONS ====================
 
   // Advance to next stage in the loop
   advanceStage() {
     this.state.currentStage = (this.state.currentStage + 1) % 4;
     if (this.state.currentStage === 0) {
       this.state.totalLoops++;
-      this.checkAchievements();
+      // Boost retention when completing a full loop
+      this.state.retentionScore = Math.min(100, this.state.retentionScore + 10);
     }
     this.state.lastActivity = Date.now();
     this.saveState();
   },
 
-  // Record lesson completion
+  // Record lesson completion with enhanced tracking
   completeLesson(correct) {
     this.state.lessonsCompleted++;
+
+    // Record performance for adaptive learning
+    const performance = correct ? 1 : 0;
+    this.state.performanceHistory.push(performance);
+    if (this.state.performanceHistory.length > 50) {
+      this.state.performanceHistory.shift(); // Keep last 50
+    }
+
     if (correct) {
       this.state.quizzesPassed++;
       this.state.streak++;
+      // Apply adaptive boost to retention
+      this.state.retentionScore = Math.min(100, this.state.retentionScore + 5 * this.state.adaptiveBoost);
       if (this.state.streak > this.state.bestStreak) {
         this.state.bestStreak = this.state.streak;
       }
     } else {
       this.state.streak = 0;
+      this.state.retentionScore = Math.max(50, this.state.retentionScore - 3);
     }
+
     this.updateMastery();
     this.advanceStage();
-    this.saveState();
+    this.selfUpdate(); // Trigger immediate update
   },
 
-  // Record practice session (chess game)
+  // Record practice session with enhanced tracking
   recordPractice(won) {
     this.state.practiceMinutes += 5;
+
+    // Record performance
+    const performance = won ? 1 : 0.5; // Partial credit for attempting
+    this.state.performanceHistory.push(performance);
+    if (this.state.performanceHistory.length > 50) {
+      this.state.performanceHistory.shift();
+    }
+
     if (won) {
       this.state.streak++;
+      this.state.retentionScore = Math.min(100, this.state.retentionScore + 8 * this.state.adaptiveBoost);
       if (this.state.streak > this.state.bestStreak) {
         this.state.bestStreak = this.state.streak;
       }
+    } else {
+      // Don't fully reset streak for practice - it's about trying
+      this.state.streak = Math.max(0, this.state.streak - 1);
     }
+
     this.advanceStage();
-    this.saveState();
+    this.selfUpdate(); // Trigger immediate update
   },
 
-  // Update mastery score
+  // Update mastery score with weighted calculation
   updateMastery() {
     if (this.state.lessonsCompleted > 0) {
-      this.state.masteryScore = Math.round((this.state.quizzesPassed / this.state.lessonsCompleted) * 100);
+      const baseMastery = (this.state.quizzesPassed / this.state.lessonsCompleted) * 100;
+      const retentionWeight = this.state.retentionScore / 100;
+      const velocityBonus = Math.max(0, this.state.learningVelocity * 5);
+      this.state.masteryScore = Math.round(Math.min(100, baseMastery * retentionWeight + velocityBonus));
     }
   },
 
-  // Check and award achievements
+  // Enhanced achievement system
   checkAchievements() {
     const achievements = [
       { id: 'first_loop', name: 'First Loop', condition: () => this.state.totalLoops >= 1 },
       { id: 'streak_5', name: 'Hot Streak', condition: () => this.state.bestStreak >= 5 },
+      { id: 'streak_10', name: 'On Fire', condition: () => this.state.bestStreak >= 10 },
       { id: 'mastery_80', name: 'Master Mind', condition: () => this.state.masteryScore >= 80 },
-      { id: 'loops_10', name: 'Loop Legend', condition: () => this.state.totalLoops >= 10 }
+      { id: 'mastery_95', name: 'Genius', condition: () => this.state.masteryScore >= 95 },
+      { id: 'loops_10', name: 'Loop Legend', condition: () => this.state.totalLoops >= 10 },
+      { id: 'loops_50', name: 'Loop Master', condition: () => this.state.totalLoops >= 50 },
+      { id: 'velocity_positive', name: 'Accelerating', condition: () => this.state.learningVelocity > 0.3 },
+      { id: 'retention_100', name: 'Perfect Recall', condition: () => this.state.retentionScore >= 100 },
+      { id: 'sessions_10', name: 'Dedicated', condition: () => this.state.totalSessions >= 10 },
+      { id: 'difficulty_5', name: 'Challenge Seeker', condition: () => this.state.difficultyLevel >= 5 }
     ];
+
     achievements.forEach(a => {
       if (!this.state.achievements.includes(a.id) && a.condition()) {
         this.state.achievements.push(a.id);
+        console.log(`🏆 Achievement Unlocked: ${a.name}!`);
       }
     });
   },
@@ -441,21 +646,43 @@ const N3L_ENGINE = {
     return this.stages[this.state.currentStage];
   },
 
-  // Get engine status for display
+  // Get comprehensive engine status for display
   getStatus() {
     return {
       active: this.active,
+      version: this.version,
       stage: this.getStageName(),
       stageIndex: this.state.currentStage,
       loops: this.state.totalLoops,
       streak: this.state.streak,
       mastery: this.state.masteryScore,
-      achievements: this.state.achievements.length
+      retention: Math.round(this.state.retentionScore),
+      velocity: this.state.learningVelocity,
+      difficulty: this.state.difficultyLevel,
+      boost: this.state.adaptiveBoost,
+      achievements: this.state.achievements.length,
+      updates: this.state.updateCount,
+      sessions: this.state.totalSessions
     };
+  },
+
+  // Get learning recommendations based on current state
+  getRecommendation() {
+    if (this.state.retentionScore < 70) {
+      return { action: 'REINFORCE', message: 'Review previous lessons to boost retention' };
+    }
+    if (this.state.learningVelocity < 0) {
+      return { action: 'PRACTICE', message: 'Practice more to regain momentum' };
+    }
+    if (this.state.streak >= 5) {
+      return { action: 'CHALLENGE', message: 'Great streak! Try a harder challenge' };
+    }
+    return { action: 'LEARN', message: 'Continue with the next lesson' };
   },
 
   // Reset engine (for testing)
   reset() {
+    this.stopUpdateLoop();
     this.state = {
       currentStage: 0,
       totalLoops: 0,
@@ -466,31 +693,77 @@ const N3L_ENGINE = {
       quizzesPassed: 0,
       practiceMinutes: 0,
       lastActivity: null,
-      achievements: []
+      achievements: [],
+      sessionStart: null,
+      totalSessions: 0,
+      avgSessionLength: 0,
+      performanceHistory: [],
+      difficultyLevel: 1,
+      adaptiveBoost: 1.0,
+      learningVelocity: 0,
+      retentionScore: 100,
+      lastUpdate: null,
+      updateCount: 0
     };
     this.saveState();
+    console.log('🔄 N3L Engine Reset Complete');
   }
 };
 
-// Initialize N3L Engine on load
+// Initialize and start N3L Engine
 console.log(`🧠 ${N3L_ENGINE.name} v${N3L_ENGINE.version} - ACTIVATED`);
 console.log(`   Stage: ${N3L_ENGINE.getStageName()} | Loops: ${N3L_ENGINE.state.totalLoops} | Mastery: ${N3L_ENGINE.state.masteryScore}%`);
+console.log(`   Retention: ${N3L_ENGINE.state.retentionScore}% | Velocity: ${N3L_ENGINE.state.learningVelocity} | Updates: ${N3L_ENGINE.state.updateCount}`);
 
-// Update N3L display elements
+// Start the self-updating loop when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  N3L_ENGINE.startUpdateLoop();
+});
+
+// Stop the loop when page unloads
+window.addEventListener('beforeunload', () => {
+  N3L_ENGINE.stopUpdateLoop();
+});
+
+// Update N3L display elements - called continuously by self-update loop
 function updateN3LDisplay() {
   const status = N3L_ENGINE.getStatus();
+  const recommendation = N3L_ENGINE.getRecommendation();
 
-  // Update stats
+  // Update core stats
   const loopsEl = document.getElementById('n3lLoops');
   const streakEl = document.getElementById('n3lStreak');
   const masteryEl = document.getElementById('n3lMastery');
   const stageNameEl = document.getElementById('n3lStageName');
   const stagesEl = document.getElementById('n3lStages');
 
+  // Update new v2.0 stats
+  const retentionEl = document.getElementById('n3lRetention');
+  const velocityEl = document.getElementById('n3lVelocity');
+  const updatesEl = document.getElementById('n3lUpdates');
+  const recommendEl = document.getElementById('n3lRecommendation');
+
   if (loopsEl) loopsEl.textContent = status.loops;
   if (streakEl) streakEl.textContent = status.streak;
   if (masteryEl) masteryEl.textContent = status.mastery + '%';
   if (stageNameEl) stageNameEl.textContent = status.stage;
+
+  // New v2.0 metrics
+  if (retentionEl) {
+    retentionEl.textContent = status.retention + '%';
+    retentionEl.style.color = status.retention > 80 ? '#4ade80' : status.retention > 60 ? '#ffd700' : '#ef4444';
+  }
+  if (velocityEl) {
+    const vel = status.velocity.toFixed(1);
+    velocityEl.textContent = (status.velocity >= 0 ? '+' : '') + vel;
+    velocityEl.style.color = status.velocity > 0 ? '#4ade80' : status.velocity < 0 ? '#ef4444' : '#888';
+  }
+  if (updatesEl) {
+    updatesEl.textContent = `#${status.updates}`;
+  }
+  if (recommendEl) {
+    recommendEl.textContent = `💡 ${recommendation.message}`;
+  }
 
   // Update stage indicators
   if (stagesEl) {
@@ -502,9 +775,6 @@ function updateN3LDisplay() {
     });
   }
 }
-
-// Call on page load
-document.addEventListener('DOMContentLoaded', updateN3LDisplay);
 
 // ==================== NAVIGATION ====================
 function showGame(gameId) {
@@ -887,20 +1157,24 @@ function initLearn() {
 function renderLearn() {
   const el = document.getElementById('learn');
   const n3l = N3L_ENGINE.getStatus();
+  const rec = N3L_ENGINE.getRecommendation();
   if(learn.screen === 'home') {
     const progress = Math.min(100, (learn.xp / 500) * 100);
     el.innerHTML = `
       <div class="learn-container">
         <header class="learn-header">
           <h1 class="learn-logo">♟️ Chess Academy</h1>
-          <div class="n3l-loop-indicator" style="margin-top:10px;justify-content:center">
-            <span>N3L Stage:</span>
+          <div class="n3l-loop-indicator" style="margin-top:10px;justify-content:center;flex-wrap:wrap">
+            <span>N3L v2.0:</span>
             <div class="n3l-loop-stage">
               ${N3L_ENGINE.stages.map((s,i) => `<span class="${i < n3l.stageIndex ? 'complete' : i === n3l.stageIndex ? 'active' : ''}" title="${s}"></span>`).join('')}
             </div>
             <span>${n3l.stage}</span>
             ${n3l.streak > 0 ? `<span class="n3l-streak">🔥 ${n3l.streak}</span>` : ''}
+            <span style="color:${n3l.retention > 80 ? '#4ade80' : n3l.retention > 60 ? '#ffd700' : '#ef4444'}">📊 ${n3l.retention}%</span>
+            <span style="color:${n3l.velocity > 0 ? '#4ade80' : n3l.velocity < 0 ? '#ef4444' : '#888'}">⚡ ${n3l.velocity >= 0 ? '+' : ''}${n3l.velocity.toFixed(1)}</span>
           </div>
+          <div style="font-size:11px;color:#4ade80;margin-top:6px">💡 ${rec.message}</div>
         </header>
         <div class="progress-section">
           <div class="progress-header"><span style="color:#4ade80;font-weight:700">Progress</span><span style="color:#888">${learn.xp} XP</span></div>
