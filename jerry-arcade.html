@@ -10,6 +10,28 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:'Russo One',sans-serif;background:#0a0a1a;min-height:100vh;color:#fff;overflow-x:hidden}
+
+    /* N3L Engine Styles */
+    .n3l-engine-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;box-shadow:0 0 20px rgba(124,58,237,0.4);animation:n3lPulse 2s infinite}
+    @keyframes n3lPulse{0%,100%{box-shadow:0 0 20px rgba(124,58,237,0.4)}50%{box-shadow:0 0 30px rgba(124,58,237,0.7)}}
+    .n3l-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:n3lDot 1s infinite}
+    @keyframes n3lDot{0%,100%{opacity:1}50%{opacity:0.4}}
+    .n3l-banner{background:linear-gradient(90deg,rgba(124,58,237,0.15),rgba(79,70,229,0.15));border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:15px 20px;margin-bottom:25px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .n3l-info{display:flex;align-items:center;gap:12px}
+    .n3l-icon{font-size:28px;filter:drop-shadow(0 0 10px rgba(124,58,237,0.5))}
+    .n3l-title{font-size:14px;color:#a78bfa;font-weight:700}
+    .n3l-subtitle{font-size:11px;color:#888}
+    .n3l-stats{display:flex;gap:15px;font-size:11px;color:#a78bfa}
+    .n3l-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+    .n3l-stat-value{font-size:16px;font-weight:700;color:#fff}
+    .n3l-loop-indicator{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(124,58,237,0.2);border-radius:8px;font-size:11px;color:#a78bfa}
+    .n3l-loop-stage{display:flex;gap:4px}
+    .n3l-loop-stage span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.3s}
+    .n3l-loop-stage span.active{background:#4ade80;box-shadow:0 0 8px #4ade80}
+    .n3l-loop-stage span.complete{background:#a78bfa}
+    .n3l-streak{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#f59e0b,#ef4444);padding:4px 10px;border-radius:10px;font-size:10px;color:#fff;font-weight:700}
+    .n3l-mastery-ring{width:60px;height:60px;border-radius:50%;background:conic-gradient(#7c3aed var(--mastery,0%),rgba(255,255,255,0.1) 0%);display:flex;align-items:center;justify-content:center;position:relative}
+    .n3l-mastery-inner{width:48px;height:48px;border-radius:50%;background:#0a0a1a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#a78bfa}
     
     /* Navigation */
     .main-nav{position:fixed;top:0;left:0;right:0;background:rgba(10,10,26,0.95);backdrop-filter:blur(10px);z-index:1000;padding:10px 20px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;border-bottom:2px solid rgba(255,255,255,0.1)}
@@ -230,6 +252,7 @@
   <button class="nav-btn chess" onclick="showGame('chess')">♟️ Chess</button>
   <button class="nav-btn learn" onclick="showGame('learn')">📚 Learn</button>
   <button class="nav-btn knockout" onclick="showGame('knockout')">🥊 Knockout</button>
+  <span class="n3l-engine-badge"><span class="n3l-dot"></span>N3L ENGINE</span>
 </nav>
 
 <!-- Arcade Home -->
@@ -239,6 +262,33 @@
       <h1 class="arcade-logo">JERRY'S ARCADE</h1>
       <p class="arcade-tagline">Free Browser Games • No Download Required</p>
     </header>
+
+    <!-- N3L Engine Banner -->
+    <div class="n3l-banner" id="n3lBanner">
+      <div class="n3l-info">
+        <div class="n3l-icon">🧠</div>
+        <div>
+          <div class="n3l-title">N3L Learning Loop Engine</div>
+          <div class="n3l-subtitle">Adaptive learning powered by the Learn → Practice → Test → Reinforce cycle</div>
+        </div>
+      </div>
+      <div class="n3l-stats">
+        <div class="n3l-stat"><span class="n3l-stat-value" id="n3lLoops">0</span>Loops</div>
+        <div class="n3l-stat"><span class="n3l-stat-value" id="n3lStreak">0</span>Streak</div>
+        <div class="n3l-stat"><span class="n3l-stat-value" id="n3lMastery">0%</span>Mastery</div>
+      </div>
+      <div class="n3l-loop-indicator">
+        <span>Stage:</span>
+        <div class="n3l-loop-stage" id="n3lStages">
+          <span title="Learn"></span>
+          <span title="Practice"></span>
+          <span title="Test"></span>
+          <span title="Reinforce"></span>
+        </div>
+        <span id="n3lStageName">LEARN</span>
+      </div>
+    </div>
+
     <div class="games-grid">
       <div class="game-card card-chess" onclick="showGame('chess')">
         <div class="game-preview">♟️</div>
@@ -286,6 +336,176 @@
 </div>
 
 <script>
+// ==================== N3L LEARNING LOOP ENGINE ====================
+const N3L_ENGINE = {
+  version: '1.0.0',
+  active: true,
+  name: 'N3L Learning Loop Engine',
+
+  // Core Loop Stages: Learn → Practice → Test → Reinforce
+  stages: ['LEARN', 'PRACTICE', 'TEST', 'REINFORCE'],
+
+  // Engine Configuration
+  config: {
+    adaptiveDifficulty: true,
+    spaceRepetition: true,
+    masteryThreshold: 0.8,
+    streakBonus: 1.5,
+    reinforceInterval: 3
+  },
+
+  // Engine State (persisted)
+  state: JSON.parse(localStorage.getItem('n3l_state') || JSON.stringify({
+    currentStage: 0,
+    totalLoops: 0,
+    streak: 0,
+    bestStreak: 0,
+    masteryScore: 0,
+    lessonsCompleted: 0,
+    quizzesPassed: 0,
+    practiceMinutes: 0,
+    lastActivity: null,
+    achievements: []
+  })),
+
+  // Save state to localStorage
+  saveState() {
+    localStorage.setItem('n3l_state', JSON.stringify(this.state));
+  },
+
+  // Advance to next stage in the loop
+  advanceStage() {
+    this.state.currentStage = (this.state.currentStage + 1) % 4;
+    if (this.state.currentStage === 0) {
+      this.state.totalLoops++;
+      this.checkAchievements();
+    }
+    this.state.lastActivity = Date.now();
+    this.saveState();
+  },
+
+  // Record lesson completion
+  completeLesson(correct) {
+    this.state.lessonsCompleted++;
+    if (correct) {
+      this.state.quizzesPassed++;
+      this.state.streak++;
+      if (this.state.streak > this.state.bestStreak) {
+        this.state.bestStreak = this.state.streak;
+      }
+    } else {
+      this.state.streak = 0;
+    }
+    this.updateMastery();
+    this.advanceStage();
+    this.saveState();
+  },
+
+  // Record practice session (chess game)
+  recordPractice(won) {
+    this.state.practiceMinutes += 5;
+    if (won) {
+      this.state.streak++;
+      if (this.state.streak > this.state.bestStreak) {
+        this.state.bestStreak = this.state.streak;
+      }
+    }
+    this.advanceStage();
+    this.saveState();
+  },
+
+  // Update mastery score
+  updateMastery() {
+    if (this.state.lessonsCompleted > 0) {
+      this.state.masteryScore = Math.round((this.state.quizzesPassed / this.state.lessonsCompleted) * 100);
+    }
+  },
+
+  // Check and award achievements
+  checkAchievements() {
+    const achievements = [
+      { id: 'first_loop', name: 'First Loop', condition: () => this.state.totalLoops >= 1 },
+      { id: 'streak_5', name: 'Hot Streak', condition: () => this.state.bestStreak >= 5 },
+      { id: 'mastery_80', name: 'Master Mind', condition: () => this.state.masteryScore >= 80 },
+      { id: 'loops_10', name: 'Loop Legend', condition: () => this.state.totalLoops >= 10 }
+    ];
+    achievements.forEach(a => {
+      if (!this.state.achievements.includes(a.id) && a.condition()) {
+        this.state.achievements.push(a.id);
+      }
+    });
+  },
+
+  // Get current stage name
+  getStageName() {
+    return this.stages[this.state.currentStage];
+  },
+
+  // Get engine status for display
+  getStatus() {
+    return {
+      active: this.active,
+      stage: this.getStageName(),
+      stageIndex: this.state.currentStage,
+      loops: this.state.totalLoops,
+      streak: this.state.streak,
+      mastery: this.state.masteryScore,
+      achievements: this.state.achievements.length
+    };
+  },
+
+  // Reset engine (for testing)
+  reset() {
+    this.state = {
+      currentStage: 0,
+      totalLoops: 0,
+      streak: 0,
+      bestStreak: 0,
+      masteryScore: 0,
+      lessonsCompleted: 0,
+      quizzesPassed: 0,
+      practiceMinutes: 0,
+      lastActivity: null,
+      achievements: []
+    };
+    this.saveState();
+  }
+};
+
+// Initialize N3L Engine on load
+console.log(`🧠 ${N3L_ENGINE.name} v${N3L_ENGINE.version} - ACTIVATED`);
+console.log(`   Stage: ${N3L_ENGINE.getStageName()} | Loops: ${N3L_ENGINE.state.totalLoops} | Mastery: ${N3L_ENGINE.state.masteryScore}%`);
+
+// Update N3L display elements
+function updateN3LDisplay() {
+  const status = N3L_ENGINE.getStatus();
+
+  // Update stats
+  const loopsEl = document.getElementById('n3lLoops');
+  const streakEl = document.getElementById('n3lStreak');
+  const masteryEl = document.getElementById('n3lMastery');
+  const stageNameEl = document.getElementById('n3lStageName');
+  const stagesEl = document.getElementById('n3lStages');
+
+  if (loopsEl) loopsEl.textContent = status.loops;
+  if (streakEl) streakEl.textContent = status.streak;
+  if (masteryEl) masteryEl.textContent = status.mastery + '%';
+  if (stageNameEl) stageNameEl.textContent = status.stage;
+
+  // Update stage indicators
+  if (stagesEl) {
+    const stages = stagesEl.querySelectorAll('span');
+    stages.forEach((s, i) => {
+      s.classList.remove('active', 'complete');
+      if (i < status.stageIndex) s.classList.add('complete');
+      if (i === status.stageIndex) s.classList.add('active');
+    });
+  }
+}
+
+// Call on page load
+document.addEventListener('DOMContentLoaded', updateN3LDisplay);
+
 // ==================== NAVIGATION ====================
 function showGame(gameId) {
   document.querySelectorAll('.game-container').forEach(g => g.classList.remove('active'));
@@ -630,6 +850,11 @@ function chessAIMove() {
 function chessEndGame(result, msg) {
   chess.gameOver = true;
   if(result==='win') { chess.wins++; localStorage.setItem('v2chess_wins',chess.wins); }
+
+  // N3L Engine Integration - record practice session
+  N3L_ENGINE.recordPractice(result === 'win');
+  updateN3LDisplay();
+
   showModal(result==='win'?'🏆':'💀', result==='win'?'VICTORY!':'DEFEAT', msg, 'Rematch', ()=>chessStartGame(chess.opponent), 'Back', ()=>{chess.screen='opponents';renderChess();});
 }
 
@@ -661,12 +886,21 @@ function initLearn() {
 
 function renderLearn() {
   const el = document.getElementById('learn');
+  const n3l = N3L_ENGINE.getStatus();
   if(learn.screen === 'home') {
     const progress = Math.min(100, (learn.xp / 500) * 100);
     el.innerHTML = `
       <div class="learn-container">
         <header class="learn-header">
           <h1 class="learn-logo">♟️ Chess Academy</h1>
+          <div class="n3l-loop-indicator" style="margin-top:10px;justify-content:center">
+            <span>N3L Stage:</span>
+            <div class="n3l-loop-stage">
+              ${N3L_ENGINE.stages.map((s,i) => `<span class="${i < n3l.stageIndex ? 'complete' : i === n3l.stageIndex ? 'active' : ''}" title="${s}"></span>`).join('')}
+            </div>
+            <span>${n3l.stage}</span>
+            ${n3l.streak > 0 ? `<span class="n3l-streak">🔥 ${n3l.streak}</span>` : ''}
+          </div>
         </header>
         <div class="progress-section">
           <div class="progress-header"><span style="color:#4ade80;font-weight:700">Progress</span><span style="color:#888">${learn.xp} XP</span></div>
@@ -744,6 +978,10 @@ window.learnComplete = function() {
     learn.xp += 50;
     localStorage.setItem('learn_completed', JSON.stringify(learn.completed));
     localStorage.setItem('learn_xp', learn.xp);
+
+    // N3L Engine Integration - record lesson completion
+    N3L_ENGINE.completeLesson(learn.correct);
+    updateN3LDisplay();
   }
   learn.screen = 'home';
   renderLearn();
@@ -971,6 +1209,11 @@ function koEnd(result) {
   clearTimeout(koTimer);
   const o = KO_OPPONENTS[ko.opponent];
   if(result === 'win') { ko.wins++; localStorage.setItem('ko_wins', ko.wins); }
+
+  // N3L Engine Integration - record practice session
+  N3L_ENGINE.recordPractice(result === 'win');
+  updateN3LDisplay();
+
   showModal(result==='win'?'🏆':'💀', result==='win'?'KNOCKOUT!':'TKO...', result==='win'?o.taunts.defeat[0]:o.taunts.victory[0], 'Rematch', ()=>koStartFight(ko.opponent), 'Back', ()=>{ko.screen='select';renderKnockout();});
 }
 </script>
