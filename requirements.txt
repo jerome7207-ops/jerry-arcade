@@ -1,0 +1,17 @@
+# No Hand Programme - Required Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core audio processing
+numpy>=1.20.0
+sounddevice>=0.4.0
+scipy>=1.7.0
+
+# Speech recognition
+SpeechRecognition>=3.8.0
+
+# Voice activity detection
+webrtcvad>=2.0.10
+
+# Voice training/verification (optional but recommended)
+resemblyzer>=0.1.1
+torch>=1.9.0
