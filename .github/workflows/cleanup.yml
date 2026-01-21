@@ -1,0 +1,89 @@
+name: Dual-Track Cleanup & Log
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Run Cleanup
+      run: |
+        mkdir -p cleanup_reports
+        python3 << 'EOF'
+        import json
+        from pathlib import Path
+        from datetime import datetime
+        
+        class DualTrackCleanup:
+            def __init__(self):
+                self.repo_path = Path('.')
+                self.report = {
+                    "timestamp": datetime.now().isoformat(),
+                    "date": datetime.now().strftime("%Y-%m-%d"),
+                    "time": datetime.now().strftime("%H:%M:%S"),
+                    "files_removed": [],
+                    "space_saved_mb": 0,
+                    "count": 0
+                }
+                self.protected = ['.git', '.github', 'README', 'LICENSE', '.gitignore', 'cleanup_reports']
+                self.removable = ['*.pyc', '*.pyo', '__pycache__', '*.log', '.DS_Store', 'node_modules', '.venv', '*.egg-info', 'dist', 'build']
+            
+            def is_protected(self, path_str):
+                return any(p in str(path_str) for p in self.protected)
+            
+            def is_removable(self, path_str):
+                path_lower = str(path_str).lower()
+                return any(pattern in path_lower for pattern in self.removable)
+            
+            def cleanup(self):
+                total_space = 0
+                for fp in self.repo_path.rglob('*'):
+                    try:
+                        if fp.is_file() and not self.is_protected(str(fp)):
+                            if self.is_removable(str(fp)):
+                                size = fp.stat().st_size
+                                try:
+                                    fp.unlink()
+                                    self.report['count'] += 1
+                                    total_space += size
+                                except:
+                                    pass
+                    except:
+                        pass
+                self.report['space_saved_mb'] = round(total_space / (1024*1024), 2)
+                return self.report
+        
+        cleanup = DualTrackCleanup()
+        report = cleanup.cleanup()
+        report_path = Path('cleanup_reports') / f"cleanup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        with open(report_path, 'w') as f:
+            json.dump(report, f, indent=2)
+        EOF
+    
+    - name: Commit and Push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add cleanup_reports/ 2>/dev/null || true
+        if ! git diff --cached --quiet; then
+          git commit -m "chore: automated cleanup - $(date +%Y-%m-%d)"
+          git push || true
+        fi
