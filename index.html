@@ -224,7 +224,9 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
   transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);text-align:center;
   box-shadow:0 4px 24px rgba(201,168,76,0.2);
 }
-.top-games-bar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(8,8,16,0.88);border-bottom:1px solid var(--border);z-index:30;}
+.top-games-bar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(8,8,16,0.92);border-bottom:1px solid var(--border);z-index:50;}
+.top-games-bar.hidden{display:none;}
+body.bar-on .screen.active{padding-top:62px;}
 .tg-btn{font-size:12px;color:var(--accent2);text-decoration:none;letter-spacing:1px;padding:7px 16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);transition:all 0.2s;white-space:nowrap;}
 .tg-btn:hover{border-color:var(--accent);color:var(--accent3);transform:translateY(-1px);}
 #boneLorePopup{cursor:pointer;}
@@ -248,13 +250,14 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 </style>
 </head>
 <body>
+<div class="top-games-bar" id="topGamesBar">
+  <a class="tg-btn" href="arcade.html?game=chess">♟️ Chess</a>
+  <a class="tg-btn" href="arcade.html?game=learn">📚 Learn</a>
+  <a class="tg-btn" href="arcade.html?game=knockout">🥊 Boxing</a>
+</div>
 
 <!-- ===== INTRO SCREEN ===== -->
 <div id="intro-screen" class="screen">
-  <div class="top-games-bar">
-    <a class="tg-btn" href="arcade.html?game=chess">♟️ Chess</a>
-    <a class="tg-btn" href="arcade.html?game=knockout">🥊 Boxing</a>
-  </div>
   <div class="intro-inner animate-in">
     <div class="intro-logo"><div style="display:inline-flex;width:80px;height:40px;background:#f5f0e8;border:3px solid #8a7a5a;border-radius:7px;overflow:hidden;transform:rotate(-15deg);box-shadow:5px 8px 22px rgba(0,0,0,0.75);"><div style="flex:1;"></div><div style="width:3px;background:#8a7a5a;flex-shrink:0;"></div><div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="width:11px;height:11px;background:#1a1020;border-radius:50%;"></div></div></div></div>
     <div class="intro-sup">Gauntlet Dominoes</div>
@@ -1094,6 +1097,11 @@ function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(`${name}-screen`);
   if(el) el.classList.add('active');
+  // Top games bar: show on menu screens, hide during gameplay/story
+  const bar=document.getElementById('topGamesBar');
+  const hide=(name==='game'||name==='story');
+  if(bar) bar.classList.toggle('hidden',hide);
+  document.body.classList.toggle('bar-on',!hide);
 }
 function renderPipGrid(n){
   const pos={0:[],1:[[1,1]],2:[[0,2],[2,0]],3:[[0,2],[1,1],[2,0]],4:[[0,0],[0,2],[2,0],[2,2]],5:[[0,0],[0,2],[1,1],[2,0],[2,2]],6:[[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]]};
