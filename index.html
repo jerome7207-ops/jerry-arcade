@@ -224,6 +224,11 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
   transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);text-align:center;
   box-shadow:0 4px 24px rgba(201,168,76,0.2);
 }
+.top-games-bar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(8,8,16,0.88);border-bottom:1px solid var(--border);z-index:30;}
+.tg-btn{font-size:12px;color:var(--accent2);text-decoration:none;letter-spacing:1px;padding:7px 16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);transition:all 0.2s;white-space:nowrap;}
+.tg-btn:hover{border-color:var(--accent);color:var(--accent3);transform:translateY(-1px);}
+#boneLorePopup{cursor:pointer;}
+.lore-dismiss{font-size:8px;color:var(--text3);letter-spacing:2px;margin-top:6px;text-transform:uppercase;}
 #boneLorePopup.visible{bottom:20px;}
 .lore-label{font-size:8px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
 .lore-title{font-size:12px;color:var(--accent2);font-weight:bold;margin-bottom:4px;}
@@ -246,6 +251,10 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 
 <!-- ===== INTRO SCREEN ===== -->
 <div id="intro-screen" class="screen">
+  <div class="top-games-bar">
+    <a class="tg-btn" href="arcade.html?game=chess">♟️ Chess</a>
+    <a class="tg-btn" href="arcade.html?game=knockout">🥊 Boxing</a>
+  </div>
   <div class="intro-inner animate-in">
     <div class="intro-logo"><div style="display:inline-flex;width:80px;height:40px;background:#f5f0e8;border:3px solid #8a7a5a;border-radius:7px;overflow:hidden;transform:rotate(-15deg);box-shadow:5px 8px 22px rgba(0,0,0,0.75);"><div style="flex:1;"></div><div style="width:3px;background:#8a7a5a;flex-shrink:0;"></div><div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="width:11px;height:11px;background:#1a1020;border-radius:50%;"></div></div></div></div>
     <div class="intro-sup">Gauntlet Dominoes</div>
@@ -392,6 +401,7 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
   <div class="lore-label">🦴 BONE LORE</div>
   <div class="lore-title" id="loreTitleEl"></div>
   <div class="lore-text" id="loreTextEl"></div>
+  <div class="lore-dismiss">tap to dismiss ✕</div>
 </div>
 
 <script>
@@ -961,7 +971,6 @@ function _runBeats(beats,title,callback){
   titleEl.textContent=title;
   beatEl.textContent='';beatEl.classList.remove('visible');
   if(nextEl)nextEl.classList.remove('visible');
-  // Build dots
   dotsEl.innerHTML=beats.map((_,i)=>`<div class="story-dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
   showScreen('story');
   let beatIdx=0;let skipped=false;let canAdvance=false;
@@ -978,13 +987,11 @@ function _runBeats(beats,title,callback){
       if(skipped) return;
       beatEl.textContent=beats[beatIdx].text;
       beatEl.classList.add('visible');
-      // Reader-paced: each beat waits for a tap. Brief lock-out so a stray tap
-      // can't blow past a beat before it has faded in.
       setTimeout(()=>{if(skipped)return;canAdvance=true;if(nextEl)nextEl.classList.add('visible');},800);
     },150);
   }
   function onTap(e){
-    if(e.target.closest('.story-skip')) return; // let the skip button do its own thing
+    if(e.target.closest('.story-skip')) return;
     if(skipped||!canAdvance) return;
     canAdvance=false;
     beatEl.classList.remove('visible');
@@ -1011,7 +1018,16 @@ function showBoneLore(){
   document.getElementById('loreTextEl').textContent=lore.text;
   const popup=document.getElementById('boneLorePopup');
   boneLoreActive=true;popup.classList.add('visible');
-  setTimeout(()=>{popup.classList.remove('visible');setTimeout(()=>{boneLoreActive=false;},450);},5500);
+  let hideTimer=null;
+  function dismiss(){
+    if(!boneLoreActive) return;
+    popup.classList.remove('visible');
+    popup.removeEventListener('click',dismiss);
+    if(hideTimer)clearTimeout(hideTimer);
+    setTimeout(()=>{boneLoreActive=false;},450);
+  }
+  popup.addEventListener('click',dismiss);
+  hideTimer=setTimeout(dismiss,20000);
 }
 function triggerBoneLore(){if(!boneLoreActive&&Math.random()<0.18)setTimeout(showBoneLore,600);}
 
