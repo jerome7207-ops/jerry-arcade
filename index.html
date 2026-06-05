@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>THE LONG GAME — Gauntlet Dominoes V2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#080810;--surface:#10101c;--surface2:#181828;--surface3:#20203a;
+  --accent:#c9a84c;--accent2:#e8c97a;--accent3:#f5d98a;
+  --text:#ece8dc;--text2:#9090a8;--text3:#606080;
+  --danger:#e05555;--success:#50c878;--warning:#f0a030;
+  --border:#242436;--border2:#363656;
+  --tile-bg:#f5f0e8;--tile-border:#8a7a5a;--tile-dot:#1a1020;
+  --warm:#b87a3a;--warm2:#d4963e;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;overflow-x:hidden;user-select:none;}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;}
+.screen.active{display:flex;}
+
+/* ===== INTRO SCREEN ===== */
+#intro-screen{
+  background:radial-gradient(ellipse at 40% 40%,#1a1208 0%,#080810 70%);
+  justify-content:center;padding:30px 20px;text-align:center;
+}
+.intro-inner{max-width:420px;width:100%;}
+.intro-logo{font-size:64px;margin-bottom:16px;filter:drop-shadow(0 0 30px #c9a84c99);animation:floatLogo 3s ease-in-out infinite;}
+.intro-sup{font-size:10px;color:var(--accent);letter-spacing:5px;text-transform:uppercase;margin-bottom:6px;}
+.intro-title{font-size:30px;color:var(--accent2);font-weight:bold;letter-spacing:3px;margin-bottom:4px;}
+.intro-sub{font-size:11px;color:var(--text2);letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;}
+.intro-quote{font-size:14px;color:#c8bea0;line-height:2;font-style:italic;margin-bottom:36px;padding:20px;background:rgba(201,168,76,0.06);border-left:2px solid var(--accent);border-radius:0 8px 8px 0;text-align:left;}
+.intro-quote em{color:var(--accent2);font-style:normal;}
+.btn-intro{padding:14px 48px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.2s;}
+.btn-intro:hover{transform:translateY(-2px);box-shadow:0 8px 28px #c9a84c55;}
+
+/* ===== PAYWALL ===== */
+#paywall-screen{background:linear-gradient(160deg,#080810 0%,#10101e 50%,#0a0a14 100%);justify-content:center;padding:20px;}
+.pw-inner{max-width:480px;width:100%;text-align:center;}
+.pw-logo{font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 20px #c9a84c88);}
+.pw-title{font-size:24px;font-weight:bold;color:var(--accent2);letter-spacing:2px;margin-bottom:2px;}
+.pw-subtitle{font-size:10px;color:var(--text2);letter-spacing:5px;text-transform:uppercase;margin-bottom:20px;}
+.pw-divider{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:14px 0;}
+.pw-free-badge{display:inline-block;background:#1a2a1a;border:1px solid var(--success);color:var(--success);padding:5px 16px;border-radius:20px;font-size:11px;letter-spacing:2px;margin-bottom:14px;}
+.pw-features{text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px;}
+.pw-feature{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);}
+.pw-feature:last-child{border-bottom:none;}
+.pw-feature .icon{font-size:16px;width:26px;text-align:center;}
+.pw-feature .locked{color:var(--danger);font-size:10px;margin-left:auto;}
+.pw-feature .free{color:var(--success);font-size:10px;margin-left:auto;}
+.pw-price{font-size:32px;font-weight:bold;color:var(--accent2);margin:10px 0 3px;}
+.pw-price-sub{font-size:11px;color:var(--text2);margin-bottom:14px;letter-spacing:1px;}
+.btn-buy{display:block;width:100%;padding:15px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;font-size:15px;font-weight:bold;border:none;border-radius:10px;cursor:pointer;letter-spacing:2px;margin-bottom:10px;transition:all 0.2s;}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 8px 24px #c9a84c44;}
+.pw-or{color:var(--text2);font-size:11px;margin:7px 0;letter-spacing:2px;}
+.pw-code-row{display:flex;gap:8px;margin-bottom:7px;}
+.pw-code-input{flex:1;padding:11px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:monospace;}
+.pw-code-input::placeholder{color:var(--text2);}
+.btn-code{padding:11px 18px;background:var(--surface3);border:1px solid var(--border2);color:var(--accent);border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s;}
+.btn-code:hover{border-color:var(--accent);}
+.pw-msg{font-size:11px;min-height:14px;margin-bottom:7px;}
+.pw-msg.error{color:var(--danger);}
+.pw-msg.success{color:var(--success);}
+.btn-play-free{display:block;width:100%;padding:11px;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:10px;cursor:pointer;font-size:12px;letter-spacing:1px;transition:all 0.2s;margin-top:3px;}
+.btn-play-free:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ===== STORY SCENE ===== */
+#story-screen{background:#050508;justify-content:center;padding:40px 30px;text-align:center;position:relative;}
+.story-inner{max-width:460px;width:100%;}
+.story-label{font-size:10px;color:var(--accent);letter-spacing:5px;text-transform:uppercase;margin-bottom:32px;}
+.story-beat{font-size:15px;color:#d8d0ba;line-height:2;font-style:italic;white-space:pre-line;opacity:0;transition:opacity 0.9s ease;min-height:120px;}
+.story-beat.visible{opacity:1;}
+.story-skip{position:absolute;bottom:28px;right:28px;font-size:10px;color:var(--text2);cursor:pointer;letter-spacing:2px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;z-index:5;}
+.story-skip:hover{border-color:var(--accent);color:var(--accent);}
+.story-next{margin-top:28px;font-size:11px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity 0.5s ease;animation:pulse 1.6s ease-in-out infinite;}
+.story-next.visible{opacity:0.85;}
+.story-dots{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
+.story-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:background 0.3s;}
+.story-dot.active{background:var(--accent);}
+
+/* ===== CHARACTER SELECT ===== */
+#char-screen{padding:20px;justify-content:flex-start;padding-top:36px;}
+.char-title{font-size:22px;color:var(--accent2);letter-spacing:3px;margin-bottom:3px;text-align:center;}
+.char-sub{font-size:10px;color:var(--text2);letter-spacing:3px;text-align:center;margin-bottom:26px;}
+.char-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:480px;width:100%;margin:0 auto 26px;}
+.char-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.25s;}
+.char-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.char-card.selected{border-color:var(--accent2);background:var(--surface2);box-shadow:0 0 20px #c9a84c33;}
+.char-avatar{font-size:40px;margin-bottom:6px;}
+.char-name{font-size:12px;color:var(--text);font-weight:bold;margin-bottom:2px;}
+.char-tag{font-size:9px;color:var(--text2);letter-spacing:1px;}
+.btn-continue{padding:13px 44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.2s;display:block;margin:0 auto;}
+.btn-continue:disabled{opacity:0.3;cursor:not-allowed;}
+.btn-continue:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 6px 20px #c9a84c44;}
+
+/* ===== GAUNTLET MAP ===== */
+#gauntlet-screen{padding:20px;padding-top:28px;}
+.gauntlet-title{font-size:20px;color:var(--accent2);letter-spacing:3px;margin-bottom:2px;text-align:center;}
+.gauntlet-sub{font-size:9px;color:var(--text2);letter-spacing:3px;text-align:center;margin-bottom:4px;}
+.gauntlet-progress{font-size:12px;color:var(--accent);text-align:center;margin-bottom:18px;}
+.opponent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;max-width:500px;width:100%;margin:0 auto;}
+.opp-card{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:12px 7px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;}
+.opp-card.available{border-color:var(--border2);}
+.opp-card.available:hover{border-color:var(--accent);transform:translateY(-2px);}
+.opp-card.beaten{border-color:var(--success);background:#0a160a;}
+.opp-card.locked{opacity:0.4;cursor:not-allowed;}
+.opp-card.current{border-color:var(--accent2);box-shadow:0 0 16px #c9a84c44;}
+.opp-avatar{font-size:28px;margin-bottom:4px;}
+.opp-name{font-size:10px;color:var(--text);font-weight:bold;margin-bottom:1px;line-height:1.2;}
+.opp-culture{font-size:8px;color:var(--accent);letter-spacing:1px;margin-bottom:2px;}
+.opp-tier{font-size:8px;color:var(--text2);letter-spacing:1px;}
+.opp-badge{position:absolute;top:5px;right:5px;font-size:11px;}
+.opp-free{position:absolute;top:5px;left:5px;background:#0a200a;border:1px solid var(--success);color:var(--success);font-size:7px;padding:1px 4px;border-radius:6px;letter-spacing:1px;}
+
+/* ===== GAME SCREEN ===== */
+#game-screen{padding:0;background:var(--bg);overflow:hidden;position:relative;}
+.game-header{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:var(--surface);border-bottom:1px solid var(--border);}
+.game-header-left{display:flex;align-items:center;gap:8px;}
+.game-title{font-size:11px;color:var(--accent);letter-spacing:2px;}
+.game-round{font-size:10px;color:var(--text2);}
+.game-scores{display:flex;gap:10px;}
+.score-item{text-align:center;}
+.score-name{font-size:8px;color:var(--text2);letter-spacing:1px;}
+.score-val{font-size:13px;color:var(--text);font-weight:bold;}
+.score-val.winning{color:var(--accent2);}
+.score-val.danger{color:var(--danger);}
+.ai-area{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:7px 10px;background:var(--surface2);}
+.ai-pod{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px;text-align:center;position:relative;transition:all 0.3s;}
+.ai-pod.active-turn{border-color:var(--accent);box-shadow:0 0 12px #c9a84c44;}
+.ai-pod.thinking::after{content:'...';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);color:var(--accent);font-size:14px;animation:pulse 0.6s infinite;}
+.ai-avatar{font-size:26px;margin-bottom:1px;}
+.ai-name{font-size:8px;color:var(--text2);letter-spacing:1px;margin-bottom:1px;}
+.ai-culture{font-size:7px;color:var(--accent);letter-spacing:1px;margin-bottom:1px;}
+.ai-hand-count{font-size:10px;color:var(--text);font-weight:bold;}
+.ai-state{font-size:8px;margin-top:1px;}
+.ai-state.baseline{color:var(--text2);}
+.ai-state.fracture{color:var(--warning);}
+.ai-state.pressure{color:var(--danger);}
+.ai-state.shift{color:#aa44ff;}
+.dialogue-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:5px 9px;font-size:9px;color:var(--text);white-space:nowrap;max-width:160px;white-space:normal;text-align:center;z-index:10;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.dialogue-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--border2);}
+.dialogue-bubble.visible{opacity:1;}
+.board-area{flex:1;overflow:hidden;position:relative;background:radial-gradient(ellipse at center,#121218 0%,#080810 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:7px;min-height:170px;}
+.board-inner{width:100%;overflow-x:auto;overflow-y:hidden;padding:8px 0;}
+.train{display:flex;align-items:center;gap:2px;min-width:min-content;padding:0 10px;}
+.board-info{position:absolute;bottom:7px;right:10px;font-size:10px;color:var(--text2);}
+.ends-display{font-size:11px;color:var(--accent);text-align:center;margin-bottom:3px;}
+.boneyard-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:11px;transition:all 0.2s;}
+.boneyard-btn:hover:not(:disabled){border-color:var(--accent);}
+.boneyard-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.domino{display:inline-flex;flex-direction:column;background:var(--tile-bg);border:2px solid var(--tile-border);border-radius:5px;cursor:default;transition:all 0.2s;position:relative;box-shadow:1px 2px 4px rgba(0,0,0,0.5);}
+.domino.horizontal{flex-direction:row;}
+.domino.playable{cursor:pointer;border-color:var(--accent);}
+.domino.playable:hover{transform:translateY(-4px);box-shadow:0 6px 16px #c9a84c66;border-color:var(--accent2);}
+.domino.selected{border-color:var(--accent2);transform:translateY(-6px);box-shadow:0 8px 20px #c9a84c88;}
+.domino.in-hand{width:40px;height:78px;}
+.domino.on-board{width:28px;height:56px;}
+.domino.on-board.horizontal{width:56px;height:28px;}
+.domino.on-board.is-double{width:28px;height:56px;}
+.domino-half{flex:1;display:grid;place-items:center;position:relative;}
+.domino-half:first-child{border-bottom:1.5px solid var(--tile-border);}
+.domino.horizontal .domino-half:first-child{border-bottom:none;border-right:1.5px solid var(--tile-border);}
+.pip-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:1px;width:100%;height:100%;padding:3px;}
+.pip{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.pip::after{content:'';width:55%;height:55%;background:var(--tile-dot);border-radius:50%;display:none;}
+.pip.filled::after{display:block;}
+.player-area{background:var(--surface);border-top:1px solid var(--border);padding:9px 7px 13px;}
+.player-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;padding:0 3px;}
+.player-name-display{display:flex;align-items:center;gap:7px;}
+.player-avatar-sm{font-size:20px;}
+.player-name-txt{font-size:11px;color:var(--accent);letter-spacing:1px;}
+.player-hand{display:flex;gap:4px;overflow-x:auto;padding:3px 2px;min-height:85px;align-items:flex-start;}
+.turn-indicator{font-size:10px;padding:3px 11px;border-radius:11px;background:var(--surface2);border:1px solid var(--border);}
+.turn-indicator.your-turn{background:#14140a;border-color:var(--accent);color:var(--accent);}
+.pass-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:4px 12px;border-radius:7px;cursor:pointer;font-size:10px;transition:all 0.2s;}
+.pass-btn:hover{border-color:var(--warning);color:var(--warning);}
+
+/* ===== RESULT SCREEN ===== */
+#result-screen{justify-content:center;align-items:center;padding:28px 20px;}
+.result-inner{max-width:400px;width:100%;text-align:center;}
+.result-icon{font-size:68px;margin-bottom:10px;animation:bounceIn 0.5s ease;}
+.result-title{font-size:26px;font-weight:bold;margin-bottom:7px;}
+.result-title.win{color:var(--accent2);}
+.result-title.lose{color:var(--danger);}
+.result-opp{font-size:13px;color:var(--text2);margin-bottom:10px;}
+.result-story{font-size:12px;color:#b8a878;font-style:italic;line-height:1.7;margin-bottom:18px;padding:12px 16px;background:rgba(201,168,76,0.06);border-radius:8px;border-left:2px solid var(--accent);}
+.result-scores{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px;}
+.result-score-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border);}
+.result-score-row:last-child{border-bottom:none;}
+.result-btns{display:flex;gap:10px;justify-content:center;}
+.btn-next{padding:13px 28px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.2s;}
+.btn-next:hover{transform:translateY(-2px);}
+.btn-retry{padding:13px 22px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:10px;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.btn-retry:hover{border-color:var(--accent);}
+
+/* ===== COMPLETE SCREEN ===== */
+#complete-screen{justify-content:center;align-items:center;padding:28px 20px;background:radial-gradient(ellipse at center,#1a1500 0%,#080810 70%);}
+.complete-inner{max-width:420px;width:100%;text-align:center;}
+.complete-crown{font-size:72px;animation:float 2s ease-in-out infinite;}
+.complete-title{font-size:28px;color:var(--accent2);font-weight:bold;margin:10px 0 5px;letter-spacing:3px;}
+.complete-sub{font-size:13px;color:var(--text2);margin-bottom:20px;}
+.complete-story{font-size:13px;color:#c8bea0;font-style:italic;line-height:2;max-width:360px;margin:0 auto 24px;white-space:pre-line;}
+.complete-trophies{font-size:32px;letter-spacing:8px;margin-bottom:18px;}
+.btn-restart{padding:13px 36px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.2s;margin-top:7px;}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:0 8px 24px #c9a84c44;}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:#00000088;z-index:100;justify-content:center;align-items:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px;max-width:360px;width:90%;text-align:center;}
+.modal-icon{font-size:44px;margin-bottom:10px;}
+.modal-title{font-size:18px;color:var(--accent2);margin-bottom:7px;}
+.modal-text{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.modal-btns{display:flex;gap:10px;justify-content:center;}
+.modal-btn{padding:9px 22px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s;}
+.modal-btn.primary{background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;font-weight:bold;}
+.modal-btn.secondary{background:var(--surface2);border:1px solid var(--border2);color:var(--text);}
+
+/* ===== BONE LORE POPUP ===== */
+#boneLorePopup{
+  position:fixed;bottom:-110px;left:50%;transform:translateX(-50%);
+  background:var(--surface2);border:1px solid var(--accent);border-radius:12px;
+  padding:10px 16px;max-width:320px;width:92%;z-index:60;
+  transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);text-align:center;
+  box-shadow:0 4px 24px rgba(201,168,76,0.2);
+}
+#boneLorePopup.visible{bottom:20px;}
+.lore-label{font-size:8px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
+.lore-title{font-size:12px;color:var(--accent2);font-weight:bold;margin-bottom:4px;}
+.lore-text{font-size:11px;color:var(--text2);line-height:1.5;}
+
+/* Animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes floatLogo{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.animate-in{animation:slideUp 0.35s ease both;}
+
+::-webkit-scrollbar{height:4px;width:4px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ===== INTRO SCREEN ===== -->
+<div id="intro-screen" class="screen">
+  <div class="intro-inner animate-in">
+    <div class="intro-logo"><div style="display:inline-flex;width:80px;height:40px;background:#f5f0e8;border:3px solid #8a7a5a;border-radius:7px;overflow:hidden;transform:rotate(-15deg);box-shadow:5px 8px 22px rgba(0,0,0,0.75);"><div style="flex:1;"></div><div style="width:3px;background:#8a7a5a;flex-shrink:0;"></div><div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="width:11px;height:11px;background:#1a1020;border-radius:50%;"></div></div></div></div>
+    <div class="intro-sup">Gauntlet Dominoes</div>
+    <div class="intro-title">THE LONG GAME</div>
+    <div class="intro-sub">A Domino Legacy</div>
+    <div class="intro-quote">
+      "The tiles are made of bone.<br>
+      Real bone. Your grandfather's hands<br>
+      shaped them, polished them<br>
+      until they caught the light.<br><br>
+      He called them <em>'the bones.'</em><br>
+      Because that's what they were.<br><br>
+      He's gone now. The table is empty.<br><br>
+      <em>Make them speak.</em>"
+    </div>
+    <button class="btn-intro" onclick="goToPaywall()">BEGIN THE LEGACY →</button>
+  </div>
+</div>
+
+<!-- ===== PAYWALL SCREEN ===== -->
+<div id="paywall-screen" class="screen">
+  <div class="pw-inner animate-in">
+    <div class="pw-logo"><div style="display:inline-flex;width:64px;height:32px;background:#f5f0e8;border:2.5px solid #8a7a5a;border-radius:6px;overflow:hidden;transform:rotate(-13deg);box-shadow:4px 6px 18px rgba(0,0,0,0.7);"><div style="flex:1;"></div><div style="width:2.5px;background:#8a7a5a;flex-shrink:0;"></div><div style="flex:1;display:flex;align-items:center;justify-content:center;"><div style="width:8px;height:8px;background:#1a1020;border-radius:50%;"></div></div></div></div>
+    <div class="pw-title">THE LONG GAME</div>
+    <div class="pw-subtitle">Gauntlet Dominoes · Championship Series</div>
+    <div class="pw-divider"></div>
+    <div class="pw-free-badge">✓ FIRST 2 OPPONENTS FREE</div>
+    <div class="pw-features">
+      <div class="pw-feature"><span class="icon">🎭</span> Choose Your Player <span class="free">FREE</span></div>
+      <div class="pw-feature"><span class="icon">🎲</span> 2 Intro Opponents + Full Story <span class="free">FREE</span></div>
+      <div class="pw-feature"><span class="icon">🌍</span> All 12 Cultural Opponents <span class="locked">LOCKED</span></div>
+      <div class="pw-feature"><span class="icon">🧠</span> Nested Thirds AI Engine <span class="locked">LOCKED</span></div>
+      <div class="pw-feature"><span class="icon">👑</span> El Rey — The Final Legacy <span class="locked">LOCKED</span></div>
+    </div>
+    <div class="pw-price">$14.99</div>
+    <div class="pw-price-sub">ONE-TIME · NO SUBSCRIPTION · UNLOCK BOTH GAMES</div>
+    <button class="btn-buy" onclick="openGumroad()">🔓 UNLOCK FULL LEGACY</button>
+    <div class="pw-or">— OR ENTER FRIEND CODE —</div>
+    <div class="pw-code-row">
+      <input class="pw-code-input" id="codeInput" type="text" placeholder="ENTER CODE" maxlength="20">
+      <button class="btn-code" onclick="submitCode()">APPLY</button>
+    </div>
+    <div class="pw-msg" id="codeMsg"></div>
+    <button class="btn-play-free" onclick="startFree()">▶ PLAY FREE (2 OPPONENTS)</button>
+  </div>
+</div>
+
+<!-- ===== CHARACTER SELECT ===== -->
+<div id="char-screen" class="screen">
+  <div class="char-title">CHOOSE YOUR PLAYER</div>
+  <div class="char-sub">WHO CARRIES THE BONES?</div>
+  <div class="char-grid" id="charGrid"></div>
+  <button class="btn-continue" id="charContinueBtn" disabled onclick="goToGauntlet()">ENTER THE GAUNTLET →</button>
+</div>
+
+<!-- ===== STORY SCENE ===== -->
+<div id="story-screen" class="screen">
+  <div class="story-inner">
+    <div class="story-label" id="storyTitle"></div>
+    <div class="story-beat" id="storyBeat"></div>
+    <div class="story-dots" id="storyDots"></div>
+    <div class="story-next" id="storyNext">Tap to continue →</div>
+  </div>
+  <div class="story-skip" onclick="skipStory()">TAP TO SKIP →</div>
+</div>
+
+<!-- ===== GAUNTLET MAP ===== -->
+<div id="gauntlet-screen" class="screen">
+  <div class="gauntlet-title">THE GAUNTLET</div>
+  <div class="gauntlet-sub">DOMINO LEGACY · 12 TRADITIONS</div>
+  <div class="gauntlet-progress" id="gauntletProgress">0 / 12 DEFEATED</div>
+  <div class="opponent-grid" id="opponentGrid"></div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <div class="game-header-left">
+      <div>
+        <div class="game-title">THE LONG GAME</div>
+        <div class="game-round" id="roundDisplay">ROUND 1</div>
+      </div>
+    </div>
+    <div class="game-scores" id="scoreDisplay"></div>
+  </div>
+  <div class="ai-area" id="aiArea"></div>
+  <div class="board-area">
+    <div class="ends-display" id="endsDisplay">Place your first tile to begin</div>
+    <div class="board-inner">
+      <div class="train" id="trainDisplay"></div>
+    </div>
+    <div class="board-info">
+      <button class="boneyard-btn" id="boneyardBtn" onclick="playerDraw()">🁯 Draw (<span id="boneyardCount">0</span>)</button>
+    </div>
+  </div>
+  <div class="player-area">
+    <div class="player-info">
+      <div class="player-name-display">
+        <span class="player-avatar-sm" id="playerAvatarSm"></span>
+        <span class="player-name-txt" id="playerNameDisplay"></span>
+      </div>
+      <div id="turnIndicator" class="turn-indicator">WAITING...</div>
+    </div>
+    <div class="player-hand" id="playerHand"></div>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="result-screen" class="screen">
+  <div class="result-inner animate-in">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-opp" id="resultOpp"></div>
+    <div class="result-story" id="resultStory" style="display:none;"></div>
+    <div class="result-scores" id="resultScores"></div>
+    <div class="result-btns" id="resultBtns"></div>
+  </div>
+</div>
+
+<!-- ===== GAUNTLET COMPLETE ===== -->
+<div id="complete-screen" class="screen">
+  <div class="complete-inner animate-in">
+    <div class="complete-crown">👑</div>
+    <div class="complete-title">LEGACY COMPLETE</div>
+    <div class="complete-sub">You've played your way through every tradition.</div>
+    <div class="complete-story" id="completeStory"></div>
+    <div class="complete-trophies">🏆🁯🏆</div>
+    <button class="btn-restart" onclick="restartGauntlet()">⚡ PLAY AGAIN</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-icon" id="modalIcon">🁯</div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-text" id="modalText"></div>
+    <div class="modal-btns" id="modalBtns"></div>
+  </div>
+</div>
+
+<!-- Bone Lore Popup -->
+<div id="boneLorePopup">
+  <div class="lore-label">🦴 BONE LORE</div>
+  <div class="lore-title" id="loreTitleEl"></div>
+  <div class="lore-text" id="loreTextEl"></div>
+</div>
+
+<script>
+// ============================================================
+// CONSTANTS & CONFIG
+// ============================================================
+const VALID_CODES = new Set(['1TURKEY2CHICKEN3','1CHUNKY2CHICKEN3','1FUNKY2MONKEY3','1JAZZY2PICKLE3','1LUCKY2NOODLE3','1ROCKY2TACO3']);
+const GUMROAD_URL = 'https://popcornwhisper.gumroad.com/l/v2chess';
+const WINNING_SCORE = 150;
+const AI_THINK_MIN = 900;
+const AI_THINK_MAX = 1700;
+
+function isUnlocked(){try{return localStorage.getItem('v2chess_unlocked')==='true';}catch(e){return false;}}
+function unlockGame(){try{localStorage.setItem('v2chess_unlocked','true');}catch(e){}}
+function openGumroad(){window.open(GUMROAD_URL,'_blank');}
+
+// ============================================================
+// BONE LORE — Cultural & Historical Domino Facts
+// ============================================================
+const BONE_LORE = [
+  {title:"Ancient Origins",text:"Dominoes are believed to have originated in China around 1120 AD, derived from cubic dice. The game spread through trade routes across Asia and the Middle East."},
+  {title:"The Name",text:"The word 'domino' may come from the Latin 'dominus' (lord) or from the black-and-white hoods worn by French clerics during Carnival — the tiles resemble their masks."},
+  {title:"Europe, 1700s",text:"Dominoes reached Europe in the 18th century, first appearing in Italy. Venice and Naples became early centers of play. By the 1770s, the game had reached France and Britain."},
+  {title:"Caribbean Roots",text:"In Cuba, Puerto Rico, and the Dominican Republic, dominoes became far more than a game — a daily ritual played in parks, on stoops, and in community centers."},
+  {title:"The Slam",text:"Slapping a domino hard on the table is tradition in Caribbean culture. It's not aggression — it's emphasis. It's punctuation. It's music made from bone and wood."},
+  {title:"Street Corner Legacy",text:"In African American communities across the South and in cities like New York and New Orleans, domino tables became gathering places — passed down like language, like love."},
+  {title:"The Double-Six",text:"The highest tile in standard dominoes — the double-six — is traditionally placed first. In Cuban domino culture, whoever holds it must begin. It is a privilege and a responsibility."},
+  {title:"28 Tiles",text:"A standard double-six domino set has exactly 28 tiles. Each unique combination of pips from 0–6. No duplicates. The set is a closed universe. Every tile matters."},
+  {title:"The Boneyard",text:"Unplayed tiles go to 'the boneyard.' In street domino culture, drawing from the boneyard is called 'going to the yard' — accepting what life gives you and playing on."},
+  {title:"Domino Effect",text:"The term 'domino effect' entered political language in 1954. But players knew it first — one tile falls, they all follow. The game was always about consequences."},
+  {title:"Chinese Dominoes",text:"Traditional Chinese domino sets have 32 tiles, not 28 — each tile represents one of the possible results of throwing two six-sided dice, including duplicates."},
+  {title:"Tournament Play",text:"The World Domino Federation holds international championships. Cuba, Jamaica, Venezuela, and Puerto Rico are perennial powerhouses. The game is truly global."},
+  {title:"Memory & Strategy",text:"Expert players memorize which tiles have been played. In a full game of 28 tiles, tracking the 21 already placed tells you exactly what remains in the boneyard."},
+  {title:"Partner Play",text:"In Puerto Rican domino culture, the most common format is partners — two teams of two. Signaling to your partner without words is an art form developed over generations."}
+];
+
+// ============================================================
+// STORY SCENES — Nested Thirds V4 Structure
+// Fracture → Pressure → Shift across 12 matches
+// ============================================================
+const STORY_SCENES = [
+  {
+    id:'opening',
+    title:'THE BONES',
+    beats:[
+      {text:"Your grandfather's domino set sits on the table.\n\nHe carved each piece by hand.\nBone. Real bone.\n\nHe called them 'the bones' because that's what they were —\nthe bones of the game,\nthe bones of the family,\nthe bones of something older than memory.", pause:5000},
+      {text:"He's gone now.\n\nThe table is empty.\nBut people still come to play where he sat.\n\nAubuelo Sal has kept the corner warm.\nHe says he's just keeping it until someone worthy arrives.", pause:4500},
+      {text:"Tonight, you pick up the bones.\n\nThey fit in your hands exactly as he said they would.\n\n'They remember everything,' he told you once.\n'Make them speak.'", pause:4500}
+    ]
+  },
+  {
+    id:'after_match2',
+    title:'WHAT YOU CARRY',
+    beats:[
+      {text:"Mia walks with you to the edge of the park.\n\n'My grandmother calls every Sunday,' she says,\n'to ask how the games are going.'\n\nShe pauses.\n\n'Does yours?'", pause:4500},
+      {text:"You want to say yes.\n\nYou don't.", pause:3000},
+      {text:"She doesn't press it.\nShe just nods, like she already knew.\n\n'The tiles know,' she says quietly.\n\n'They always know who's sitting behind them.'", pause:4500}
+    ]
+  },
+  {
+    id:'after_match4',
+    title:'WHAT POPS KNOWS',
+    beats:[
+      {text:"Pops Beaumont lingers after the game.\nHe doesn't rush.", pause:3000},
+      {text:"'Your grandfather used to lose on purpose sometimes,' he says.\n'To give younger players confidence.\nI saw it. He knew I saw it.\nHe just smiled.'", pause:5000},
+      {text:"You hold the tiles.\n\nThey feel heavier than before.", pause:3500}
+    ]
+  },
+  {
+    id:'after_match6',
+    title:'ORIGINS',
+    beats:[
+      {text:"Professor Chen shows you a photograph on his phone.\n\nA painting — Chinese domino tiles from the Song Dynasty.\n1120 AD.\n\n'This,' he says, 'is where we all began.'", pause:4500},
+      {text:"The same pips.\nThe same grid.\n\nA thousand years of hands between then and now.\nYou are one of those hands.", pause:4000},
+      {text:"The game traveled from China to Italy.\nFrom Italy to France.\nFrom Europe to Cuba, Puerto Rico, New Orleans.\nTo this park.\nTo your grandfather.\n\nTo you.", pause:5000}
+    ]
+  },
+  {
+    id:'after_match8',
+    title:'WHAT JAY SEES',
+    beats:[
+      {text:"Joker Jay puts a hand on your shoulder.\n\n'You know what I've noticed?' he says.\n'You play like you're afraid of something.'", pause:4000},
+      {text:"'Most people play afraid to lose.\nYou play afraid to be... wrong.\nAfraid to dishonor something.'\n\nHe grins.", pause:4500},
+      {text:"'That's not fear,' he says.\n\n'That's respect.\n\nBig difference.\n\nKeep it.'", pause:4000}
+    ]
+  },
+  {
+    id:'before_final',
+    title:'EL REY',
+    beats:[
+      {text:"El Rey is already sitting when you arrive.\n\nHe doesn't look up.\nThe tiles are already shuffled.\n\nHe's been waiting a long time.", pause:4500},
+      {text:"'I knew your grandfather,' he says.\n\nYour hands go still.\n\n'He was the finest player I ever faced.'\n\nA pause.\n\n'Until tonight, maybe.'", pause:5500},
+      {text:"You sit down.\n\nThe bones are in your hands.\nEvery tradition you've faced is watching.\n\nPlay.", pause:4000}
+    ]
+  }
+];
+
+// ============================================================
+// PLAYER CHARACTERS
+// ============================================================
+const CHARACTERS = [
+  {id:'marcus',name:'Marcus',avatar:'🧢',tag:'THE INHERITOR',gender:'male'},
+  {id:'darius',name:'Darius',avatar:'🎩',tag:'THE VETERAN',gender:'male'},
+  {id:'alejandro',name:'Alejandro',avatar:'📖',tag:'THE SCHOLAR',gender:'male'},
+  {id:'jade',name:'Jade',avatar:'💅',tag:'THE SHARP ONE',gender:'female'},
+  {id:'destiny',name:'Destiny',avatar:'💎',tag:'THE KEEPER',gender:'female'},
+  {id:'amara',name:'Amara',avatar:'⚡',tag:'THE BRIDGE',gender:'female'},
+];
+
+// ============================================================
+// OPPONENTS — 12 Cultural Traditions
+// ============================================================
+const OPPONENTS = [
+  {
+    id:1,name:'Abuelo Sal',avatar:'🇨🇺',tier:1,free:true,
+    culture:'Cuban Tradition',
+    win_story:"Sal nods slowly. He pours himself a coffee from his thermos. 'Your grandfather used to beat me the same way,' he says. 'Same angle. Same tile. Like you learned it from him directly.' He doesn't sound sad. He sounds satisfied.",
+    lose_story:"Sal leans back and smiles. 'Come back tomorrow,' he says. 'And the day after. That's how you learn. Not from winning.'",
+    dialogue:{
+      baseline:["In Cuba, we say the bones carry the prayers of everyone who ever touched them.","Your grandfather taught me something at this very table once.","Slow down, {mijo}. The game rewards patience.","I've been playing here since before you were born. Watch everything."],
+      fracture:["You have his instincts. I didn't expect that.","Hmph. The grandfather lives in those hands.","Okay. You're making this interesting, {mijo}.","Lucky? No. That was skill. I'll admit it."],
+      pressure:["I'm an old man, but I'm not finished yet.","The bones are speaking to you tonight...","Don't get comfortable, {youngster}.","You play like someone taught you well."],
+      shift:["You earned your seat at this table.","Your grandfather would be proud. So am I.","Go on. The game belongs to you now.","We'll play again. Soon."]
+    }
+  },
+  {
+    id:2,name:'Mia',avatar:'🌟',tier:1,free:true,
+    culture:'First Generation',
+    win_story:"Mia is quiet for a moment. Then: 'I'm going to call my grandmother tonight and tell her what happened.' She looks up at you. 'She'll want to know the tiles found someone worthy.'",
+    lose_story:"Mia smiles and says, 'I'll be better next time.' You believe her.",
+    dialogue:{
+      baseline:["My abuela says the tiles know things. I'm starting to believe her.","I learned this from watching. Still learning.","You play like you have something to prove. Me too.","Let's see what we both know."],
+      fracture:["That was smart. I didn't see that coming.","Abuela would have caught that. I'm still learning.","You're better than I thought. Good.","Maybe I need to call home more often."],
+      pressure:["You're pushing me somewhere I've never been.","Abuela always said I'd face someone like this.","I might lose here — but I'll know exactly why.","The tiles are telling a story I don't understand yet."],
+      shift:["I learned something just now. Thank you.","You played with respect. I felt it.","My grandmother will be happy when I tell her.","Play again sometime? I'll be better."]
+    }
+  },
+  {
+    id:3,name:'"Quick" Carlos',avatar:'🔥',tier:1,
+    culture:'Puerto Rican NYC',
+    win_story:"Carlos slaps the table and laughs. 'My uncle TOLD me someone like you was coming. I didn't listen.' He stands, offers a fist bump. 'South Bronx respects South Bronx. Wherever you're from.'",
+    lose_story:"Carlos grins. 'See? Speed alone isn't enough. My uncle taught me that. I keep forgetting.'",
+    dialogue:{
+      baseline:["My uncle always said — hit the bone hard. Let them know you're here.","Speed is respect in this game. Don't make me wait.","South Bronx rules: no mercy, all respect.","Keep up or step aside."],
+      fracture:["Yo, that was SLICK! I see you.","You play like my uncle. That might actually be a compliment.","Good move. Keep that up.","Alright, you've got game. For real."],
+      pressure:["You're messing with my flow...","Come on, bones — COOPERATE!","This ain't supposed to be going like this!","You're good. Don't let it go to your head."],
+      shift:["You played Bronx style. I respect that.","My uncle would love you. Come through sometime.","The block is yours tonight. Good game.","Real talk — you've got skills. Don't waste them."]
+    }
+  },
+  {
+    id:4,name:'"Pops" Beaumont',avatar:'🎷',tier:1,
+    culture:'New Orleans',
+    win_story:"Pops Beaumont is quiet for a long time after the last tile. Then he says: 'Baby, I've been playing this game in Treme for 70 years. And I want you to know something. That was a real game. Your grandfather would've stood up for that.'",
+    lose_story:"Pops chuckles softly. 'You'll get there, baby. The table will wait for you.'",
+    dialogue:{
+      baseline:["Baby, I was playing this game before you could walk.","In New Orleans, we don't rush the tiles. They come when they come.","Every bone has a story. You listening?","Sit down, child. Let Pops show you something."],
+      fracture:["Well, now. You DO know something.","Ha! That reminds me of someone I knew in Treme.","Not bad at all. You've got some seasoning on you.","Pops sees you, baby. Pops sees you."],
+      pressure:["You're making an old man work tonight.","I've been doing this for 70 years... and you're giving me trouble.","The spirit is moving in this game. I can feel it.","Lord have mercy. This {youngster} can play."],
+      shift:["Baby, you played that game with your whole self. That's all anyone can ask.","The tradition lives in you. I can see it.","You keep playing like that, these bones will remember you forever.","Sit. Let me tell you something about your grandfather's style."]
+    }
+  },
+  {
+    id:5,name:'Joy',avatar:'😊',tier:2,
+    culture:'Community Spirit',
+    win_story:"Joy is practically bouncing. 'I run the community tournament every summer and I am putting you on the invitation list RIGHT NOW.' She pulls out her phone. 'What's your number? Don't argue with me.'",
+    lose_story:"Joy laughs. 'Okay, okay, you're good! But I still had FUN. That's the whole point!'",
+    dialogue:{
+      baseline:["This game is how my family talks when words run out.","Every tile is a sentence. That's what I love about it.","Play with your heart! That's what Grandma always says.","I just love this game so much. Don't you?"],
+      fracture:["Oh! You have your grandfather's move! I've seen that!","That was beautiful — did you know what you were doing?","Okay, now I'm nervous. The good kind!","You play with feeling. That's everything."],
+      pressure:["You're making this so meaningful right now!","I can feel the whole community in this game!","I cannot believe this is going to the wire!","That move is going in my highlight reel."],
+      shift:["That was one of the most beautiful games I've played all summer.","Thank you for playing with your whole heart.","Your family would have loved watching that.","Come back for the tournament. I'm serious."]
+    }
+  },
+  {
+    id:6,name:'Professor Chen',avatar:'🏛️',tier:2,
+    culture:'Chinese Origins',
+    win_story:"Professor Chen sets down his tile and is silent for a moment. Then: 'The game left China 900 years ago. It has been looking for the right hands ever since.' He pauses. 'I think it may have found them tonight.'",
+    lose_story:"Professor Chen nods precisely. 'My analysis was incomplete. I will revise. We should play again.'",
+    dialogue:{
+      baseline:["This game began with my ancestors in the Song Dynasty. Every tile is history made tangible.","The Chinese set has 32 tiles — each a throw of two dice. Mathematics in bone.","I honor this game with precision. It deserves nothing less.","Every move is a proof. I am writing mine."],
+      fracture:["That deviation was not in my model. Interesting.","You are not following the expected probability distribution.","The human element remains the one variable I cannot fully account for.","My ancestor designed this game. You're playing it correctly."],
+      pressure:["You are exceeding my probability model.","My mathematics are failing me. That is... unusual.","I must acknowledge — your instinct surpasses calculation here.","The game's origins are being honored in how you play tonight."],
+      shift:["The game began in China, traveled the world, and found you tonight. It chose well.","You played as my ancestors intended — with complete attention.","Remarkable. Come back. I'll show you the original 32-tile set.","The tradition recognized you. I cannot argue with that."]
+    }
+  },
+  {
+    id:7,name:'Isabelle',avatar:'🌊',tier:2,
+    culture:'Martinique',
+    win_story:"Isabelle looks at the final tile for a long time. Then she says, very quietly: 'My grandmother played like that. She said the tiles chose their own path. That you just have to listen.' A pause. 'You listen well.'",
+    lose_story:"Isabelle says nothing. She just nods once, slowly, and begins shuffling for another game.",
+    dialogue:{
+      baseline:["...","...Play.","...The sea teaches patience. So does this game.","...I'm watching everything."],
+      fracture:["...You're good.","...Interesting.","...The current shifts.","...I didn't expect that."],
+      pressure:["...You play with intention. I respect that.","...This is real now.","...The sea is listening.","...I see the whole game in you."],
+      shift:["...Well played.","...The tradition recognizes you.","...Come play in Martinique. They'd love you.","..."]
+    }
+  },
+  {
+    id:8,name:'"Joker" Jay',avatar:'🃏',tier:2,
+    culture:'Caribbean',
+    win_story:"Joker Jay throws his head back and laughs — a full, genuine, delighted laugh. 'BRILLIANT! You played my game better than me! I've been waiting YEARS for someone to do that!' He's still laughing as he shakes your hand.",
+    lose_story:"Jay grins wide. 'You'll get me next time. Or you won't. AHAHA! That's the beauty of it!'",
+    dialogue:{
+      baseline:["In Jamaica, the best player makes you forget you're losing! AHAHA!","The trick isn't the tile — it's the TIMING! Watch!","Domino is like reggae — it builds until you can't help but move!","You don't know what I'm holding. THAT is the game."],
+      fracture:["Raas! How you do that?! I was setting a trap!","AHAHA! You spotted the trick! Respect!","Was that YOUR plan or did you stumble into genius? Either way — big respect.","You play like you grew up on the same streets I did!"],
+      pressure:["The performance is turning on me...","THIS isn't in my script!","You're playing MY game better than me! The disrespect!","I might actually lose here — and I'm still having fun!"],
+      shift:["Biggest respect, star. You played the WHOLE game.","That's domino art right there. I'm not even sad.","Tell me who taught you. I want to thank them personally.","AHAHAHA! The student becomes the teacher! Beautiful!"]
+    }
+  },
+  {
+    id:9,name:'Doña Esperanza',avatar:'🌸',tier:2,
+    culture:'Dominican Republic',
+    win_story:"Doña Esperanza folds her hands on the table. She looks at you for a long time. 'My mother played this game for 60 years,' she finally says. 'She told me once that the tiles choose their keeper the way rivers choose their bed — not by force, but by the way the ground receives them.' She nods. 'The tiles chose well tonight.'",
+    lose_story:"Doña Esperanza smiles gently. 'Come back, {mijo}. The tiles are not finished with you yet.'",
+    dialogue:{
+      baseline:["The tiles have memory, {mijo}. They remember every game they've been in.","My mother taught me that a bone placed with intention never falls wrong.","In Santo Domingo, we play until the stars come out. Tonight, we play.","The game knows who belongs at the table. It will tell us."],
+      fracture:["The tiles are speaking about you. In a good way.","That was guided. Something beyond skill alone.","My mother used to do exactly that. Lord have mercy.","The bones remember your grandfather through your hands."],
+      pressure:["The spirits are watching closely tonight.","I have lived 78 years. This game tonight is something else.","Even Esperanza can be surprised.","You are carrying something very old. I feel it in this game."],
+      shift:["The tiles have spoken. They chose you.","In 70 years of play, that was among the finest things I've seen.","Your grandfather is watching, {mijo}. He is pleased.","Go. You are ready for what comes next."]
+    }
+  },
+  {
+    id:10,name:'The Architect',avatar:'📐',tier:3,
+    culture:'Modern Competitive',
+    win_story:"The Architect leans back and studies you the way he studies the board. 'I've played in 14 countries,' he says slowly. 'I've catalogued every pattern, every deviation. What you just did...' He stops. 'That wasn't in the catalogue. That was in the blood. That's different. That's better.'",
+    lose_story:"The Architect nods sharply. 'Solid. You'll dismantle the next one. I've seen it.'",
+    dialogue:{
+      baseline:["I've played in Havana, Kingston, São Paulo, Lagos. You carry something from all of them.","This game has a thousand years of history. I've studied every era.","I don't win through luck. I win through architecture. Every tile is structure.","You're the most interesting opponent I've seen in three tournaments."],
+      fracture:["That was a cultural pattern I didn't account for. Interesting.","You play like someone taught you before you could analyze. That's dangerous.","That move broke my system. Good.","Revising the blueprint for you."],
+      pressure:["You've dismantled three different strategies in one game.","I've studied a thousand years of this game. You're playing something older than study.","Whatever you're carrying in those hands — it's real.","This requires everything I have."],
+      shift:["In 14 countries, 6000 hands — that was in my top ten.","You play with cultural memory. Today, memory wins.","Teach me where you learned this. Seriously.","The tradition you carry is living. Protect it."]
+    }
+  },
+  {
+    id:11,name:'La Reina',avatar:'👸',tier:3,
+    culture:'European Tradition',
+    win_story:"La Reina is still for a long moment. Then she says: 'When dominoes reached the courts of Europe, we believed we had refined it. Perfected it. We were wrong. The streets kept the soul alive. The soul you're playing with tonight.' She inclines her head. 'I bow to it.'",
+    lose_story:"La Reina adjusts her composure with practiced grace. 'Well played. The court does not begrudge excellence.'",
+    dialogue:{
+      baseline:["When dominoes reached Europe, only the court played. We have not forgotten that.","The Italian aristocracy refined this game into art. I carry that tradition.","Every piece placed with intention. This is how it was. How it must be.","The history of this table spans continents. Do you understand where you sit?"],
+      fracture:["The street tradition in those hands — I didn't expect such sophistication.","You've crossed traditions I didn't anticipate. Remarkable.","The court would have loved you. I'm not sure how I feel about that.","That was not expected. Adjusting."],
+      pressure:["You are playing something older than my tradition.","The bones do not care about courts or streets. I am being reminded of that.","For the first time in this gauntlet, I am genuinely uncertain.","You honor this game more than I expected."],
+      shift:["The game crossed continents to bring us here. You're proof it found the right hands.","My tradition bows to yours tonight. The streets kept the spirit alive when the courts could not.","You've humbled me. That is rare. That is valuable.","The bones chose their champion. I am honored to have played against them."]
+    }
+  },
+  {
+    id:12,name:'El Rey',avatar:'👑',tier:3,
+    culture:'All Traditions',
+    win_story:"El Rey looks at the last tile on the table.\n\nThen at you.\n\nHe doesn't look defeated. He looks relieved.\n\nHe places the double-six between you. Sets it down slowly, carefully, like something sacred.\n\n'They're yours now,' he says. 'They were always yours.'\n\nYou understand — you were never competing for a title.\n\nYou were completing a chain.\n\nA thousand years long.",
+    lose_story:"El Rey says nothing for a while. Then: 'Come back. The bones are not done with you. Neither am I.'",
+    dialogue:{
+      baseline:["I've been waiting for whoever carries what you carry.","Every tradition you've faced tonight lives in this set.","The bones told me someone was coming.","You have traveled far to reach this table."],
+      fracture:["...You're different.","...The tradition is real in you.","...I see the grandfather.","...Yes. Keep going."],
+      pressure:["For the first time in years... I feel the game again.","You are not playing to beat me. You are playing to continue something.","This is what the table is for.","Every tile tonight has told the whole story."],
+      shift:["...You are worthy.","The bones are yours now. You know that.","Every player you faced tonight lives in you. That's the tradition.","Play for the rest of your life. The game will always be there. And so will they."]
+    }
+  }
+];
+
+// ============================================================
+// GAME STATE
+// ============================================================
+const GS = {
+  unlocked:false, freeOpponents:2, player:null, progress:0,
+  currentOpponentIdx:0,
+  matchActive:false,
+  matchScores:{player:0,ai1:0,ai2:0,ai3:0},
+  roundNumber:0,
+  hands:{player:[],ai1:[],ai2:[],ai3:[]},
+  boneyard:[], train:[], trainLeft:null, trainRight:null,
+  currentTurn:'player', turnOrder:['player','ai1','ai2','ai3'],
+  passCount:0,
+  ai1Opp:null, ai2Opp:null, ai3Opp:null,
+  psychology:{
+    ai1:{state:'baseline',pressureScore:0},
+    ai2:{state:'baseline',pressureScore:0},
+    ai3:{state:'baseline',pressureScore:0}
+  },
+  selectedTile:null, isProcessing:false, playerCanPlay:false, playerMustPass:false,
+  // Story system
+  shownScenes:new Set(), pendingScene:null
+};
+
+// ============================================================
+// DIALOGUE PROCESSING — gender-aware text
+// ============================================================
+function processDialogue(text){
+  if(!GS.player) return text;
+  const f = GS.player.gender === 'female';
+  return text
+    .replace(/\{mijo\}/g, f?'mija':'mijo')
+    .replace(/\{youngster\}/g, f?'young lady':'youngster')
+    .replace(/\{son\}/g, f?'daughter':'son')
+    .replace(/\{baby\}/g, 'baby');
+}
+
+// ============================================================
+// DOMINO LOGIC
+// ============================================================
+function generateAllTiles(){
+  const t=[];
+  for(let h=0;h<=6;h++) for(let l=0;l<=h;l++) t.push({high:h,low:l,id:`${h}-${l}`});
+  return t;
+}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function dealGame(){
+  const all=shuffle(generateAllTiles());
+  GS.hands.player=all.slice(0,7);
+  GS.hands.ai1=all.slice(7,14);
+  GS.hands.ai2=all.slice(14,21);
+  GS.hands.ai3=all.slice(21,28);
+  GS.boneyard=all.slice(28);
+  GS.train=[];GS.trainLeft=null;GS.trainRight=null;GS.passCount=0;GS.selectedTile=null;
+  GS.psychology={
+    ai1:{state:'baseline',pressureScore:0},
+    ai2:{state:'baseline',pressureScore:0},
+    ai3:{state:'baseline',pressureScore:0}
+  };
+  findFirstTurn();
+}
+function findFirstTurn(){
+  for(let d=6;d>=0;d--){
+    for(const seat of ['player','ai1','ai2','ai3']){
+      if(GS.hands[seat].find(t=>t.high===d&&t.low===d)){GS.currentTurn=seat;return;}
+    }
+  }
+  GS.currentTurn='player';
+}
+function canPlayTile(tile,left,right){
+  if(left===null) return true;
+  return tile.high===left||tile.low===left||tile.high===right||tile.low===right;
+}
+function getPlayableTiles(hand,left,right){return hand.filter(t=>canPlayTile(t,left,right));}
+function placeTile(seat,tile,side){
+  const hand=GS.hands[seat];
+  const idx=hand.findIndex(t=>t.id===tile.id);
+  if(idx===-1) return false;
+  hand.splice(idx,1);
+  const isDouble=tile.high===tile.low;
+  let tileObj={...tile,isDouble,orientation:'horizontal'};
+  if(GS.train.length===0){
+    GS.trainLeft=tile.low;GS.trainRight=tile.high;
+    tileObj.flipped=false;
+    if(isDouble) tileObj.orientation='vertical';
+  } else {
+    if(side==='left'){
+      if(tile.high===GS.trainLeft){tileObj.flipped=true;GS.trainLeft=tile.low;}
+      else{tileObj.flipped=false;GS.trainLeft=tile.high;}
+      GS.train.unshift(tileObj);
+      checkWinRound(seat);return true;
+    } else {
+      if(tile.low===GS.trainRight){tileObj.flipped=false;GS.trainRight=tile.high;}
+      else{tileObj.flipped=true;GS.trainRight=tile.low;}
+    }
+  }
+  GS.train.push(tileObj);
+  checkWinRound(seat);return true;
+}
+function calcHandScore(hand){return hand.reduce((s,t)=>s+t.high+t.low,0);}
+function checkWinRound(seat){if(GS.hands[seat].length===0){setTimeout(()=>endRound(seat),400);}}
+function drawFromBoneyard(seat){
+  if(GS.boneyard.length===0) return null;
+  const tile=GS.boneyard.pop();GS.hands[seat].push(tile);return tile;
+}
+function isBlocked(){
+  if(GS.boneyard.length>0) return false;
+  for(const seat of GS.turnOrder){
+    if(getPlayableTiles(GS.hands[seat],GS.trainLeft,GS.trainRight).length>0) return false;
+  }
+  return true;
+}
+
+// ============================================================
+// NESTED THIRDS ENGINE — AI Psychology (Fracture/Pressure/Shift)
+// ============================================================
+function updatePsychology(event,seat){
+  if(!seat||seat==='player') return;
+  const ps=GS.psychology[seat];
+  switch(event){
+    case 'player_big_score': ps.pressureScore+=20; break;
+    case 'player_blocks_ai': ps.pressureScore+=15; break;
+    case 'player_wins_round': ps.pressureScore+=30; break;
+    case 'player_near_win': ps.pressureScore+=25; break;
+    case 'ai_wins_round': ps.pressureScore=Math.max(0,ps.pressureScore-40); break;
+    case 'ai_good_play': ps.pressureScore=Math.max(0,ps.pressureScore-10); break;
+  }
+  const prev=ps.state;
+  if(ps.pressureScore>=80) ps.state='shift';
+  else if(ps.pressureScore>=50) ps.state='pressure';
+  else if(ps.pressureScore>=20) ps.state='fracture';
+  else ps.state='baseline';
+  if(ps.state!==prev) triggerDialogue(seat,ps.state);
+}
+function getDialogue(seat,state){
+  const opp=getOppForSeat(seat);if(!opp) return '';
+  const lines=opp.dialogue[state]||opp.dialogue.baseline;
+  return processDialogue(lines[Math.floor(Math.random()*lines.length)]);
+}
+function triggerDialogue(seat,state){showDialogueBubble(seat,getDialogue(seat,state));}
+function randomDialogue(seat){
+  const state=GS.psychology[seat]?.state||'baseline';
+  const text=getDialogue(seat,state);
+  if(text) showDialogueBubble(seat,text);
+}
+
+// ============================================================
+// AI LOGIC
+// ============================================================
+function getOppForSeat(seat){
+  if(seat==='ai1') return GS.ai1Opp;
+  if(seat==='ai2') return GS.ai2Opp;
+  if(seat==='ai3') return GS.ai3Opp;
+  return null;
+}
+function aiChooseTile(seat){
+  const opp=getOppForSeat(seat);const tier=opp?opp.tier:1;
+  const playable=getPlayableTiles(GS.hands[seat],GS.trainLeft,GS.trainRight);
+  if(playable.length===0) return null;
+  if(tier===1) return tier1Choice(playable);
+  if(tier===2) return tier2Choice(playable,GS.hands[seat]);
+  return tier3Choice(playable,GS.hands[seat],seat);
+}
+function tier1Choice(playable){return playable.reduce((b,t)=>((t.high+t.low)>(b.high+b.low)?t:b),playable[0]);}
+function tier2Choice(playable,hand){
+  const doubles=playable.filter(t=>t.high===t.low);
+  if(doubles.length>0){const bd=doubles.reduce((b,t)=>t.high>b.high?t:b,doubles[0]);if(bd.high>=4)return bd;}
+  return tier1Choice(playable);
+}
+function tier3Choice(playable,hand,seat){
+  const t2=tier2Choice(playable,hand);
+  if(Math.random()>0.3) return t2;
+  return playable.reduce((b,t)=>t.low<b.low?t:b,playable[0]);
+}
+function aiChooseSide(seat,tile){
+  if(GS.train.length===0) return 'right';
+  if(tile.high===GS.trainLeft&&tile.low===GS.trainRight) return Math.random()>0.5?'left':'right';
+  if(tile.high===GS.trainLeft||tile.low===GS.trainLeft) return 'left';
+  return 'right';
+}
+
+// ============================================================
+// TURN MANAGEMENT
+// ============================================================
+function nextTurn(){
+  if(GS.isProcessing) return;
+  const idx=GS.turnOrder.indexOf(GS.currentTurn);
+  GS.currentTurn=GS.turnOrder[(idx+1)%4];
+  processCurrentTurn();
+}
+function processCurrentTurn(){
+  if(!GS.matchActive) return;
+  renderGame();
+  if(isBlocked()){endRound(findBlockedWinner());return;}
+  if(GS.currentTurn==='player'){
+    const playable=getPlayableTiles(GS.hands.player,GS.trainLeft,GS.trainRight);
+    GS.playerCanPlay=playable.length>0;
+    GS.playerMustPass=playable.length===0&&GS.boneyard.length===0;
+    renderPlayerHand();updateTurnIndicator(true);
+  } else {
+    GS.playerCanPlay=false;updateTurnIndicator(false);
+    const think=AI_THINK_MIN+Math.random()*(AI_THINK_MAX-AI_THINK_MIN);
+    GS.isProcessing=true;setAIPodThinking(GS.currentTurn,true);
+    setTimeout(()=>processAITurn(GS.currentTurn),think);
+  }
+}
+function processAITurn(seat){
+  GS.isProcessing=false;setAIPodThinking(seat,false);
+  let tile=aiChooseTile(seat);
+  if(!tile){
+    if(GS.boneyard.length>0){
+      let attempts=0;
+      while(GS.boneyard.length>0&&attempts<GS.boneyard.length+1){
+        const drawn=drawFromBoneyard(seat);attempts++;
+        if(drawn&&canPlayTile(drawn,GS.trainLeft,GS.trainRight)){tile=drawn;break;}
+      }
+    }
+    if(!tile){GS.passCount++;randomDialogue(seat);renderGame();setTimeout(()=>nextTurn(),400);return;}
+  }
+  GS.passCount=0;
+  const side=aiChooseSide(seat,tile);
+  placeTile(seat,tile,side);
+  updatePsychology('ai_good_play',seat);
+  if(Math.random()<0.25) randomDialogue(seat);
+  triggerBoneLore();
+  renderGame();
+  if(GS.matchActive) setTimeout(()=>nextTurn(),300);
+}
+function findBlockedWinner(){
+  const scores={
+    player:calcHandScore(GS.hands.player),
+    ai1:calcHandScore(GS.hands.ai1),
+    ai2:calcHandScore(GS.hands.ai2),
+    ai3:calcHandScore(GS.hands.ai3)
+  };
+  return Object.keys(scores).reduce((a,b)=>scores[a]<scores[b]?a:b);
+}
+
+// ============================================================
+// ROUND & MATCH MANAGEMENT
+// ============================================================
+function endRound(winner){
+  GS.matchActive=false;
+  const hands=GS.hands;let total=0;
+  for(const seat of GS.turnOrder){if(seat!==winner) total+=calcHandScore(hands[seat]);}
+  total=Math.round(total/5)*5;
+  GS.matchScores[winner]+=total;
+  if(winner==='player'){
+    updatePsychology('player_wins_round','ai1');
+    updatePsychology('player_wins_round','ai2');
+    updatePsychology('player_wins_round','ai3');
+  } else {
+    updatePsychology('ai_wins_round',winner);
+  }
+  const matchWinner=Object.keys(GS.matchScores).find(s=>GS.matchScores[s]>=WINNING_SCORE);
+  if(matchWinner){setTimeout(()=>endMatch(matchWinner),600);}
+  else{GS.roundNumber++;setTimeout(()=>startRound(),1200);}
+}
+
+function endMatch(winner){
+  GS.matchActive=false;
+  if(winner==='player'){
+    GS.progress=Math.max(GS.progress,GS.currentOpponentIdx+1);
+    saveProgress();
+    // Final boss defeated → show ending story then complete screen
+    if(GS.currentOpponentIdx===11){
+      showStoryScene('ending_seq',()=>showScreen('complete'));
+      return;
+    }
+    // Milestone story scenes
+    const milestones={1:'after_match2',3:'after_match4',5:'after_match6',7:'after_match8'};
+    const scene=milestones[GS.currentOpponentIdx];
+    if(scene&&!GS.shownScenes.has(scene)) GS.pendingScene=scene;
+    showResult(true);
+  } else {
+    showResult(false);
+  }
+}
+
+// Inline ending story (shown after El Rey is defeated)
+const ENDING_BEATS = [
+  {text:"El Rey looks at the last tile on the table.\nThen at you.\n\nHe doesn't look defeated.\nHe looks relieved.", pause:4500},
+  {text:"He places the double-six between you.\nSets it down slowly, carefully.\nLike something sacred.\n\n'They're yours now,' he says.\n'They were always yours.'", pause:5000},
+  {text:"You understand.\n\nYou were never competing for a title.\n\nYou were completing a chain.\n\nA thousand years long.\n\nYour grandfather's hands.\nHis father's. His father's father's.\nAll the way back.\nAll the way forward.\n\nThe bones remember everything.", pause:7000}
+];
+
+function showStoryScene(sceneId,callback){
+  // Special case: ending sequence
+  if(sceneId==='ending_seq'){
+    _runBeats(ENDING_BEATS,'THE BONES REMEMBER',callback);
+    return;
+  }
+  const scene=STORY_SCENES.find(s=>s.id===sceneId);
+  if(!scene){if(callback) callback();return;}
+  _runBeats(scene.beats,scene.title,callback);
+}
+
+function _runBeats(beats,title,callback){
+  const titleEl=document.getElementById('storyTitle');
+  const beatEl=document.getElementById('storyBeat');
+  const dotsEl=document.getElementById('storyDots');
+  const nextEl=document.getElementById('storyNext');
+  const screenEl=document.getElementById('story-screen');
+  titleEl.textContent=title;
+  beatEl.textContent='';beatEl.classList.remove('visible');
+  if(nextEl)nextEl.classList.remove('visible');
+  // Build dots
+  dotsEl.innerHTML=beats.map((_,i)=>`<div class="story-dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
+  showScreen('story');
+  let beatIdx=0;let skipped=false;let canAdvance=false;
+  function cleanup(){skipped=true;if(nextEl)nextEl.classList.remove('visible');screenEl.removeEventListener('click',onTap);}
+  window._skipStory=()=>{cleanup();if(callback)callback();};
+  function showBeat(){
+    if(skipped) return;
+    if(beatIdx>=beats.length){cleanup();setTimeout(()=>{if(callback)callback();},300);return;}
+    canAdvance=false;
+    if(nextEl)nextEl.classList.remove('visible');
+    document.querySelectorAll('.story-dot').forEach((d,i)=>d.classList.toggle('active',i===beatIdx));
+    beatEl.classList.remove('visible');
+    setTimeout(()=>{
+      if(skipped) return;
+      beatEl.textContent=beats[beatIdx].text;
+      beatEl.classList.add('visible');
+      // Reader-paced: each beat waits for a tap. Brief lock-out so a stray tap
+      // can't blow past a beat before it has faded in.
+      setTimeout(()=>{if(skipped)return;canAdvance=true;if(nextEl)nextEl.classList.add('visible');},800);
+    },150);
+  }
+  function onTap(e){
+    if(e.target.closest('.story-skip')) return; // let the skip button do its own thing
+    if(skipped||!canAdvance) return;
+    canAdvance=false;
+    beatEl.classList.remove('visible');
+    if(nextEl)nextEl.classList.remove('visible');
+    setTimeout(()=>{beatIdx++;showBeat();},500);
+  }
+  screenEl.addEventListener('click',onTap);
+  showBeat();
+}
+
+function skipStory(){if(window._skipStory)window._skipStory();}
+
+// ============================================================
+// BONE LORE SYSTEM
+// ============================================================
+let boneLoreActive=false;let boneLoreShownIds=new Set();
+function showBoneLore(){
+  if(boneLoreActive) return;
+  const available=BONE_LORE.filter((_,i)=>!boneLoreShownIds.has(i));
+  if(available.length===0){boneLoreShownIds.clear();}
+  const idx=Math.floor(Math.random()*BONE_LORE.length);
+  const lore=BONE_LORE[idx];boneLoreShownIds.add(idx);
+  document.getElementById('loreTitleEl').textContent=lore.title;
+  document.getElementById('loreTextEl').textContent=lore.text;
+  const popup=document.getElementById('boneLorePopup');
+  boneLoreActive=true;popup.classList.add('visible');
+  setTimeout(()=>{popup.classList.remove('visible');setTimeout(()=>{boneLoreActive=false;},450);},5500);
+}
+function triggerBoneLore(){if(!boneLoreActive&&Math.random()<0.18)setTimeout(showBoneLore,600);}
+
+// ============================================================
+// PLAYER ACTIONS
+// ============================================================
+function selectTile(tileId){
+  if(!GS.playerCanPlay||GS.currentTurn!=='player') return;
+  const tile=GS.hands.player.find(t=>t.id===tileId);
+  if(!tile||!canPlayTile(tile,GS.trainLeft,GS.trainRight)) return;
+  if(GS.selectedTile&&GS.selectedTile.id===tileId){GS.selectedTile=null;renderPlayerHand();return;}
+  GS.selectedTile=tile;renderPlayerHand();
+  if(GS.train.length===0){
+    placeTile('player',tile,'right');GS.selectedTile=null;GS.passCount=0;
+    renderGame();if(GS.matchActive)setTimeout(()=>nextTurn(),300);
+  } else {
+    const canLeft=tile.high===GS.trainLeft||tile.low===GS.trainLeft;
+    const canRight=tile.high===GS.trainRight||tile.low===GS.trainRight;
+    if(canLeft&&canRight&&GS.trainLeft!==GS.trainRight){showSideModal(tile);}
+    else{
+      const side=canLeft?'left':'right';GS.selectedTile=null;
+      placeTile('player',tile,side);GS.passCount=0;
+      checkPlayerScoredBig(tile);renderGame();
+      if(GS.matchActive)setTimeout(()=>nextTurn(),300);
+    }
+  }
+}
+function showSideModal(tile){
+  showModal('🁯','Choose a Side',`Play the <strong>${tile.high}-${tile.low}</strong> on which end?`,[
+    {label:`← LEFT (${GS.trainLeft})`,cls:'primary',action:()=>{
+      GS.selectedTile=null;placeTile('player',tile,'left');GS.passCount=0;
+      checkPlayerScoredBig(tile);renderGame();if(GS.matchActive)setTimeout(()=>nextTurn(),300);
+    }},
+    {label:`RIGHT (${GS.trainRight}) →`,cls:'primary',action:()=>{
+      GS.selectedTile=null;placeTile('player',tile,'right');GS.passCount=0;
+      checkPlayerScoredBig(tile);renderGame();if(GS.matchActive)setTimeout(()=>nextTurn(),300);
+    }}
+  ]);
+}
+function checkPlayerScoredBig(tile){
+  if(tile.high+tile.low>=9){
+    updatePsychology('player_big_score','ai1');
+    updatePsychology('player_big_score','ai2');
+    updatePsychology('player_big_score','ai3');
+  }
+}
+function playerDraw(){
+  if(GS.currentTurn!=='player'||GS.boneyard.length===0) return;
+  const tile=drawFromBoneyard('player');
+  if(tile&&canPlayTile(tile,GS.trainLeft,GS.trainRight)) GS.playerCanPlay=true;
+  renderGame();renderPlayerHand();updateBoneyardBtn();
+}
+function playerPass(){
+  if(GS.currentTurn!=='player'||!GS.playerMustPass) return;
+  GS.passCount++;
+  if(isBlocked()){endRound(findBlockedWinner());return;}
+  nextTurn();
+}
+
+// ============================================================
+// UI RENDERING
+// ============================================================
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(`${name}-screen`);
+  if(el) el.classList.add('active');
+}
+function renderPipGrid(n){
+  const pos={0:[],1:[[1,1]],2:[[0,2],[2,0]],3:[[0,2],[1,1],[2,0]],4:[[0,0],[0,2],[2,0],[2,2]],5:[[0,0],[0,2],[1,1],[2,0],[2,2]],6:[[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]]};
+  const cells=Array(9).fill(false);
+  (pos[n]||[]).forEach(([r,c])=>cells[r*3+c]=true);
+  return `<div class="pip-grid">${cells.map(f=>`<div class="pip${f?' filled':''}"></div>`).join('')}</div>`;
+}
+function renderDomino(tile,classes='',onClick=''){
+  const isDouble=tile.high===tile.low;
+  const horizontal=classes.includes('on-board')&&!isDouble;
+  return `<div class="domino${horizontal?' horizontal':''} ${classes}" ${onClick?`onclick="${onClick}"`:''} data-id="${tile.id}">
+    <div class="domino-half">${renderPipGrid(tile.flipped?tile.high:tile.low)}</div>
+    <div class="domino-half">${renderPipGrid(tile.flipped?tile.low:tile.high)}</div>
+  </div>`;
+}
+function renderGame(){
+  renderTrainDisplay();renderAIPods();renderScoreDisplay();updateBoneyardBtn();updateRoundDisplay();
+  if(GS.currentTurn==='player') renderPlayerHand();
+}
+function renderTrainDisplay(){
+  const el=document.getElementById('trainDisplay');if(!el) return;
+  if(GS.train.length===0){el.innerHTML='<span style="color:var(--text2);font-size:12px;letter-spacing:2px;">— EMPTY TABLE —</span>';}
+  else{el.innerHTML=GS.train.map(t=>renderDomino(t,'on-board')).join('');}
+  const endsEl=document.getElementById('endsDisplay');
+  if(endsEl) endsEl.textContent=GS.train.length>0?`Ends: [${GS.trainLeft}] ←→ [${GS.trainRight}]`:'Play your first tile to begin';
+}
+function renderPlayerHand(){
+  const el=document.getElementById('playerHand');if(!el) return;
+  const playable=getPlayableTiles(GS.hands.player,GS.trainLeft,GS.trainRight);
+  const playableIds=new Set(playable.map(t=>t.id));
+  el.innerHTML=GS.hands.player.map(tile=>{
+    const isPlayable=GS.playerCanPlay&&GS.currentTurn==='player'&&playableIds.has(tile.id);
+    const isSelected=GS.selectedTile&&GS.selectedTile.id===tile.id;
+    const cls=`in-hand${isPlayable?' playable':''}${isSelected?' selected':''}`;
+    return renderDomino(tile,cls,isPlayable?`selectTile('${tile.id}')`:null);
+  }).join('');
+}
+function renderAIPods(){
+  const el=document.getElementById('aiArea');if(!el) return;
+  el.innerHTML=['ai1','ai2','ai3'].map(seat=>{
+    const opp=getOppForSeat(seat);if(!opp) return '';
+    const isActive=GS.currentTurn===seat;
+    const ps=GS.psychology[seat];
+    const stateLabel={baseline:'Focused',fracture:'Rattled',pressure:'Struggling',shift:'Breaking'}[ps?.state||'baseline'];
+    return `<div class="ai-pod${isActive?' active-turn':''}" id="pod-${seat}">
+      <div class="ai-avatar">${opp.avatar}</div>
+      <div class="ai-name">${opp.name}</div>
+      <div class="ai-culture">${opp.culture}</div>
+      <div class="ai-hand-count">${GS.hands[seat]?.length||0} tiles</div>
+      <div class="ai-state ${ps?.state||'baseline'}">${stateLabel}</div>
+      <div class="dialogue-bubble" id="bubble-${seat}"></div>
+    </div>`;
+  }).join('');
+}
+function renderScoreDisplay(){
+  const el=document.getElementById('scoreDisplay');if(!el) return;
+  const player=GS.player;
+  const entries=[
+    {label:player?.name||'You',score:GS.matchScores.player},
+    {label:GS.ai1Opp?.name?.replace(/"/g,'')||'AI1',score:GS.matchScores.ai1},
+    {label:'Others',score:Math.max(GS.matchScores.ai2,GS.matchScores.ai3)}
+  ];
+  el.innerHTML=entries.map(e=>{
+    const cls=e.score>=WINNING_SCORE*0.8?'danger':e.score>=WINNING_SCORE*0.5?'winning':'';
+    return `<div class="score-item"><div class="score-name">${e.label.substring(0,6).toUpperCase()}</div><div class="score-val ${cls}">${e.score}</div></div>`;
+  }).join('');
+}
+function updateRoundDisplay(){
+  const el=document.getElementById('roundDisplay');
+  if(el) el.textContent=`ROUND ${GS.roundNumber} · First to ${WINNING_SCORE}`;
+}
+function updateBoneyardBtn(){
+  const btn=document.getElementById('boneyardBtn');
+  const count=document.getElementById('boneyardCount');
+  if(btn){
+    btn.disabled=!(GS.currentTurn==='player'&&!GS.playerCanPlay&&GS.boneyard.length>0);
+    if(count) count.textContent=GS.boneyard.length;
+  }
+  const passArea=document.getElementById('turnIndicator');
+  if(passArea&&GS.currentTurn==='player'&&GS.playerMustPass&&!document.getElementById('passBtn')){
+    passArea.innerHTML+=' <button id="passBtn" class="pass-btn" onclick="playerPass()">PASS</button>';
+  }
+}
+function updateTurnIndicator(isPlayerTurn){
+  const el=document.getElementById('turnIndicator');if(!el) return;
+  if(isPlayerTurn){
+    if(GS.playerMustPass){
+      el.innerHTML='NO PLAY — <button class="pass-btn" onclick="playerPass()">PASS TURN</button>';
+      el.className='turn-indicator your-turn';
+    } else {
+      el.textContent=GS.playerCanPlay?'YOUR TURN — TAP A TILE':'NO PLAY — DRAW';
+      el.className='turn-indicator your-turn';
+    }
+  } else {
+    el.textContent=`${getOppForSeat(GS.currentTurn)?.name||'AI'} IS PLAYING...`;
+    el.className='turn-indicator';
+  }
+}
+function setAIPodThinking(seat,thinking){
+  const pod=document.getElementById(`pod-${seat}`);
+  if(pod){thinking?pod.classList.add('thinking'):pod.classList.remove('thinking');}
+}
+function showDialogueBubble(seat,text){
+  const el=document.getElementById(`bubble-${seat}`);if(!el) return;
+  el.textContent=text;el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),3500);
+}
+function updatePlayerDisplay(){
+  const p=GS.player;if(!p) return;
+  const av=document.getElementById('playerAvatarSm');
+  const nm=document.getElementById('playerNameDisplay');
+  if(av) av.textContent=p.avatar;
+  if(nm) nm.textContent=p.name.toUpperCase();
+}
+
+// ============================================================
+// RESULT SCREEN
+// ============================================================
+function showResult(won){
+  GS.matchActive=false;
+  const opp=GS.ai1Opp;
+  document.getElementById('resultIcon').textContent=won?'🏆':'💀';
+  const title=document.getElementById('resultTitle');
+  title.textContent=won?'VICTORY!':'DEFEATED';
+  title.className=`result-title ${won?'win':'lose'}`;
+  document.getElementById('resultOpp').textContent=won?`You defeated ${opp.name}!`:`${opp.name} beat you. Try again.`;
+  // Story quote
+  const storyEl=document.getElementById('resultStory');
+  const storyText=won?opp.win_story:processDialogue(opp.lose_story||'');
+  if(storyText){storyEl.textContent=storyText;storyEl.style.display='block';}
+  else{storyEl.style.display='none';}
+  // Scores
+  const scoresEl=document.getElementById('resultScores');
+  scoresEl.innerHTML=Object.entries(GS.matchScores).map(([seat,score])=>{
+    const name=seat==='player'?GS.player.name:getOppForSeat(seat)?.name||seat;
+    return `<div class="result-score-row"><span>${name}</span><span>${score} pts</span></div>`;
+  }).join('');
+  // Buttons
+  const btns=document.getElementById('resultBtns');
+  if(won){
+    const nextIdx=GS.currentOpponentIdx+1;
+    if(nextIdx>=OPPONENTS.length){
+      btns.innerHTML=`<button class="btn-next" onclick="showScreen('complete')">CHAMPION →</button>`;
+    } else {
+      btns.innerHTML=`<button class="btn-next" onclick="goToGauntlet()">NEXT OPPONENT →</button>
+        <button class="btn-retry" onclick="startMatch(${GS.currentOpponentIdx})">REMATCH</button>`;
+    }
+  } else {
+    btns.innerHTML=`<button class="btn-next" onclick="startMatch(${GS.currentOpponentIdx})">🔄 TRY AGAIN</button>
+      <button class="btn-retry" onclick="goToGauntlet()">GAUNTLET MAP</button>`;
+  }
+  showScreen('result');
+}
+
+// ============================================================
+// GAUNTLET MAP
+// ============================================================
+function renderGauntletMap(){
+  const unlocked=GS.unlocked;const progress=GS.progress;
+  document.getElementById('gauntletProgress').textContent=`${progress} / ${OPPONENTS.length} DEFEATED`;
+  const grid=document.getElementById('opponentGrid');
+  grid.innerHTML=OPPONENTS.map((opp,i)=>{
+    const beaten=i<progress;
+    const available=(i===progress)||(i<GS.freeOpponents);
+    const locked=!unlocked&&i>=GS.freeOpponents&&i>progress;
+    const isCurrent=i===progress&&!beaten;
+    const cls=beaten?'beaten':locked?'locked':isCurrent?'current available':'available';
+    const badge=beaten?'✅':locked?'🔒':'';
+    const freeBadge=i<GS.freeOpponents&&!beaten?'<span class="opp-free">FREE</span>':'';
+    const onclick=locked?'showLockedModal()':(beaten||available)?`startMatch(${i})`:'';
+    return `<div class="opp-card ${cls}" onclick="${onclick}">
+      ${freeBadge}
+      <div class="opp-badge">${badge}</div>
+      <div class="opp-avatar">${opp.avatar}</div>
+      <div class="opp-name">${opp.name}</div>
+      <div class="opp-culture">${opp.culture}</div>
+      <div class="opp-tier">TIER ${opp.tier}</div>
+    </div>`;
+  }).join('');
+}
+function showLockedModal(){
+  showModal('🔒','Full Legacy Locked',`Unlock all 12 cultural traditions for <strong>$14.99</strong>. One-time payment. No subscription. Unlocks both Chess & Dominoes games!`,[
+    {label:'UNLOCK NOW',cls:'primary',action:()=>openGumroad()},
+    {label:'Cancel',cls:'secondary',action:()=>{}}
+  ]);
+}
+
+// ============================================================
+// CHARACTER SELECT
+// ============================================================
+function renderCharacterSelect(){
+  const grid=document.getElementById('charGrid');
+  grid.innerHTML=CHARACTERS.map(c=>`
+    <div class="char-card${GS.player?.id===c.id?' selected':''}" onclick="selectChar('${c.id}')">
+      <div class="char-avatar">${c.avatar}</div>
+      <div class="char-name">${c.name}</div>
+      <div class="char-tag">${c.tag}</div>
+    </div>`).join('');
+}
+function selectChar(id){
+  GS.player=CHARACTERS.find(c=>c.id===id);
+  renderCharacterSelect();
+  document.getElementById('charContinueBtn').disabled=!GS.player;
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(icon,title,text,btns){
+  document.getElementById('modalIcon').textContent=icon;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalText').innerHTML=text;
+  const btnsEl=document.getElementById('modalBtns');
+  btnsEl.innerHTML=btns.map((b,i)=>`<button class="modal-btn ${b.cls}" onclick="handleModalBtn(${i})">${b.label}</button>`).join('');
+  window._modalBtns=btns;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function handleModalBtn(idx){
+  document.getElementById('modalOverlay').classList.remove('open');
+  if(window._modalBtns&&window._modalBtns[idx]) window._modalBtns[idx].action();
+}
+
+// ============================================================
+// MATCH MANAGEMENT
+// ============================================================
+function startMatch(opponentIdx){
+  // Story scene hooks
+  if(opponentIdx===0&&!GS.shownScenes.has('opening')){
+    GS.shownScenes.add('opening');
+    showStoryScene('opening',()=>_doStartMatch(opponentIdx));return;
+  }
+  if(opponentIdx===11&&!GS.shownScenes.has('before_final')){
+    GS.shownScenes.add('before_final');
+    showStoryScene('before_final',()=>_doStartMatch(opponentIdx));return;
+  }
+  _doStartMatch(opponentIdx);
+}
+function _doStartMatch(opponentIdx){
+  GS.currentOpponentIdx=opponentIdx;
+  const mainOpp=OPPONENTS[opponentIdx];
+  GS.ai1Opp=mainOpp;
+  const others=OPPONENTS.filter(o=>o.id!==mainOpp.id&&o.id<=mainOpp.id);
+  GS.ai2Opp=others[Math.max(0,others.length-1)]||OPPONENTS[0];
+  GS.ai3Opp=others[Math.max(0,others.length-2)]||OPPONENTS[0];
+  GS.matchScores={player:0,ai1:0,ai2:0,ai3:0};
+  GS.roundNumber=1;GS.matchActive=true;
+  showScreen('game');
+  setTimeout(updatePlayerDisplay,80);
+  startRound();
+}
+function startRound(){
+  dealGame();GS.matchActive=true;GS.isProcessing=false;
+  renderGame();updateRoundDisplay();processCurrentTurn();
+}
+
+// ============================================================
+// FLOW
+// ============================================================
+function goToPaywall(){showScreen('paywall');}
+
+function submitCode(){
+  const code=document.getElementById('codeInput').value.trim().toUpperCase();
+  const msg=document.getElementById('codeMsg');
+  if(VALID_CODES.has(code)){
+    unlockGame();GS.unlocked=true;
+    msg.textContent='✓ Code accepted! Full legacy unlocked!';
+    msg.className='pw-msg success';
+    setTimeout(()=>goToCharSelect(),1200);
+  } else {
+    msg.textContent='Invalid code. Try again.';
+    msg.className='pw-msg error';
+  }
+}
+
+function startFree(){
+  GS.unlocked=false;GS.shownScenes=new Set();GS.pendingScene=null;
+  goToCharSelect();
+}
+
+function goToCharSelect(){renderCharacterSelect();showScreen('char');}
+
+function goToGauntlet(){
+  if(GS.pendingScene){
+    const scene=GS.pendingScene;GS.pendingScene=null;
+    GS.shownScenes.add(scene);
+    showStoryScene(scene,()=>{renderGauntletMap();showScreen('gauntlet');});
+  } else {
+    renderGauntletMap();showScreen('gauntlet');
+  }
+}
+
+function restartGauntlet(){
+  GS.progress=0;GS.shownScenes=new Set();GS.pendingScene=null;
+  saveProgress();renderGauntletMap();showScreen('gauntlet');
+}
+
+// ============================================================
+// COMPLETE SCREEN
+// ============================================================
+function updateCompleteScreen(){
+  const el=document.getElementById('completeStory');
+  if(el){
+    el.textContent=`Every tradition you faced —\nCuban, Puerto Rican, New Orleans,\nCaribbean, Dominican, Chinese, European —\n\nAll of it lives in your hands now.\n\nThe bones remember everything.\nAnd they chose you.`;
+  }
+}
+
+// ============================================================
+// PERSISTENCE
+// ============================================================
+function saveProgress(){try{localStorage.setItem('longGame_progress',GS.progress);}catch(e){}}
+function loadProgress(){try{return parseInt(localStorage.getItem('longGame_progress')||'0');}catch(e){return 0;}}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  GS.unlocked=isUnlocked();
+  GS.progress=loadProgress();
+  GS.freeOpponents=2;
+  GS.shownScenes=new Set();
+  GS.pendingScene=null;
+
+  document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+    if(e.target===document.getElementById('modalOverlay'))
+      document.getElementById('modalOverlay').classList.remove('open');
+  });
+  document.getElementById('codeInput').addEventListener('keydown',(e)=>{
+    if(e.key==='Enter') submitCode();
+  });
+
+  updateCompleteScreen();
+
+  if(GS.unlocked){goToCharSelect();}
+  else{showScreen('intro');}
+}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
