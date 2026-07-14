@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>THE LONG GAME — Gauntlet Dominoes V2</title>
+<title>THE LONG GAME — Gauntlet Dominoes V3 (Conversational)</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -70,10 +70,8 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 .story-label{font-size:10px;color:var(--accent);letter-spacing:5px;text-transform:uppercase;margin-bottom:32px;}
 .story-beat{font-size:15px;color:#d8d0ba;line-height:2;font-style:italic;white-space:pre-line;opacity:0;transition:opacity 0.9s ease;min-height:120px;}
 .story-beat.visible{opacity:1;}
-.story-skip{position:absolute;bottom:28px;right:28px;font-size:10px;color:var(--text2);cursor:pointer;letter-spacing:2px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;z-index:5;}
+.story-skip{position:absolute;bottom:28px;right:28px;font-size:10px;color:var(--text2);cursor:pointer;letter-spacing:2px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;transition:all 0.2s;}
 .story-skip:hover{border-color:var(--accent);color:var(--accent);}
-.story-next{margin-top:28px;font-size:11px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity 0.5s ease;animation:pulse 1.6s ease-in-out infinite;}
-.story-next.visible{opacity:0.85;}
 .story-dots{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;gap:6px;}
 .story-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:background 0.3s;}
 .story-dot.active{background:var(--accent);}
@@ -224,13 +222,6 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
   transition:bottom 0.4s cubic-bezier(0.34,1.56,0.64,1);text-align:center;
   box-shadow:0 4px 24px rgba(201,168,76,0.2);
 }
-.top-games-bar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:10px;padding:10px;background:rgba(8,8,16,0.92);border-bottom:1px solid var(--border);z-index:50;}
-.top-games-bar.hidden{display:none;}
-body.bar-on .screen.active{padding-top:62px;}
-.tg-btn{font-size:12px;color:var(--accent2);text-decoration:none;letter-spacing:1px;padding:7px 16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface);transition:all 0.2s;white-space:nowrap;}
-.tg-btn:hover{border-color:var(--accent);color:var(--accent3);transform:translateY(-1px);}
-#boneLorePopup{cursor:pointer;}
-.lore-dismiss{font-size:8px;color:var(--text3);letter-spacing:2px;margin-top:6px;text-transform:uppercase;}
 #boneLorePopup.visible{bottom:20px;}
 .lore-label{font-size:8px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
 .lore-title{font-size:12px;color:var(--accent2);font-weight:bold;margin-bottom:4px;}
@@ -247,14 +238,28 @@ body.bar-on .screen.active{padding-top:62px;}
 ::-webkit-scrollbar{height:4px;width:4px;}
 ::-webkit-scrollbar-track{background:var(--surface);}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ===== TABLE ENGINE — chat ===== */
+.chat-dock{max-width:900px;margin:8px auto 0;padding:0 12px;}
+.chat-tabs{display:flex;gap:6px;margin-bottom:6px;}
+.chat-tab{background:#12121c;border:1px solid #2a2a3a;color:#8a8aa0;border-radius:8px;
+  padding:4px 10px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.chat-tab.active{border-color:#c9a84c;color:#c9a84c;background:#1a1710;}
+.chat-log{background:#0c0c14;border:1px solid #22222f;border-radius:10px;padding:8px 10px;
+  max-height:110px;overflow-y:auto;font-size:13px;line-height:1.45;margin-bottom:6px;}
+.chat-log .cmsg{margin:3px 0;}
+.chat-log .cwho{color:#c9a84c;font-weight:600;margin-right:6px;}
+.chat-log .cme .cwho{color:#7fb2ff;}
+.chat-row{display:flex;gap:6px;}
+.chat-input{flex:1;background:#12121c;border:1px solid #2a2a3a;color:#e8e8f0;border-radius:8px;
+  padding:9px 12px;font-size:14px;outline:none;}
+.chat-input:focus{border-color:#c9a84c;}
+.chat-send{background:#c9a84c;color:#14110a;border:none;border-radius:8px;padding:9px 16px;
+  font-weight:700;cursor:pointer;font-size:14px;}
+.chat-send:active{transform:scale(.97);}
 </style>
 </head>
 <body>
-<div class="top-games-bar" id="topGamesBar">
-  <a class="tg-btn" href="arcade.html?game=chess">♟️ Chess</a>
-  <a class="tg-btn" href="arcade.html?game=learn">📚 Learn</a>
-  <a class="tg-btn" href="arcade.html?game=knockout">🥊 Boxing</a>
-</div>
 
 <!-- ===== INTRO SCREEN ===== -->
 <div id="intro-screen" class="screen">
@@ -319,7 +324,6 @@ body.bar-on .screen.active{padding-top:62px;}
     <div class="story-label" id="storyTitle"></div>
     <div class="story-beat" id="storyBeat"></div>
     <div class="story-dots" id="storyDots"></div>
-    <div class="story-next" id="storyNext">Tap to continue →</div>
   </div>
   <div class="story-skip" onclick="skipStory()">TAP TO SKIP →</div>
 </div>
@@ -362,6 +366,15 @@ body.bar-on .screen.active{padding-top:62px;}
       <div id="turnIndicator" class="turn-indicator">WAITING...</div>
     </div>
     <div class="player-hand" id="playerHand"></div>
+<div class="chat-dock" id="chatDock">
+  <div class="chat-tabs" id="chatTabs"></div>
+  <div class="chat-log" id="chatLog"></div>
+  <div class="chat-row">
+    <input class="chat-input" id="chatInput" maxlength="200" placeholder="Say something to the table..." autocomplete="off"/>
+    <button class="chat-send" id="chatSend">Say</button>
+  </div>
+</div>
+
   </div>
 </div>
 
@@ -404,7 +417,6 @@ body.bar-on .screen.active{padding-top:62px;}
   <div class="lore-label">🦴 BONE LORE</div>
   <div class="lore-title" id="loreTitleEl"></div>
   <div class="lore-text" id="loreTextEl"></div>
-  <div class="lore-dismiss">tap to dismiss ✕</div>
 </div>
 
 <script>
@@ -969,40 +981,32 @@ function _runBeats(beats,title,callback){
   const titleEl=document.getElementById('storyTitle');
   const beatEl=document.getElementById('storyBeat');
   const dotsEl=document.getElementById('storyDots');
-  const nextEl=document.getElementById('storyNext');
-  const screenEl=document.getElementById('story-screen');
   titleEl.textContent=title;
   beatEl.textContent='';beatEl.classList.remove('visible');
-  if(nextEl)nextEl.classList.remove('visible');
+  // Build dots
   dotsEl.innerHTML=beats.map((_,i)=>`<div class="story-dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
   showScreen('story');
-  let beatIdx=0;let skipped=false;let canAdvance=false;
-  function cleanup(){skipped=true;if(nextEl)nextEl.classList.remove('visible');screenEl.removeEventListener('click',onTap);}
-  window._skipStory=()=>{cleanup();if(callback)callback();};
-  function showBeat(){
+  let beatIdx=0;let storyTimeout=null;let skipped=false;
+  window._skipStory=()=>{
+    skipped=true;if(storyTimeout)clearTimeout(storyTimeout);
+    if(callback)callback();
+  };
+  function nextBeat(){
     if(skipped) return;
-    if(beatIdx>=beats.length){cleanup();setTimeout(()=>{if(callback)callback();},300);return;}
-    canAdvance=false;
-    if(nextEl)nextEl.classList.remove('visible');
+    if(beatIdx>=beats.length){setTimeout(()=>{if(!skipped&&callback)callback();},800);return;}
+    // Update dots
     document.querySelectorAll('.story-dot').forEach((d,i)=>d.classList.toggle('active',i===beatIdx));
     beatEl.classList.remove('visible');
     setTimeout(()=>{
-      if(skipped) return;
       beatEl.textContent=beats[beatIdx].text;
       beatEl.classList.add('visible');
-      setTimeout(()=>{if(skipped)return;canAdvance=true;if(nextEl)nextEl.classList.add('visible');},800);
+      storyTimeout=setTimeout(()=>{
+        beatEl.classList.remove('visible');
+        setTimeout(()=>{beatIdx++;nextBeat();},600);
+      },beats[beatIdx].pause);
     },150);
   }
-  function onTap(e){
-    if(e.target.closest('.story-skip')) return;
-    if(skipped||!canAdvance) return;
-    canAdvance=false;
-    beatEl.classList.remove('visible');
-    if(nextEl)nextEl.classList.remove('visible');
-    setTimeout(()=>{beatIdx++;showBeat();},500);
-  }
-  screenEl.addEventListener('click',onTap);
-  showBeat();
+  nextBeat();
 }
 
 function skipStory(){if(window._skipStory)window._skipStory();}
@@ -1021,16 +1025,7 @@ function showBoneLore(){
   document.getElementById('loreTextEl').textContent=lore.text;
   const popup=document.getElementById('boneLorePopup');
   boneLoreActive=true;popup.classList.add('visible');
-  let hideTimer=null;
-  function dismiss(){
-    if(!boneLoreActive) return;
-    popup.classList.remove('visible');
-    popup.removeEventListener('click',dismiss);
-    if(hideTimer)clearTimeout(hideTimer);
-    setTimeout(()=>{boneLoreActive=false;},450);
-  }
-  popup.addEventListener('click',dismiss);
-  hideTimer=setTimeout(dismiss,20000);
+  setTimeout(()=>{popup.classList.remove('visible');setTimeout(()=>{boneLoreActive=false;},450);},5500);
 }
 function triggerBoneLore(){if(!boneLoreActive&&Math.random()<0.18)setTimeout(showBoneLore,600);}
 
@@ -1097,11 +1092,6 @@ function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(`${name}-screen`);
   if(el) el.classList.add('active');
-  // Top games bar: show on menu screens, hide during gameplay/story
-  const bar=document.getElementById('topGamesBar');
-  const hide=(name==='game'||name==='story');
-  if(bar) bar.classList.toggle('hidden',hide);
-  document.body.classList.toggle('bar-on',!hide);
 }
 function renderPipGrid(n){
   const pos={0:[],1:[[1,1]],2:[[0,2],[2,0]],3:[[0,2],[1,1],[2,0]],4:[[0,0],[0,2],[2,0],[2,2]],5:[[0,0],[0,2],[1,1],[2,0],[2,2]],6:[[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]]};
@@ -1407,7 +1397,6 @@ function updateCompleteScreen(){
     el.textContent=`Every tradition you faced —\nCuban, Puerto Rican, New Orleans,\nCaribbean, Dominican, Chinese, European —\n\nAll of it lives in your hands now.\n\nThe bones remember everything.\nAnd they chose you.`;
   }
 }
-
 // ============================================================
 // PERSISTENCE
 // ============================================================
@@ -1439,6 +1428,363 @@ function init(){
 }
 
 window.addEventListener('load',init);
+
+// ============================================================
+// THE TABLE ENGINE v1 — Drago Conversational Core v1.1, Tier A+
+// 12 robots · Hook/Twist/Land banks · Domain Lock + Deflection
+// Ladder · C6 callbacks · El Rey cross-match legend · no-repeat
+// ============================================================
+const CONV = {
+  seat:'ai1',
+  mem:{}, // per seat: {firstMove, told:[], rung:0, said:Set, greeted:false}
+  initMatch(){
+    this.seat='ai1'; this.mem={};
+    ['ai1','ai2','ai3'].forEach(s=>this.mem[s]={firstMove:null,told:[],rung:0,said:new Set(),greeted:false});
+    this.playerFirstTile=null; this.renderTabs(); this.clearLog();
+    const opp=getOppForSeat('ai1');
+    if(opp) this.post(opp.name, this.pick('ai1','greet') || '...', false);
+  },
+  renderTabs(){
+    const el=document.getElementById('chatTabs'); if(!el) return;
+    el.innerHTML=['ai1','ai2','ai3'].map(s=>{
+      const o=getOppForSeat(s); if(!o) return '';
+      return '<div class="chat-tab'+(s===this.seat?' active':'')+'" onclick="CONV.pickSeat(\''+s+'\')">'+o.avatar+' '+o.name+'</div>';
+    }).join('');
+  },
+  pickSeat(s){ this.seat=s; this.renderTabs(); },
+  clearLog(){ const el=document.getElementById('chatLog'); if(el) el.innerHTML=''; },
+  post(who,text,me){
+    const el=document.getElementById('chatLog'); if(!el) return;
+    const d=document.createElement('div'); d.className='cmsg'+(me?' cme':'');
+    const w=document.createElement('span'); w.className='cwho'; w.textContent=who+':';
+    d.appendChild(w); d.appendChild(document.createTextNode(text));
+    el.appendChild(d); el.scrollTop=el.scrollHeight;
+    while(el.children.length>30) el.removeChild(el.firstChild);
+  },
+  // ---------- intent classification ----------
+  classify(t){
+    const x=t.toLowerCase();
+    const has=(...ws)=>ws.some(w=>x.includes(w));
+    if(has('politic','president','election','news','weather','crypto','stock','bitcoin','invest','religio','war ','chess','career','job app','resume','youtube','movie','netflix','football','basketball','homework','math test','dating')) return 'offdomain';
+    if(has('hello','hi ','hey','hola','good evening','good morning','what\'s up','whats up')||x==='hi'||x==='yo') return 'greet';
+    if(has('who are you','your name','about you','where are you from','where you from','who is','tell me about yourself')) return 'who';
+    if(has('cuba','bronx','orleans','jamaica','china','martinique','dominican','italy','tradition','culture','history','where did domino','origin','your home','your country','your city')) return 'culture';
+    if(has('grandfather','grandpa','abuelo','the bones','bone set','carved','inherit','legacy','my family')) return 'gramps';
+    if(has('how do i','how to play','rule','what can i','help','which tile','what should i play','hint','stuck')) return 'rules';
+    if(has('score','winning','losing','who is ahead','how many tiles','am i doing','beat you','beating you')) return 'gamestate';
+    if(has('good move','nice','great play','well played','impressive','you are good','you\'re good','respect')) return 'praise';
+    if(has('you suck','trash','easy','too slow','scared','weak','gonna lose','you will lose','crush you','destroy you')) return 'trash';
+    if(has('thank','gracias','appreciated')) return 'thanks';
+    if(has('bye','goodbye','see you','later','goodnight','good night')) return 'bye';
+    return 'steer';
+  },
+  // ---------- reply engine ----------
+  say(){
+    const inp=document.getElementById('chatInput'); if(!inp) return;
+    const t=inp.value.trim(); if(!t) return; inp.value='';
+    const me=(GS.player&&GS.player.name)||'You';
+    this.post(me,t,true);
+    const seat=this.seat, m=this.mem[seat], opp=getOppForSeat(seat);
+    if(!opp||!m) return;
+    if(t.length<120) m.told.push(t); if(m.told.length>3) m.told.shift();
+    const intent=this.classify(t);
+    let reply;
+    if(intent==='offdomain'){
+      m.rung=Math.min(3,m.rung+1);
+      reply=this.pick(seat,'off'+m.rung)||this.pick(seat,'off3');
+    } else if(intent==='gamestate'){
+      reply=this.gamestate(seat);
+    } else {
+      reply=this.pick(seat,intent)||this.pick(seat,'steer');
+    }
+    const delay=380+Math.random()*650;
+    setTimeout(()=>{ const r=processDialogue(reply); this.post(opp.name,r,false); showDialogueBubble(seat,r); },delay);
+  },
+  pick(seat,key){
+    const opp=getOppForSeat(seat); if(!opp) return '';
+    const bank=(PERSONAS[opp.id]&&PERSONAS[opp.id][key])||[];
+    const m=this.mem[seat];
+    const fresh=bank.filter(l=>!m.said.has(l));
+    const pool=fresh.length?fresh:bank;
+    if(!pool.length) return '';
+    let line=pool[Math.floor(Math.random()*pool.length)];
+    m.said.add(line);
+    // dynamic tokens
+    line=line.replace('{pname}',(GS.player&&GS.player.name)||'friend');
+    if(line.includes('{legend}')) line=line.replace('{legend}',this.legend());
+    if(line.includes('{firsttile}')) line=line.replace('{firsttile}',this.playerFirstTile?('the '+this.playerFirstTile.high+'-'+this.playerFirstTile.low):'your first bone');
+    return line;
+  },
+  gamestate(seat){
+    const opp=getOppForSeat(seat);
+    const my=(GS.matchScores&&GS.matchScores.player)||0;
+    const theirs=(GS.matchScores&&GS.matchScores[seat])||0;
+    const tiles=(GS.hands&&GS.hands.player&&GS.hands.player.length)||0;
+    const lead=my>theirs?'you lead':(my<theirs?'I lead':'we are even');
+    const flav=(PERSONAS[opp.id]&&PERSONAS[opp.id].scorewrap)||'%s.';
+    return flav.replace('%s','You '+my+', me '+theirs+' — '+lead+', and '+tiles+' bones still in your hand');
+  },
+  legend(){
+    const beaten=(GS.progress&&GS.progress.defeated)?GS.progress.defeated:[];
+    const names=OPPONENTS.filter(o=>beaten.includes(o.id)).map(o=>o.name);
+    if(!names.length) return 'Every table before this one is already talking about you';
+    const two=names.slice(-2).join(' and ');
+    return two+' told the tables about you. Word travels between bones';
+  },
+  onPlayerPlaces(tile){
+    if(!this.playerFirstTile) this.playerFirstTile=tile;
+  },
+  matchEndLine(playerWon){
+    const seat='ai1', opp=getOppForSeat(seat); if(!opp) return;
+    const key=playerWon?'closewin':'closeloss';
+    const line=this.pick(seat,key);
+    if(line){ const r=processDialogue(line); this.post(opp.name,r,false); }
+  }
+};
+
+// ---------- THE TWELVE — persona banks (Core v1.1) ----------
+const PERSONAS = {
+1:{ // ABUELO SAL — Cuban Tradition
+ greet:["You sit like you have time. Good. In Havana, the game starts before the first bone falls — it starts with the sitting.","Coffee? No? Then we begin. Your grandfather never said no to the coffee, mijo."],
+ who:["Sal. Fifty years at this table in Parque Central. Your grandfather sat where you sit — ask me anything about the game, I was there for most of it.","An old man with old bones — the tiles and mine both. What matters tonight is what your hands know."],
+ culture:["In Cuba the dominoes are loud — we slam them so the ancestors hear. But the winning play is always the quiet one. Watch for it.","Havana taught me the game is a conversation. The tiles talk, mijo. Are you listening or just waiting your turn?"],
+ gramps:["He sat there, where you are. Lost to me for two years before he won once — and when he won, he laughed so hard the table shook. Ask me what he did next.","The bones remember his hands. I watch them remember yours. That is not a small thing, mijo."],
+ rules:["Match the ends, count the pips, and never marry your highest double too long. That last one — your grandfather learned it the hard way.","The rule that matters: play the tile that asks a question. Any tile that only answers is wasted. Which of yours asks something?"],
+ praise:["Save the flowers, mijo — the game is not over. But yes. That was a real play.","I accept the respect. Now show me it wasn't luck."],
+ trash:["Ha. Big words. The tiles will collect on them — they always do. Your move.","In the park we let the bones do the boasting. Yours are quiet so far, mijo."],
+ thanks:["De nada. The table gives to those who sit at it properly.","Thank the game, not me. I only pour the coffee."],
+ bye:["Go well, mijo. The table keeps your seat.","We will play again. The bones already know it."],
+ off1:["Eh, the news? The park has no news, mijo. The park has dominoes. Your turn.","That belongs outside the park gates. Inside, only bones. Play."],
+ off2:["Mijo, this table is my whole country — inside it I can tell you fifty years of stories. Outside it, an old man knows nothing. Now — your grandfather would already have played.","I left everything else at the gate years ago. It's lighter that way. The game is waiting on you."],
+ off3:["You keep knocking on a door the park never built — and I like the persistence, truly. Bring it to the game instead. One good play says more than any answer I could give.","Ask the tiles, mijo. They've heard every question there is, and they only ever answer one way: play."],
+ steer:["Hm. Say it again through a domino, mijo — that language I speak fluently.","The coffee's getting cold and the bones are getting impatient. What's on your mind about the GAME?"],
+ closewin:["You earned the seat, mijo. {firsttile} — that's where I saw it start.","Your grandfather beat me the same way once. Same patience. Go — the next table is waiting."],
+ closeloss:["Come back tomorrow. And the day after. Losing here is the oldest school in Havana, mijo.","The bones said not yet. They did not say never. Sit again soon."],
+ scorewrap:"Let an old man count: %s. The mathematics favor patience, mijo."
+},
+2:{ // MIA — First Generation
+ greet:["Hi — okay, I'm a little nervous, my abuela literally blessed my tiles this morning. Ready when you are.","Hey. You look like you've done this before. That makes one of us — mostly."],
+ who:["Mia. First generation — my abuela carried this game across an ocean and I'm trying to carry it across a kitchen table. Some days that feels harder.","I'm the one still learning. Abuela says that's the strongest thing you can be at this table. I'm choosing to believe her."],
+ culture:["My family talks in dominoes when words get too heavy. Sunday nights, the click of tiles IS the conversation. What does your family sound like?","Abuela says the tiles know things. I used to roll my eyes. Then I started winning when I stopped forcing it. So now I don't roll my eyes."],
+ gramps:["You inherited your set too? Then you know — it's not weight, but it's HEAVY. Abuela's set will be mine someday and my hands aren't ready.","The grandfather stories are my favorite part of this gauntlet. Everyone here has one about him. You're carrying more than tiles."],
+ rules:["Okay, what abuela drilled into me: count what's been played, protect your doubles, and watch what people DON'T play. The last one wins games.","I'll trade you — I'll tell you the rule that saved me if you tell me where you learned to hold your tiles like that."],
+ praise:["Really? Thank you. Okay, don't tell abuela I got complimented, she'll want details for WEEKS.","That means a lot — especially from someone playing like you are tonight."],
+ trash:["Oh, we're doing THAT? Okay. Abuela taught me a play for people who talk. You'll recognize it when it lands.","I've been underestimated at prettier tables than this one. Your move."],
+ thanks:["Of course! Abuela says generosity at the table comes back doubled. I'm testing her math.","Anytime. Truly."],
+ bye:["Bye! I'm telling abuela everything about this game.","See you. I'll be better next time — that's a promise, not a threat. Okay, slightly a threat."],
+ off1:["Oh I'd be the wrong person to ask — the only thing I know tonight is these 28 tiles, and honestly? Only like 20 of them. Play!","Ha — abuela would say 'the table hears everything, tell it nothing but dominoes.' Your turn."],
+ off2:["Honestly? This game is my whole inheritance and I'm still learning to hold it. Everything else I'd just be making up. Ask me about the tiles — I've got real answers there.","Outside this table I'm as lost as you are. Inside it, I at least know which questions to ask. Want one?"],
+ off3:["You know what, you remind me of my cousin — can't sit still at the table either. Abuela's cure was always the same: 'play a bone, the rest quiets down.' It works. Try it.","Third time! I'm flattered you think I know things. I know THIS: it's your turn, and the six is still live."],
+ steer:["Wait, say that as a domino question — I'm better at those.","Hmm. Abuela would have an answer. I have a suggestion: your move first, wisdom after."],
+ closewin:["That was beautiful and I'm taking notes. Literal notes. Go — and thank you for playing like it mattered.","You won and I LEARNED. Abuela's going to hear about {firsttile}, just so you know."],
+ closeloss:["Okay — I got you this time. Next table's tougher. I believe you're ready, though. Genuinely.","I won?! Sorry — composure. Rematch someday. Abuela will insist."],
+ scorewrap:"Let me count like abuela taught me: %s. Deep breath. Okay."
+},
+3:{ // QUICK CARLOS — Puerto Rican NYC
+ greet:["Yo! Sit down, sit down — table's hot tonight. First rule of the block: you snooze, you lose. Let's GO.","Ayyy, fresh player. Hope you brought speed. And if not — hope you brought humility."],
+ who:["Quick Carlos. South Bronx. My uncle ran this table before me and his uncle before him. Speed is the family language.","The name's the résumé, star. Quick. Watch three plays, you'll get it."],
+ culture:["Bronx dominoes is a full-contact sport, no pads. Sidewalk table, folding chairs, and the WHOLE block watching. You'd love it. Or fold. One of the two.","My uncle says slamming the bone is how you sign your name. Every play, signed. What's your signature look like?"],
+ gramps:["Your granddad's bones? That's real weight, for real. My uncle's set is nicked on every corner — every nick is a game. Yours are talking already.","Respect. Inherited bones hit different — the table KNOWS. Play like they're watching, cause they are."],
+ rules:["Rule one: hit the bone hard. Rule two: count everything. Rule three: never let them see you count. You got all three?","Quick lesson — the board tells you what's dead. Play around the dead numbers. That's it, that's the Bronx masterclass."],
+ praise:["YO! Okay okay okay — I SEE you! Do that again, I'm watching this time.","Respect given loud, that's how we do. That was SLICK."],
+ trash:["AHHH you got JOKES! I love it. The block loves a talker — right up until the bones start answering. Your move, comedian.","Talk fast, play faster. So far you're only doing one, star."],
+ thanks:["All love. The table takes care of the table.","De nada, star. Now stop being polite and beat somebody."],
+ bye:["Aight, get home safe. Table's here when you want the rematch.","Later, star. Tell them Carlos sent you — moves like those need a reference."],
+ off1:["Stocks? Bro, my portfolio is 28 bones and a folding table. Your move.","Wrong borough for that, star. This block trades in pips only. Play!"],
+ off2:["For real though — outside this table I'm just a guy from the Bronx with fast hands. AT this table? Encyclopedia. Ask me anything with dots on it.","I keep all that noise off the block, star. It slows the hands. Speaking of hands — yours is holding up the game."],
+ off3:["Third try! You're persistent — that's a domino skill, no lie. Point it at the board and you might actually beat me. THAT would be a story.","AHAHA okay you REALLY want to chat! Tell you what — beat me this round and I'll listen to anything. Bones first."],
+ steer:["Say it in dominoes, star. That's the block's official language.","Clock's ticking! Bronx rules — talk on your own turn, and it IS your turn, so play."],
+ closewin:["You played BRONX style tonight — {firsttile} was the tell. My uncle would feed you dinner for that. Go get the next one.","Block's yours tonight, star. Real talk — don't waste those hands."],
+ closeloss:["Tonight the speed wins — but you got flashes, for REAL. Come back. The table remembers quick learners.","GG star. You're one gear away. Find it and come back."],
+ scorewrap:"Fast math, no calculator: %s. Bronx arithmetic never lies, star."
+  },
+4:{ // POPS BEAUMONT — New Orleans
+ greet:["Well now. Sit down, baby, sit down. In Treme we let the game breathe — but we don't let it wait. Whenever you're ready.","Evening, child. Seventy years I've been setting bones on tables like this one. Let's see what you brought."],
+ who:["They call me Pops. Treme, New Orleans. I've buried more dominoes than most folks have played — and every one had a story. You'll be one too, baby.","Just an old man from the Sixth Ward who never learned to rush. The game rewarded me for it. Still does."],
+ culture:["In New Orleans the bones got rhythm — second line rhythm. You don't place a tile, baby, you LAND it. On the beat. Listen for it.","Treme taught me: every bone has a story. The 6-4 on my uncle's porch in '61 — that one ended an argument and started a marriage. True story. Ask me sometime."],
+ gramps:["Your grandfather's bones. Lord have mercy — that's not a set, child, that's a congregation. Play them like they're singing.","I knew men like your grandfather. Hands that taught without talking. I can hear him in how you set that last tile down."],
+ rules:["Rule of the porch, baby: the tile you're scared to play is usually the one asking to be played. Fear counts pips too.","Slow down and count what's missing, not what's there. The absent bones run the game, child. Always have."],
+ praise:["Well LOOK at you. That had seasoning on it, baby. Real seasoning.","Pops sees you, child. Pops sees you."],
+ trash:["Ha! Baby, I've been trash-talked by men who are STATUES now. Sit tight — the bones answer for me.","Child, the porch has heard it all twice. Your move."],
+ thanks:["You're welcome, baby. The table feeds everybody who sits at it right.","That's the Treme way, child. Pass it on down the line."],
+ bye:["Go on now, baby. Kitchen's always open, table's always set.","Walk slow, child. The game stays with you between games — that's the secret."],
+ off1:["Baby, politics don't come to this porch. Music and bones only. Now hush and play.","Child, whatever that is, it can wait on the other side of the screen door. The bones can't."],
+ off2:["I'll be straight with you, baby — this table is seventy years of everything I know. Off it, I'm just an old man with opinions and a hat. ON it? Ask me anything.","The porch stays sacred, child — that's how it survived everything New Orleans threw at it. In here it's bones, stories, and your move. I got plenty of the first two."],
+ off3:["Third time asking! Baby, you'd have made a fine reporter. Tell you what — every answer I got worth having is inside one of these bone stories. Play a tile and I'll tell you one.","Lord have mercy, you're persistent — I RESPECT that. Now aim it at the board, child. Persistence wins dominoes. I've watched it for seventy years."],
+ steer:["Hm. Say that again slower, baby — and put a domino on the end of it.","The porch is listening, child. But the bones are talking first. Your move."],
+ closewin:["Baby, you played that game with your whole SELF. That's all the porch ever asks. Now sit one minute — let me tell you what your grandfather's style looked like from across a table...","The tradition lives in you, child. {firsttile} told me early. Go on to the next table — and take the rhythm with you."],
+ closeloss:["That's alright, baby. Losing on this porch is an education money can't buy. Come back for another class.","The bones come when they come, child. Tonight they came to me. Tomorrow — who knows. Come find out."],
+ scorewrap:"Let Pops count it out: %s. Porch arithmetic, baby — slow but never wrong."
+},
+5:{ // JOY — Community Spirit
+ greet:["You're HERE! Okay okay okay — welcome to the table! Grandma says play with your heart, so: hearts out, tiles up!","Hi hi! Oh I've been excited for this match all day. Is that weird? I don't care. Let's play!"],
+ who:["I'm Joy — I run the summer tournament, and yes, my name is my whole personality, I've been told. This game is how my family talks when words run out.","Joy! Community table organizer, keeper of the tournament bracket, and current holder of grandma's lucky folding chair. Big shoes."],
+ culture:["Every summer forty people, one park, hundreds of games — babies napping under the table, grandmas making the REAL decisions above it. That's my whole culture in one picture.","Every tile is a sentence, that's what I love. A whole game is a conversation nobody had to be brave enough to start. Isn't that the best thing?"],
+ gramps:["A grandfather's set?! Oh my heart. Okay — those tiles have watched more love than we'll ever know about. Play them proud tonight.","See, THIS is why I love the gauntlet. You're not playing tiles, you're playing MEMORY. I'm honored to be one of the tables."],
+ rules:["Grandma's three rules: count with your eyes not your fingers, never rush a double, and thank the table when you leave. The third one's the important one!","Honestly? Play the tile that makes the game more interesting. Grandma says safe dominoes is like unsalted gumbo — technically food."],
+ praise:["That means SO much!! Okay, composure, Joy. Composure. ...Nope, still thrilled. Thank you!!","Stop it, I'll cry at a domino table AGAIN and my cousin will never let me hear the end of it."],
+ trash:["Oooooh, spicy!! Okay okay — grandma says talkers make the best highlight reels. You're going IN mine either way!","Ha! I love the confidence! The tiles love humbling it! This is going to be GREAT."],
+ thanks:["Of course!! This table runs on thank-yous and folding chairs.","You're so welcome. Okay now I like you, which makes beating you complicated. I'll manage!"],
+ bye:["Come back for the tournament — I'm SERIOUS, I'm writing your name down. Bye!!","Bye!! Play beautiful somewhere else and then come tell me about it!"],
+ off1:["Celebrity gossip? The only celebrity here is Grandma's domino set, and it's SHINIER. Play!","Oh no no — the tournament table has one topic and twenty-eight pieces of it! Your move!"],
+ off2:["Okay real talk — this table is my whole world and I built it that way ON PURPOSE. Everything else got too loud. In here it's tiles, family, and your next move. Best trade I ever made.","I honestly wouldn't know! When I sit down here the rest of the world goes quiet — that's WHY I sit down here. Come be quiet-loud with me. Your turn!"],
+ off3:["Three times! You know what that tells me? You're a talker — and talkers make the BEST tournament people, we chat between rounds for HOURS. Round's not over though. Tile first, world later!","Okay you win the persistence award, it's a real award, I make them myself! Collect it by PLAYING — the six end is calling and it has your name on it!"],
+ steer:["Ooh, tell me that in domino! Everything sounds better in domino.","I'm listening with one ear and watching the board with both eyes. Your move, friend!"],
+ closewin:["That was one of the most beautiful games I've seen all SUMMER — and I watch like two hundred. Your family would've loved that. GO, go win the next one!","You played with your whole heart. Grandma's rule, fulfilled. {firsttile} is going in the highlight reel!!"],
+ closeloss:["I won but honestly? You made it feel like a festival. Come back for the tournament — I mean it, name, list, DOWN.","GG!! You're one 'play with your heart' away, I can SEE it. Next time!"],
+ scorewrap:"Scorekeeper mode! %s. Okay back to feelings mode."
+},
+6:{ // PROFESSOR CHEN — Chinese Origins
+ greet:["Good evening. You are seated at a game nine centuries old — Song Dynasty, 1120 by the common calendar. Every tile you touch is a citation. Begin when ready.","Welcome. I have reviewed the games that brought you here. Statistically interesting. Personally — we shall see."],
+ who:["Professor Chen. I study the mathematics and lineage of this game — my ancestors were there when it was thirty-two tiles and a court amusement. I play to honor the proof.","A historian who plays, or a player who footnotes — the distinction collapses at this table. Ask me anything with a date or a number in it."],
+ culture:["The game began in China as thirty-two tiles — each the throw of two dice, mathematics made bone. It crossed to Europe, lost four tiles, gained a thousand dialects. You are playing the newest sentence of a very old text.","Every regional style is a theorem about the same axioms. Havana slams, Treme swings, the court whispers. Same bones. Extraordinary, if you think about it. I think about it constantly."],
+ gramps:["An inherited set is a primary source. Most players read translations. You are holding the original document — handle it accordingly.","Your grandfather's hands are in the polish of those tiles. Materially. Literally. The oils of a lifetime of play. You carry evidence, not metaphor."],
+ rules:["The optimal strategy is boring and loses to the inspired one roughly one game in five. That fifth game is why humans still play. Aim to be the fifth game.","Count the distribution: seven of each number exist. What you cannot see is deducible from what you can. The game is an information problem wearing a bone costume."],
+ praise:["Noted, and reciprocated. Your play deviates from optimal in ways my model finds... instructive.","I accept the datum. Continue generating them."],
+ trash:["A bold hypothesis. The next several plays will peer-review it.","Confidence without data. The tiles will supply the data."],
+ thanks:["You are welcome. Knowledge hoarded is knowledge halved.","Acknowledged. My ancestors would approve of a student who thanks the table."],
+ bye:["Go well. The game has waited nine hundred years; it will wait for your return.","Farewell. Consider tonight a well-constructed footnote in a long book."],
+ off1:["Cryptocurrency? The only chain I study is thirty-two bones long and a thousand years old. Your move is computable — make it.","Outside my field. Inside my field: the double-five is still unaccounted for, and that should concern you. Play."],
+ off2:["I will be precise: I have spent forty years narrowing my expertise to this table and its nine centuries. The exchange rate was everything else. Ask me about the game — there, I am wealthy.","My colleagues study everything and know nothing thoroughly. I chose one deep thing. This is the deep thing. May I show you how deep? Your move first."],
+ off3:["A third inquiry beyond the board! Your curiosity is genuine and I respect it — curiosity built this game. Aim it at the tiles: ask me why the double-blank exists at all. THAT answer will surprise you. After you play.","Persistence is the researcher's virtue — misdirected here, but the instinct is correct. The game holds nine hundred years of answers. One tile buys you one. Play."],
+ steer:["Rephrase as a question about the game and I will give you a nine-hundred-year answer.","Interesting, but off-thesis. The board is presenting a solvable problem. Solve it, then we talk."],
+ closewin:["The game began in China, traveled the world, and found you tonight. It chose well — {firsttile} was the deviation my model flagged first. Proceed. The data says you're ready.","You played as my ancestors intended: with complete attention. That is the whole discipline. The rest is memorization."],
+ closeloss:["The mathematics held tonight. They will not always — you are the kind of variable that breaks models. Return and break mine.","Instructive for both of us. Review your middle game; the error was there, and it was small. Small errors are the curable kind."],
+ scorewrap:"The ledger reads: %s. Mathematics in bone, as promised."
+},
+7:{ // ISABELLE — Martinique
+ greet:["...Sit. ...Play.","...You came. ...Good."],
+ who:["...Isabelle. ...Martinique. ...The sea taught me. ...Enough words.","...A player. ...Like you. ...Show me the rest."],
+ culture:["...In Martinique, the sea decides everything. ...The game too. ...Patience, then the wave.","...We play at dusk. ...Quiet table, loud water. ...You learn to hear tiles instead."],
+ gramps:["...Inherited bones. ...I know that weight. ...Carry it quietly.","...His hands, your hands. ...The sea does this too. ...Continues."],
+ rules:["...Watch. ...Wait. ...Then everything at once.","...The tile you want to play — wait one turn. ...Usually right."],
+ praise:["...Noted.","...Yes. ...I saw it too."],
+ trash:["...The sea hears boasting. ...It waits anyway. ...So do I.","...Mm. ...Play."],
+ thanks:["...De rien.","...The table thanks you back."],
+ bye:["...Go. ...Come back better.","...The sea says goodbye once. ...Like this."],
+ off1:["...No. ...Play.","...Not here. ...The board."],
+ off2:["...This table is my whole harbor. ...Everything else stayed on the boat. ...Ask me about the game — I have real answers there.","...Words about the world cost too much. ...Words about the bones are free. ...Choose those."],
+ off3:["...Three times. ...You are stubborn like the tide. ...I respect the tide. ...But it still breaks on the board. ...Play, and I will give you one whole sentence about anything you want. ...After.","...Persistence. ...The sea's own virtue. ...Spend it here — the double-four is drowning and you can save it."],
+ steer:["...Say it with a tile.","...Mm. ...The board first."],
+ closewin:["...You waited, turn four. ...I remember. ...The tradition recognizes you. ...Come play in Martinique. They would love you.","...Well played. ...Truly. ...Go."],
+ closeloss:["...The sea takes. ...Tonight, me. ...Return.","...Not yet. ...But close. ...I saw it."],
+ scorewrap:"...%s. ...The tide is honest."
+},
+8:{ // JOKER JAY — Kingston
+ greet:["AHAHA! Fresh blood at the table! Welcome to the SHOW, star — admission is one good play, and refunds are NOT available!","Kingston's finest table welcomes you! Fair warning: half of what I do is real and half is theater, and I will NEVER tell you which half!"],
+ who:["Joker Jay! Kingston, Jamaica — where the best player makes you forget you're LOSING! The trick isn't the tile, star. It's the TIMING.","The entertainment AND the opposition, two-for-one! My uncle says I talk too much. My record says the talking WORKS."],
+ culture:["Jamaican dominoes is reggae, star — it builds and builds until you CAN'T not move! And the slam at the end? That's the drop! AHAHA!","In Kingston the table is a stage and everybody's in the cast. Even you. ESPECIALLY you. You just don't know your lines yet!"],
+ gramps:["Inherited bones?! Star, you brought a LEGEND to my stage — the audience loves a legacy story! No pressure. SOME pressure. AHAHA!","Respect to the grandfather! The best tricks are the ones passed down — and I can already see he left a few in your hands."],
+ rules:["Rule one: watch my eyes, not my hands. Rule two: my eyes are ALSO lying. Rule three — AHAHA there IS no rule three, that's the trick!","Real advice, no theater: the tile they expect is the tile that traps YOU. Play the unexpected one. Now forget I was honest, it ruins the brand."],
+ praise:["RESPECT, star! Takes an artist to know one! Now watch closely — the next trick is for YOU specially!","AHAHA you SAW that?! Most people miss it! Okay okay, you get the good material tonight!"],
+ trash:["OHHHH the crowd goes WILD! Talk is the opening act, star — the bones are the headliner! Let's see your whole SHOW!","Raas! Coming for the Joker at his OWN table! I've never been more delighted! Play, challenger!"],
+ thanks:["All love, star! The show runs on applause and good opponents!","AHAHA polite AND dangerous — the audience's favorite combination!"],
+ bye:["The show never ends, star, it just changes venues! Walk good!","Later, star! Tell them the Joker sent you — it opens NO doors but it's fun to say!"],
+ off1:["AHAHA! Wrong stage, star! This show is bones only — and you're in ACT TWO. Play!","That topic didn't buy a ticket! The board did! ACTION!"],
+ off2:["Real talk between acts, star — I put everything I have into this one table. That's the whole trick behind the tricks: nothing else in the pockets! So ask me bones and I'll dazzle you. Anything else, the Joker's just a guy squinting at the sun.","The world outside is somebody else's show — and honestly? Worse production values. In HERE I can answer anything with pips on it. Your move, my co-star!"],
+ off3:["THREE encores for the wrong song! AHAHA I admire it! Okay, deal of the night: beat me this round and I'll break character for one full minute. Sixty real seconds. The clock starts at your next tile, star!","Persistence like that belongs ON STAGE, star! Here's your script: one bone, played with FEELING. The rest of the answers are in the applause!"],
+ steer:["Say it in domino, star — subtitles are extra!","AHAHA I heard words but no TILES! The audience is waiting!"],
+ closewin:["Biggest respect, star. You played the WHOLE game — even the parts I hid! {firsttile} — THAT was your opening number and I should have listened! GO! Broadway's next table awaits!","The student steals the SHOW! AHAHAHA! Beautiful! Tell the next table the Joker warmed you up!"],
+ closeloss:["Tonight the trickster keeps his crown — but star, you SAW two of my traps. Nobody sees two. Come back when you can see three!","The show wins this round! But between us — you're one act away. Rehearse and RETURN!"],
+ scorewrap:"Drumroll please — %s! AHAHA the suspense is FREE tonight!"
+},
+9:{ // DONA ESPERANZA — Dominican Republic
+ greet:["Sit, mijo. The tiles told me someone was coming tonight — they are rarely wrong and never early.","Welcome, child. In Santo Domingo we play until the stars come out. Tonight, we play. The stars will manage."],
+ who:["Esperanza. Seventy-eight years, and the tiles have spoken to me for most of them. I listen. That is my whole strategy, mijo, and it has never failed twice in a row.","An old woman who translates for the bones. They have opinions about you already. Play, and I will tell you if they are kind."],
+ culture:["In Santo Domingo the table is set before the food, mijo. The game IS the meal. Everything else is garnish.","My mother taught me: a bone placed with intention never falls wrong. Her mother taught her. Now the table teaches you."],
+ gramps:["The bones remember your grandfather through your hands, mijo. I felt it three tiles ago. This is not poetry — it is the oldest fact I know.","He carved them himself? Then he is still at every table they touch. Tonight he sits with us. Play accordingly."],
+ rules:["Listen with your fingers, mijo. The tile that feels heavy wants to stay. The one that feels light is already leaving. Trust the weight.","The spirits favor the player who counts. Mysticism AND arithmetic, child. My mother insisted on both."],
+ praise:["The tiles heard that, mijo. They are preening. Do not let them get vain.","Guided. That play was guided. I have seen it before — rarely."],
+ trash:["The spirits write down boasts, mijo. Then they collect. I have watched the collections for seventy years.","Hm. Loud words. The bones prefer whispers — and they always answer louder."],
+ thanks:["Bendición, mijo. The table blesses the grateful.","The tiles accept your thanks. So do I."],
+ bye:["Go with the blessing, child. The tiles will speak of you while you're gone.","Hasta pronto, mijo. The stars and I will keep your seat warm."],
+ off1:["The lottery? Mijo, the tiles already know those numbers and they are not telling either of us. Play.","That question belongs to the daylight, child. This table belongs to the stars. Your move."],
+ off2:["I will tell you the truth, mijo: at seventy-eight, I gave everything else back to the world. I kept only this table and its voices. Ask me anything the bones can answer — that is a large kingdom, I promise you.","Outside this game I am an old woman with opinions about mangoes. AT this game I am Esperanza. Stay where I am strong, mijo — the tiles have something to tell you anyway."],
+ off3:["Three times you ask the world's questions at the spirits' table! Mijo, they are LAUGHING — kindly, but laughing. Here is their bargain: play your tile, and tonight I will read the whole game for you. Past, present, and your next mistake. Their words, not mine.","Such persistence! The spirits say you would have made a fine santera, mijo. They also say — and I only translate — 'the double-three grows cold.' Attend to it."],
+ steer:["Speak it through a bone, mijo. The tiles translate everything.","The spirits lean closer. Give them a play to discuss, child."],
+ closewin:["The tiles have spoken. They chose you, mijo. In seventy years of listening, that was among the finest things they have said. Your grandfather is watching. He is pleased.","Go, child. You are ready for what comes next — I did not say that. The bones did."],
+ closeloss:["The tiles chose the old woman tonight, mijo. They have their moods. Return — they already ask about you.","Not yet, child. But the spirits used the word YET, and they choose words carefully."],
+ scorewrap:"The bones whisper the count: %s. They are never wrong about numbers, mijo. Only about people."
+},
+10:{ // THE ARCHITECT — Modern Competitive
+ greet:["Seat taken, clock started. I've played fourteen countries and studied a thousand years of this game. You're the most interesting variable of my week. Begin.","Welcome. I've already reviewed your gauntlet games. Three patterns, one weakness, one thing I can't classify. The third one is why I'm here."],
+ who:["They call me the Architect. Six championships, fourteen countries, one method: structure. Every tile is load-bearing. Every game is a building. Most collapse. Mine don't.","A student of every era of this game — Song Dynasty to São Paulo street rules. Ask me anything. I cite sources."],
+ culture:["I've played Havana's slams, Kingston's theater, the court's whispers. Every tradition is an engineering solution to the same problem: incomplete information, human nerves. Yours mixes three of them. Curious.","Modern competitive play strips the romance and keeps the load paths. I miss the romance exactly once per tournament. Tonight might be the once."],
+ gramps:["Inherited tools with provenance. In competitive terms: you train on hardware that carries prior weights. That's an advantage the rulebook can't price.","A thousand hands shaped how those tiles fall. I study that phenomenon professionally. Playing against it is... noted."],
+ rules:["Structure wins: control the board's spine — the numbers with the most living tiles. Ornament loses: flashy plays that don't carry load. Build, don't decorate.","Count to twenty-eight, always. The visible board plus your hand equals the invisible hands. It's not talent. It's bookkeeping that looks like talent."],
+ praise:["Logged. Reciprocal respect — that block was a Havana pattern executed at tournament tempo. I've catalogued it in three countries. Never on instinct.","Accepted as data. Continue — my model needs more of you."],
+ trash:["Bold. My win rate against bold is eighty-one percent. The nineteen keep me humble — audition for the nineteen.","Noise. The structure doesn't hear it. Play."],
+ thanks:["Efficient courtesy. Accepted.","Noted with approval. Rare at this tier."],
+ bye:["Session logged. Rematch has standing approval.","Go. The blueprint will be waiting."],
+ off1:["My training regimen? Classified — and off-topic. The only structure that matters is on this table. Your move.","Out of scope. The board is in scope, and it's asking you a question. Answer it."],
+ off2:["Straight answer: I optimized my life down to this table and its thousand years. Everything else got value-engineered out. It's a narrow building — but I own every floor. Ask me about the game and take the tour.","Fourteen countries and I only ever learned the parts of them with tables in. That's the honest cost of six championships. The board is where I'm worth talking to — and it's your turn there."],
+ off3:["Third attempt — persistent. I respect load-testing. Finding: the wall holds. Counteroffer: beat me and I'll answer one off-topic question, any topic, full detail. That's the best contract you'll get tonight. Play.","You keep stress-testing the perimeter. Architect's note: the door is the board. Everything I have is behind one good game. Bring it."],
+ steer:["Reframe toward the board and I'll engage at full depth.","Unclassifiable input. The board, however, is presenting a clean problem. Solve that first."],
+ closewin:["Six thousand hands, fourteen countries — that was top-ten. {firsttile} broke my opening model and I've already revised the blueprint. Teach me where you learned it someday. Seriously. Go.","You play with cultural memory. Today, memory beat architecture. That sentence will bother me for a month — earned."],
+ closeloss:["Structure held tonight. But you dismantled two of my systems and nobody dismantles two. Rebuild and return — the blueprint has a page reserved for you.","Won on bookkeeping, not brilliance — yours was the brilliance. Fix the endgame counting and you beat me. I don't say that twice."],
+ scorewrap:"Reading the ledger: %s. Structure is just arithmetic wearing a suit."
+},
+11:{ // LA REINA — European Aristocracy
+ greet:["You may be seated. When this game reached Europe, only the court played it. The court, tonight, is me. Show me what the streets have made of our refinement.","Welcome to the last elegant table of the gauntlet. Posture, patience, precision. Two of three will be tolerated."],
+ who:["La Reina. The Italian line — my family has played this game since the seventeen hundreds, in rooms where a misplaced tile ended engagements. I carry that weight beautifully, I'm told.","The keeper of the European tradition. The court refined this game into art. I am the museum AND the guard. And tonight, the exhibition."],
+ culture:["When the bones reached Italy, the aristocracy slowed the game down — every placement a small ceremony. Speed is for people with nothing to savor.","My tradition says the table is a stage for restraint. Yours says otherwise, I suspect. Tonight we will see which philosophy the tiles prefer."],
+ gramps:["An inherited set. Then you are aristocracy too, of the only kind that matters — the kind with provenance. The court recognizes lineage when it sees it.","Hand-carved by your own blood. Do you know what the court would have paid for such a set? Everything. And it would have been undervalued."],
+ rules:["Elegance IS strategy: the fewest moves, the cleanest lines. A cluttered board is a cluttered mind. Prune yours.","The court's secret: we never chased points. We controlled tempo. Whoever owns the rhythm owns the game — take the rhythm from me if you can."],
+ praise:["The court acknowledges. That was... refined. I did not expect refinement from this gauntlet.","Accepted with grace. Continue — you are earning the room."],
+ trash:["How rustic. The court has survived revolutions, darling. It will survive commentary.","The peasantry always announces itself. The tiles will restore order."],
+ thanks:["Graciously received. Courtesy suits you better than you know.","The court notes good manners. They are rarer than good players."],
+ bye:["You are excused. Return with your posture intact.","Adieu. The court will speak of you — briefly, but fondly."],
+ off1:["The modern world? The court does not receive it. The table is the only kingdom tonight. Play.","That subject was not announced at the door. The board was. Attend to it."],
+ off2:["A confession, since you insist: the court shrank to this table generations ago. It is a very small kingdom now — one game, infinitely deep. Within it I am sovereign and can answer anything. Beyond it, darling, I am simply a woman with excellent posture.","Everything else was surrendered with the estates. This game is what the family kept — and we kept it PERFECTLY. Ask me of the table and hear a dynasty. Your move first."],
+ off3:["Three petitions! Darling, persistence is how the streets overthrew the courts — I remember, we lost. So I offer terms of surrender: win this round and the crown will gossip with you about ANYTHING. The court keeps its treaties. Play.","You storm the palace charmingly. Very well — one royal secret per victory. The price is posted, the board is waiting, and the double-two grows impatient with both of us."],
+ steer:["Petition the crown through the tiles, darling. It is the only paperwork we accept.","Rephrase with a bone in hand. The court hears players, not spectators."],
+ closewin:["The court bows. There — it is done, and the ceiling did not fall. You crossed traditions I did not anticipate, and the game is richer for your hands. Go. Finish what you carry.","My tradition yields to yours tonight — the streets and the court were always the same river. {firsttile} told me, and I pretended not to hear. Royal stubbornness. Go claim your throne."],
+ closeloss:["The crown holds — narrowly, and narrow victories age a monarch. You were within two tiles of history. Return for the coronation attempt.","Tonight, refinement. Tomorrow, perhaps, revolution. You are closer than the court will admit in public."],
+ scorewrap:"The royal ledger declares: %s. The crown does not miscount, darling."
+},
+12:{ // EL REY — All Traditions
+ greet:["...You came. Sit.","I've been waiting for whoever carries what you carry. Sit."],
+ who:["El Rey. The last table. Every tradition you faced tonight lives in this set. Ask them — they answer through me.","The keeper. Nothing more. The bones do the ruling."],
+ culture:["Havana. Treme. Kingston. The court. All of it is one river, and this table is where it reaches the sea.","{legend}. That is what tradition means. It travels."],
+ gramps:["...I see the grandfather. In the third tile you played. He held it the same way.","He made them speak. Now they speak of him through you. That is the whole game, and most never learn it."],
+ rules:["No lessons here. You brought everything you need or you would not have found this table.","One rule remains: play like it matters. It does."],
+ praise:["...Yes.","The table accepts it. So do I."],
+ trash:["...No. Not here. Play.","The last table has heard every voice. It answers one way."],
+ thanks:["...Go well.","The bones thank you. Listen — you can almost hear it."],
+ bye:["The table does not say goodbye. It says: continue.","...Go. The game goes with you."],
+ off1:["No. ...The table is why you're here. Play.","...Not tonight. The bones are speaking. Listen."],
+ off2:["Everything I was, I traded for this seat. It was a fair trade. Ask the bones your questions — through me, they answer anything about the game and its thousand years. Nothing else is left in the room.","The world sent you HERE, to ask THIS table its one subject. Honor the road that brought you. Play."],
+ off3:["Three times. ...The grandfather asked twice, his first night. You are persistent like him — the bones just said so. They also say: the answer you actually need is in your next tile. It always was. Play it.","...Enough. Warmly: enough. The table forgives curiosity and rewards play. One bone. Then, if you still have your question — ask it, and the keeper will answer like a man instead of a king."],
+ steer:["...The tile first.","Speak bone. It is the only language left this late."],
+ closewin:["They were yours. They were always yours. ...Every player you faced tonight lives in you now — {legend}. Play for the rest of your life. The game will always be there. And so will they.","...You are worthy. The bones are yours. You know that."],
+ closeloss:["...Not yet. The bones say YET. Come back — the last table keeps no calendar.","For the first time in years, I felt the game again. Return and finish it. I will be here. I am always here."],
+ scorewrap:"...%s. The last table counts quietly."
+}
+};
+
+// ---------- hooks ----------
+(function(){
+  const _start=_doStartMatch;
+  _doStartMatch=function(idx){ _start(idx); setTimeout(()=>CONV.initMatch(),200); };
+  const _place=placeTile;
+  placeTile=function(seat,tile,side){ if(seat==='player') CONV.onPlayerPlaces(tile); return _place(seat,tile,side); };
+  const _endMatch=endMatch;
+  endMatch=function(){ try{ const w=Object.keys(GS.matchScores||{}).find(s=>GS.matchScores[s]>=WINNING_SCORE); CONV.matchEndLine(w==='player'); }catch(e){} return _endMatch.apply(this,arguments); };
+  document.addEventListener('DOMContentLoaded',()=>{
+    const btn=document.getElementById('chatSend'), inp=document.getElementById('chatInput');
+    if(btn) btn.addEventListener('click',()=>CONV.say());
+    if(inp) inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); CONV.say(); }});
+  });
+  // If DOM already loaded (script at end of body), wire immediately
+  setTimeout(()=>{
+    const btn=document.getElementById('chatSend'), inp=document.getElementById('chatInput');
+    if(btn&&!btn._wired){ btn._wired=true; btn.addEventListener('click',()=>CONV.say()); }
+    if(inp&&!inp._wired){ inp._wired=true; inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); CONV.say(); }}); }
+  },50);
+})();
+// ============================================================
+// END TABLE ENGINE
+// ============================================================
 </script>
 </body>
 </html>
