@@ -325,7 +325,7 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
     <div class="story-beat" id="storyBeat"></div>
     <div class="story-dots" id="storyDots"></div>
   </div>
-  <div class="story-skip" onclick="skipStory()">TAP TO SKIP →</div>
+  <div class="story-skip" id="storyGoBtn" onclick="advanceStoryBeat()">GO ▸</div>
 </div>
 
 <!-- ===== GAUNTLET MAP ===== -->
@@ -462,54 +462,54 @@ const STORY_SCENES = [
     id:'opening',
     title:'THE BONES',
     beats:[
-      {text:"Your grandfather's domino set sits on the table.\n\nHe carved each piece by hand.\nBone. Real bone.\n\nHe called them 'the bones' because that's what they were —\nthe bones of the game,\nthe bones of the family,\nthe bones of something older than memory.", pause:5000},
-      {text:"He's gone now.\n\nThe table is empty.\nBut people still come to play where he sat.\n\nAubuelo Sal has kept the corner warm.\nHe says he's just keeping it until someone worthy arrives.", pause:4500},
-      {text:"Tonight, you pick up the bones.\n\nThey fit in your hands exactly as he said they would.\n\n'They remember everything,' he told you once.\n'Make them speak.'", pause:4500}
+      {text:"Your grandfather's domino set sits on the table.\n\nHe carved each piece by hand.\nBone. Real bone.\n\nHe called them 'the bones' because that's what they were —\nthe bones of the game,\nthe bones of the family,\nthe bones of something older than memory.", pause:25000},
+      {text:"He's gone now.\n\nThe table is empty.\nBut people still come to play where he sat.\n\nAubuelo Sal has kept the corner warm.\nHe says he's just keeping it until someone worthy arrives.", pause:23750},
+      {text:"Tonight, you pick up the bones.\n\nThey fit in your hands exactly as he said they would.\n\n'They remember everything,' he told you once.\n'Make them speak.'", pause:23750}
     ]
   },
   {
     id:'after_match2',
     title:'WHAT YOU CARRY',
     beats:[
-      {text:"Mia walks with you to the edge of the park.\n\n'My grandmother calls every Sunday,' she says,\n'to ask how the games are going.'\n\nShe pauses.\n\n'Does yours?'", pause:4500},
-      {text:"You want to say yes.\n\nYou don't.", pause:3000},
-      {text:"She doesn't press it.\nShe just nods, like she already knew.\n\n'The tiles know,' she says quietly.\n\n'They always know who's sitting behind them.'", pause:4500}
+      {text:"Mia walks with you to the edge of the park.\n\n'My grandmother calls every Sunday,' she says,\n'to ask how the games are going.'\n\nShe pauses.\n\n'Does yours?'", pause:23750},
+      {text:"You want to say yes.\n\nYou don't.", pause:20000},
+      {text:"She doesn't press it.\nShe just nods, like she already knew.\n\n'The tiles know,' she says quietly.\n\n'They always know who's sitting behind them.'", pause:23750}
     ]
   },
   {
     id:'after_match4',
     title:'WHAT POPS KNOWS',
     beats:[
-      {text:"Pops Beaumont lingers after the game.\nHe doesn't rush.", pause:3000},
-      {text:"'Your grandfather used to lose on purpose sometimes,' he says.\n'To give younger players confidence.\nI saw it. He knew I saw it.\nHe just smiled.'", pause:5000},
-      {text:"You hold the tiles.\n\nThey feel heavier than before.", pause:3500}
+      {text:"Pops Beaumont lingers after the game.\nHe doesn't rush.", pause:20000},
+      {text:"'Your grandfather used to lose on purpose sometimes,' he says.\n'To give younger players confidence.\nI saw it. He knew I saw it.\nHe just smiled.'", pause:25000},
+      {text:"You hold the tiles.\n\nThey feel heavier than before.", pause:21250}
     ]
   },
   {
     id:'after_match6',
     title:'ORIGINS',
     beats:[
-      {text:"Professor Chen shows you a photograph on his phone.\n\nA painting — Chinese domino tiles from the Song Dynasty.\n1120 AD.\n\n'This,' he says, 'is where we all began.'", pause:4500},
-      {text:"The same pips.\nThe same grid.\n\nA thousand years of hands between then and now.\nYou are one of those hands.", pause:4000},
-      {text:"The game traveled from China to Italy.\nFrom Italy to France.\nFrom Europe to Cuba, Puerto Rico, New Orleans.\nTo this park.\nTo your grandfather.\n\nTo you.", pause:5000}
+      {text:"Professor Chen shows you a photograph on his phone.\n\nA painting — Chinese domino tiles from the Song Dynasty.\n1120 AD.\n\n'This,' he says, 'is where we all began.'", pause:23750},
+      {text:"The same pips.\nThe same grid.\n\nA thousand years of hands between then and now.\nYou are one of those hands.", pause:22500},
+      {text:"The game traveled from China to Italy.\nFrom Italy to France.\nFrom Europe to Cuba, Puerto Rico, New Orleans.\nTo this park.\nTo your grandfather.\n\nTo you.", pause:25000}
     ]
   },
   {
     id:'after_match8',
     title:'WHAT JAY SEES',
     beats:[
-      {text:"Joker Jay puts a hand on your shoulder.\n\n'You know what I've noticed?' he says.\n'You play like you're afraid of something.'", pause:4000},
-      {text:"'Most people play afraid to lose.\nYou play afraid to be... wrong.\nAfraid to dishonor something.'\n\nHe grins.", pause:4500},
-      {text:"'That's not fear,' he says.\n\n'That's respect.\n\nBig difference.\n\nKeep it.'", pause:4000}
+      {text:"Joker Jay puts a hand on your shoulder.\n\n'You know what I've noticed?' he says.\n'You play like you're afraid of something.'", pause:22500},
+      {text:"'Most people play afraid to lose.\nYou play afraid to be... wrong.\nAfraid to dishonor something.'\n\nHe grins.", pause:23750},
+      {text:"'That's not fear,' he says.\n\n'That's respect.\n\nBig difference.\n\nKeep it.'", pause:22500}
     ]
   },
   {
     id:'before_final',
     title:'EL REY',
     beats:[
-      {text:"El Rey is already sitting when you arrive.\n\nHe doesn't look up.\nThe tiles are already shuffled.\n\nHe's been waiting a long time.", pause:4500},
-      {text:"'I knew your grandfather,' he says.\n\nYour hands go still.\n\n'He was the finest player I ever faced.'\n\nA pause.\n\n'Until tonight, maybe.'", pause:5500},
-      {text:"You sit down.\n\nThe bones are in your hands.\nEvery tradition you've faced is watching.\n\nPlay.", pause:4000}
+      {text:"El Rey is already sitting when you arrive.\n\nHe doesn't look up.\nThe tiles are already shuffled.\n\nHe's been waiting a long time.", pause:23750},
+      {text:"'I knew your grandfather,' he says.\n\nYour hands go still.\n\n'He was the finest player I ever faced.'\n\nA pause.\n\n'Until tonight, maybe.'", pause:26250},
+      {text:"You sit down.\n\nThe bones are in your hands.\nEvery tradition you've faced is watching.\n\nPlay.", pause:22500}
     ]
   }
 ];
@@ -961,9 +961,9 @@ function endMatch(winner){
 
 // Inline ending story (shown after El Rey is defeated)
 const ENDING_BEATS = [
-  {text:"El Rey looks at the last tile on the table.\nThen at you.\n\nHe doesn't look defeated.\nHe looks relieved.", pause:4500},
-  {text:"He places the double-six between you.\nSets it down slowly, carefully.\nLike something sacred.\n\n'They're yours now,' he says.\n'They were always yours.'", pause:5000},
-  {text:"You understand.\n\nYou were never competing for a title.\n\nYou were completing a chain.\n\nA thousand years long.\n\nYour grandfather's hands.\nHis father's. His father's father's.\nAll the way back.\nAll the way forward.\n\nThe bones remember everything.", pause:7000}
+  {text:"El Rey looks at the last tile on the table.\nThen at you.\n\nHe doesn't look defeated.\nHe looks relieved.", pause:23750},
+  {text:"He places the double-six between you.\nSets it down slowly, carefully.\nLike something sacred.\n\n'They're yours now,' he says.\n'They were always yours.'", pause:25000},
+  {text:"You understand.\n\nYou were never competing for a title.\n\nYou were completing a chain.\n\nA thousand years long.\n\nYour grandfather's hands.\nHis father's. His father's father's.\nAll the way back.\nAll the way forward.\n\nThe bones remember everything.", pause:30000}
 ];
 
 function showStoryScene(sceneId,callback){
@@ -986,7 +986,21 @@ function _runBeats(beats,title,callback){
   // Build dots
   dotsEl.innerHTML=beats.map((_,i)=>`<div class="story-dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
   showScreen('story');
-  let beatIdx=0;let storyTimeout=null;let skipped=false;
+  let beatIdx=0;let storyTimeout=null;let skipped=false;let beatLocked=true;
+  // GO button: only allowed to advance the CURRENT beat once it's actually
+  // on screen (beatLocked=false). Pressing it early does nothing — the line
+  // still gets its full read time. Pressing it while a line is showing
+  // immediately advances to the next one, instead of waiting out the full
+  // 20-30s auto-advance window.
+  window._advanceStoryBeat=()=>{
+    if(skipped||beatLocked) return;
+    if(storyTimeout){clearTimeout(storyTimeout);storyTimeout=null;}
+    beatEl.classList.remove('visible');
+    beatLocked=true;
+    setTimeout(()=>{beatIdx++;nextBeat();},400);
+  };
+  // Long-press / double-tap style full skip retained for emergencies,
+  // reachable via window._skipStory if ever wired to a separate control.
   window._skipStory=()=>{
     skipped=true;if(storyTimeout)clearTimeout(storyTimeout);
     if(callback)callback();
@@ -997,10 +1011,14 @@ function _runBeats(beats,title,callback){
     // Update dots
     document.querySelectorAll('.story-dot').forEach((d,i)=>d.classList.toggle('active',i===beatIdx));
     beatEl.classList.remove('visible');
+    beatLocked=true;
     setTimeout(()=>{
       beatEl.textContent=beats[beatIdx].text;
       beatEl.classList.add('visible');
+      beatLocked=false; // GO button now live for this beat
       storyTimeout=setTimeout(()=>{
+        if(skipped||beatLocked) return;
+        beatLocked=true;
         beatEl.classList.remove('visible');
         setTimeout(()=>{beatIdx++;nextBeat();},600);
       },beats[beatIdx].pause);
@@ -1010,6 +1028,7 @@ function _runBeats(beats,title,callback){
 }
 
 function skipStory(){if(window._skipStory)window._skipStory();}
+function advanceStoryBeat(){if(window._advanceStoryBeat)window._advanceStoryBeat();}
 
 // ============================================================
 // BONE LORE SYSTEM
