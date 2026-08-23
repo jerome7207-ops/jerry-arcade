@@ -849,26 +849,120 @@ function getOppForSeat(seat){
   if(seat==='ai3') return GS.ai3Opp;
   return null;
 }
+// ------------------------------------------------------------
+// Real-strategy tile/side selection. Replaces the old 3-tier
+// system (which only ever compared total pips, with a 30% coin
+// flip for tier3) with a graduated ladder that actually reasons
+// about the board:
+//   - shed:      base heuristic -- prefer unloading heavier tiles
+//   - doubles:   doubles only match one number, so get rid of
+//                them early before they become stuck in hand
+//   - flex:      prefer leaving an open end you still hold more
+//                tiles for, so you keep controlling the board
+//   - scarcity:  count how many copies of a pip value are still
+//                unseen (not in this hand, not on the train) --
+//                leaving a scarce end is harder for opponents to
+//                answer, forcing them to draw or pass
+//   - blocking:  when it sees another seat's hand is down to 3
+//                or fewer tiles, it leans hard into scarcity
+//                specifically to try to deny that seat a play
+// Skill scales with an opponent's position (id) in the 12-face
+// gauntlet, so opponent 1 barely plays on purpose and opponent 12
+// (El Rey) plays every one of these levers with zero blunders.
+function domSkill(opp){
+  const id=(opp&&opp.id)||1;
+  if(id<=2)   return {blunder:0.55,doubles:false,flex:false,scarcity:false,blocking:false,mult:1.0};
+  if(id<=4)   return {blunder:0.30,doubles:true, flex:false,scarcity:false,blocking:false,mult:1.0};
+  if(id<=7)   return {blunder:0.15,doubles:true, flex:true, scarcity:false,blocking:false,mult:1.0};
+  if(id<=9)   return {blunder:0.06,doubles:true, flex:true, scarcity:true, blocking:false,mult:1.2};
+  if(id===10) return {blunder:0.02,doubles:true, flex:true, scarcity:true, blocking:true, mult:1.4};
+  if(id===11) return {blunder:0.0, doubles:true, flex:true, scarcity:true, blocking:true, mult:1.7};
+  return        {blunder:0.0, doubles:true, flex:true, scarcity:true, blocking:true, mult:2.0}; // El Rey, id 12
+}
+// How many tiles touching pip value v are still unseen -- not in this
+// hand, not already placed on the train. Each value 0-6 starts at 7
+// possible tiles in a double-six set (double-counts a double's own
+// value only once, since a double only removes one tile from the pool).
+function unseenCount(v,hand,train){
+  let seen=0;
+  for(const t of hand){ if(t.high===v)seen++; if(t.low===v&&t.low!==t.high)seen++; }
+  for(const t of train){ if(t.high===v)seen++; if(t.low===v&&t.low!==t.high)seen++; }
+  return Math.max(0,7-seen);
+}
+// Pure (no side-effect) mirror of placeTile()'s end-update logic, used to
+// score candidate moves before one is actually committed.
+function simulateEnds(tile,side){
+  if(GS.train.length===0){
+    return tile.high===tile.low?{left:tile.high,right:tile.high}:{left:tile.low,right:tile.high};
+  }
+  if(side==='left'){
+    const newLeft=tile.high===GS.trainLeft?tile.low:tile.high;
+    return {left:newLeft,right:GS.trainRight};
+  }
+  const newRight=tile.low===GS.trainRight?tile.high:tile.low;
+  return {left:GS.trainLeft,right:newRight};
+}
+// Every legal (tile, side) combination this seat could play right now.
+// A tile that matches both open ends yields two distinct candidates,
+// since which side it's played on can matter strategically.
+function enumerateMoves(hand,left,right){
+  const moves=[];
+  for(const t of hand){
+    if(GS.train.length===0){ moves.push({tile:t,side:'right'}); continue; }
+    if(t.high===left||t.low===left) moves.push({tile:t,side:'left'});
+    if(t.high===right||t.low===right) moves.push({tile:t,side:'right'});
+  }
+  return moves;
+}
+function scoreMove(move,seat,hand,skill){
+  const {tile,side}=move;
+  const ends=simulateEnds(tile,side);
+  const openEnd=side==='left'?ends.left:ends.right;
+  const restOfHand=hand.filter(t=>t.id!==tile.id);
+  let score=tile.high+tile.low; // shed weight off the hand
+  if(skill.doubles&&tile.high===tile.low) score+=4;
+  if(skill.flex){
+    const ownMatches=restOfHand.filter(t=>t.high===openEnd||t.low===openEnd).length;
+    score+=ownMatches*2.5*skill.mult; // keep the board playable for yourself next turn
+  }
+  if(skill.scarcity){
+    let weight=1.1*skill.mult;
+    if(skill.blocking){
+      const shortestOther=Math.min(...['player','ai1','ai2','ai3'].filter(s=>s!==seat).map(s=>GS.hands[s].length));
+      if(shortestOther<=4) weight=2.6*skill.mult; // someone's getting close to winning -- try to deny them a response
+    }
+    score-=unseenCount(openEnd,hand,GS.train)*weight;
+  }
+  return score;
+}
+function aiChooseTileAndSide(seat){
+  const opp=getOppForSeat(seat),skill=domSkill(opp);
+  const hand=GS.hands[seat];
+  const moves=enumerateMoves(hand,GS.trainLeft,GS.trainRight);
+  if(!moves.length) return null;
+  // Endgame override: with a very short hand, second-guessing the board
+  // stops mattering -- just take the fastest route to going out.
+  if(hand.length<=2){
+    let best=moves[0],bestPips=-1;
+    for(const m of moves){ const p=m.tile.high+m.tile.low; if(p>bestPips){bestPips=p;best=m;} }
+    return best;
+  }
+  if(Math.random()<skill.blunder) return moves[Math.floor(Math.random()*moves.length)];
+  let best=moves[0],bestScore=-Infinity;
+  for(const m of moves){ const s=scoreMove(m,seat,hand,skill); if(s>bestScore){bestScore=s;best=m;} }
+  return best;
+}
+const _aiPick={};
 function aiChooseTile(seat){
-  const opp=getOppForSeat(seat);const tier=opp?opp.tier:1;
   const playable=getPlayableTiles(GS.hands[seat],GS.trainLeft,GS.trainRight);
   if(playable.length===0) return null;
-  if(tier===1) return tier1Choice(playable);
-  if(tier===2) return tier2Choice(playable,GS.hands[seat]);
-  return tier3Choice(playable,GS.hands[seat],seat);
-}
-function tier1Choice(playable){return playable.reduce((b,t)=>((t.high+t.low)>(b.high+b.low)?t:b),playable[0]);}
-function tier2Choice(playable,hand){
-  const doubles=playable.filter(t=>t.high===t.low);
-  if(doubles.length>0){const bd=doubles.reduce((b,t)=>t.high>b.high?t:b,doubles[0]);if(bd.high>=4)return bd;}
-  return tier1Choice(playable);
-}
-function tier3Choice(playable,hand,seat){
-  const t2=tier2Choice(playable,hand);
-  if(Math.random()>0.3) return t2;
-  return playable.reduce((b,t)=>t.low<b.low?t:b,playable[0]);
+  const pick=aiChooseTileAndSide(seat);
+  _aiPick[seat]=pick;
+  return pick?pick.tile:null;
 }
 function aiChooseSide(seat,tile){
+  const cached=_aiPick[seat];
+  if(cached&&cached.tile&&cached.tile.id===tile.id) return cached.side;
   if(GS.train.length===0) return 'right';
   if(tile.high===GS.trainLeft&&tile.low===GS.trainRight) return Math.random()>0.5?'left':'right';
   if(tile.high===GS.trainLeft||tile.low===GS.trainLeft) return 'left';
@@ -1373,9 +1467,19 @@ function _doStartMatch(opponentIdx){
   GS.currentOpponentIdx=opponentIdx;
   const mainOpp=OPPONENTS[opponentIdx];
   GS.ai1Opp=mainOpp;
-  const others=OPPONENTS.filter(o=>o.id!==mainOpp.id&&o.id<=mainOpp.id);
-  GS.ai2Opp=others[Math.max(0,others.length-1)]||OPPONENTS[0];
-  GS.ai3Opp=others[Math.max(0,others.length-2)]||OPPONENTS[0];
+  // Seat the other two AI chairs with two DISTINCT faces from the roster,
+  // chosen to be ADJACENT in difficulty to the main opponent (clamped, not
+  // wrapped) so every table's overall strength actually matches its rung on
+  // the ladder -- e.g. El Rey's table shouldn't get diluted by pairing him
+  // with Abuelo Sal just because the roster wraps around.
+  // (Previously this filtered for `id<=mainOpp.id`, which is an empty set
+  // for the very first one or two opponents and fell back to OPPONENTS[0]
+  // for BOTH seats -- so the first match's table showed three copies of
+  // Abuelo Sal.)
+  const n=OPPONENTS.length;
+  const prevIdx=opponentIdx-1, nextIdx=opponentIdx+1;
+  GS.ai2Opp = prevIdx>=0 ? OPPONENTS[prevIdx] : OPPONENTS[Math.min(n-1,opponentIdx+2)];
+  GS.ai3Opp = nextIdx<=n-1 ? OPPONENTS[nextIdx] : OPPONENTS[Math.max(0,opponentIdx-2)];
   GS.matchScores={player:0,ai1:0,ai2:0,ai3:0};
   GS.roundNumber=1;GS.matchActive=true;
   showScreen('game');
