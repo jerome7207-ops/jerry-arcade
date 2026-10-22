@@ -1,0 +1,8 @@
+{
+  "name": "gauntlet-table-chat",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": { "start": "node table-chat-server.mjs" },
+  "engines": { "node": ">=20.10" }
+}

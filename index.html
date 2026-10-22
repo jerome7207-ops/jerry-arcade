@@ -87,6 +87,7 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 .char-avatar{font-size:40px;margin-bottom:6px;}
 .char-name{font-size:12px;color:var(--text);font-weight:bold;margin-bottom:2px;}
 .char-tag{font-size:9px;color:var(--text2);letter-spacing:1px;}
+.char-bio{font-size:9px;color:#9a917a;line-height:1.35;margin-top:6px;font-style:italic;}
 .btn-continue{padding:13px 44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#0a0a0f;border:none;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;letter-spacing:2px;transition:all 0.2s;display:block;margin:0 auto;}
 .btn-continue:disabled{opacity:0.3;cursor:not-allowed;}
 .btn-continue:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 6px 20px #c9a84c44;}
@@ -228,6 +229,9 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 .lore-label{font-size:8px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
 .lore-title{font-size:12px;color:var(--accent2);font-weight:bold;margin-bottom:4px;}
 .lore-text{font-size:11px;color:var(--text2);line-height:1.5;}
+.lore-continue{margin-top:8px;padding:6px 18px;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:6px;font-size:10px;letter-spacing:2px;cursor:pointer;}
+.lore-continue:hover{background:var(--accent);color:#0a0a0f;}
+#boneLorePopup{pointer-events:auto;}
 
 /* Animations */
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -419,6 +423,7 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
   <div class="lore-label">🦴 BONE LORE</div>
   <div class="lore-title" id="loreTitleEl"></div>
   <div class="lore-text" id="loreTextEl"></div>
+  <button class="lore-continue" id="loreContinueBtn" onclick="dismissBoneLore()">CONTINUE ▸</button>
 </div>
 
 <script>
@@ -427,6 +432,9 @@ body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-heig
 // ============================================================
 const VALID_CODES = new Set(['1TURKEY2CHICKEN3','1CHUNKY2CHICKEN3','1FUNKY2MONKEY3','1JAZZY2PICKLE3','1LUCKY2NOODLE3','1ROCKY2TACO3']);
 const GUMROAD_URL = 'https://popcornwhisper.gumroad.com/l/v2chess';
+// LIVE AI CHAT: set this to your table-chat endpoint (see table-chat-server.mjs).
+// Leave empty and every character answers from the scripted family-history engine.
+const TABLE_AI_URL = '';
 const WINNING_SCORE = 150;
 const AI_THINK_MIN = 900;
 const AI_THINK_MAX = 1700;
@@ -465,7 +473,7 @@ const STORY_SCENES = [
     title:'THE BONES',
     beats:[
       {text:"Your grandfather's domino set sits on the table.\n\nHe carved each piece by hand.\nBone. Real bone.\n\nHe called them 'the bones' because that's what they were —\nthe bones of the game,\nthe bones of the family,\nthe bones of something older than memory.", pause:21000},
-      {text:"He's gone now.\n\nThe table is empty.\nBut people still come to play where he sat.\n\nAubuelo Sal has kept the corner warm.\nHe says he's just keeping it until someone worthy arrives.", pause:21000},
+      {text:"He's gone now.\n\nThe table is empty.\nBut people still come to play where he sat.\n\nAbuelo Sal has kept the corner warm.\nHe says he's just keeping it until someone worthy arrives.", pause:21000},
       {text:"Tonight, you pick up the bones.\n\nThey fit in your hands exactly as he said they would.\n\n'They remember everything,' he told you once.\n'Make them speak.'", pause:21000}
     ]
   },
@@ -520,12 +528,24 @@ const STORY_SCENES = [
 // PLAYER CHARACTERS
 // ============================================================
 const CHARACTERS = [
-  {id:'marcus',name:'Marcus',avatar:'🧢',tag:'THE INHERITOR',gender:'male'},
-  {id:'darius',name:'Darius',avatar:'🎩',tag:'THE VETERAN',gender:'male'},
-  {id:'alejandro',name:'Alejandro',avatar:'📖',tag:'THE SCHOLAR',gender:'male'},
-  {id:'jade',name:'Jade',avatar:'💅',tag:'THE SHARP ONE',gender:'female'},
-  {id:'destiny',name:'Destiny',avatar:'💎',tag:'THE KEEPER',gender:'female'},
-  {id:'amara',name:'Amara',avatar:'⚡',tag:'THE BRIDGE',gender:'female'},
+  {id:'marcus',name:'Marcus',avatar:'🧢',tag:'THE INHERITOR',gender:'male',rel:'grandfather',relWord:'grandfather',age:6,
+   bio:'Grew up in the house where the bones lived.',
+   story:"I was six when my grandfather set me on two phone books and put the bones in front of me. He taught me every Sunday until I turned fifteen. Then I stopped playing and told everyone I'd outgrown it. I hadn't. I just couldn't sit at that table without him."},
+  {id:'darius',name:'Darius',avatar:'🎩',tag:'THE VETERAN',gender:'male',rel:'dad',relWord:'dad',age:9,
+   bio:'Thirty years of tables, from barracks to break rooms.',
+   story:"My dad taught me at nine, on a card table in the garage with the radio on. I've played in barracks, break rooms and one airport in Frankfurt for thirty years. I never beat him. He stopped playing the year I got good enough to, and I never asked why."},
+  {id:'alejandro',name:'Alejandro',avatar:'📖',tag:'THE SCHOLAR',gender:'male',rel:'self',relWord:'nobody',age:14,
+   bio:"Learned from his grandfather's notebooks.",
+   story:"My grandfather died before he could teach me, so I learned from his notebooks. Three of them, pencil, his handwriting. I was fourteen. I know every opening he ever tried and none of the voices that went with them."},
+  {id:'jade',name:'Jade',avatar:'💅',tag:'THE SHARP ONE',gender:'female',rel:'mom',relWord:'mom',age:8,
+   bio:'Learned at her mother\'s Friday-night tables.',
+   story:"My mom taught me at eight because she needed a partner who didn't talk. She ran Friday games in our kitchen, twenty dollars a seat. I learned to count tiles before I could do long division. People still underestimate me. I let them."},
+  {id:'destiny',name:'Destiny',avatar:'💎',tag:'THE KEEPER',gender:'female',rel:'grandmother',relWord:'grandmother',age:7,
+   bio:"Her grandmother's student. Cleans every tile.",
+   story:"My grandmother kept the bones in a blue cloth and taught me to clean each one on Sunday before we played. I was seven. She left me a voicemail the last week and I can't make myself delete it. I play the way she cleaned them. Slowly, every tile."},
+  {id:'amara',name:'Amara',avatar:'⚡',tag:'THE BRIDGE',gender:'female',rel:'dad',relWord:'dad',age:6,
+   bio:'Two families, two rule books, one table.',
+   story:"My dad taught me the Lagos way, loud and fast with a lot of arguing. My mom taught me the Caribbean way, slow with a lot of slamming. I was six. I still can't tell you which rules are whose, and neither of them will give in."},
 ];
 
 // ============================================================
@@ -1152,7 +1172,16 @@ function showBoneLore(){
   document.getElementById('loreTextEl').textContent=lore.text;
   const popup=document.getElementById('boneLorePopup');
   boneLoreActive=true;popup.classList.add('visible');
-  setTimeout(()=>{popup.classList.remove('visible');setTimeout(()=>{boneLoreActive=false;},450);},5500);
+  // Stays until the player taps CONTINUE, or 40 seconds, so there is time to read it.
+  clearTimeout(window._boneLoreTimer);
+  window._boneLoreTimer=setTimeout(dismissBoneLore,40000);
+}
+function dismissBoneLore(){
+  clearTimeout(window._boneLoreTimer);
+  const popup=document.getElementById('boneLorePopup');
+  if(!popup||!boneLoreActive) return;
+  popup.classList.remove('visible');
+  setTimeout(()=>{boneLoreActive=false;},450);
 }
 function triggerBoneLore(){if(!boneLoreActive&&Math.random()<0.18)setTimeout(showBoneLore,600);}
 
@@ -1216,6 +1245,7 @@ function playerPass(){
 // UI RENDERING
 // ============================================================
 function showScreen(name){
+  try{ if(typeof dismissBoneLore==='function') dismissBoneLore(); }catch(e){}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById(`${name}-screen`);
   if(el) el.classList.add('active');
@@ -1423,6 +1453,7 @@ function renderCharacterSelect(){
       <div class="char-avatar">${c.avatar}</div>
       <div class="char-name">${c.name}</div>
       <div class="char-tag">${c.tag}</div>
+      <div class="char-bio">${c.bio||''}</div>
     </div>`).join('');
 }
 function selectChar(id){
@@ -1633,8 +1664,10 @@ const CONV = {
     if(!opp||!m) return;
     if(t.length<120) m.told.push(t); if(m.told.length>3) m.told.shift();
     const intent=this.classify(t);
-    let reply;
-    if(intent==='offdomain'){
+    let reply=(typeof FAM!=='undefined')?FAM.handle(opp,t,intent):null;
+    if(reply){
+      // family-history branch answered
+    } else if(intent==='offdomain'){
       m.rung=Math.min(3,m.rung+1);
       reply=this.pick(seat,'off'+m.rung)||this.pick(seat,'off3');
     } else if(intent==='gamestate'){
@@ -1643,7 +1676,39 @@ const CONV = {
       reply=this.pick(seat,intent)||this.pick(seat,'steer');
     }
     const delay=380+Math.random()*650;
-    setTimeout(()=>{ const r=processDialogue(reply); this.post(opp.name,r,false); showDialogueBubble(seat,r); },delay);
+    const deliver=txt=>{ const r=processDialogue(txt||''); if(!r) return; this.post(opp.name,r,false); showDialogueBubble(seat,r); this.remember(opp.id,t,r); };
+    if(typeof TABLE_AI_URL==='string' && TABLE_AI_URL){
+      this.askAI(seat,opp,t,reply).then(ai=>setTimeout(()=>deliver(ai||reply),ai?0:delay));
+    } else {
+      setTimeout(()=>deliver(reply),delay);
+    }
+  },
+  hist:{},
+  remember(key,q,a){
+    const h=this.hist[key]||(this.hist[key]=[]);
+    h.push({q,a}); while(h.length>6) h.shift();
+  },
+  // Live AI: the character answers in their own voice from their backstory.
+  // The scripted line rides along as "canon" so the AI stays consistent with it.
+  async askAI(seat,opp,text,canon){
+    const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),9000);
+    try{
+      const f=(typeof ORIGINS!=='undefined')?ORIGINS[opp.id]:null;
+      const mem=(typeof FAM!=='undefined')?FAM.mem[opp.id]:null;
+      const res=await fetch(TABLE_AI_URL,{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
+        body:JSON.stringify({
+          opponent:{id:opp.id,name:opp.name,culture:opp.culture,history:opp.history},
+          origin:f?{start:f.start,teach:f.teach,good:f.good,chain:f.chain,told:mem?f.chain.slice(0,Math.min(mem.step,f.chain.length)):[]}:null,
+          player:GS.player?{name:GS.player.name,tag:GS.player.tag,gender:GS.player.gender,story:GS.player.story,rel:GS.player.rel}:null,
+          message:text,
+          recent:(this.hist[opp.id]||[]).slice(-6),
+          game:{round:GS.currentOpponentIdx+1,you:(GS.matchScores&&GS.matchScores.player)||0,them:(GS.matchScores&&GS.matchScores[seat])||0},
+          canon:canon||''
+        })});
+      if(!res.ok) return null;
+      const j=await res.json();
+      return (j&&typeof j.reply==='string'&&j.reply.trim())?j.reply.trim().slice(0,700):null;
+    }catch(e){ return null; } finally{ clearTimeout(to); }
   },
   pick(seat,key){
     const opp=getOppForSeat(seat); if(!opp) return '';
@@ -1670,8 +1735,8 @@ const CONV = {
     return flav.replace('%s','You '+my+', me '+theirs+' — '+lead+', and '+tiles+' bones still in your hand');
   },
   legend(){
-    const beaten=(GS.progress&&GS.progress.defeated)?GS.progress.defeated:[];
-    const names=OPPONENTS.filter(o=>beaten.includes(o.id)).map(o=>o.name);
+    const done=(typeof GS.progress==='number')?GS.progress:0;
+    const names=OPPONENTS.filter(o=>o.id<=done).map(o=>o.name);
     if(!names.length) return 'Every table before this one is already talking about you';
     const two=names.slice(-2).join(' and ');
     return two+' told the tables about you. Word travels between bones';
@@ -1691,7 +1756,7 @@ const CONV = {
 const PERSONAS = {
 1:{ // ABUELO SAL — Cuban Tradition
  greet:["You sit like you have time. Good. In Havana, the game starts before the first bone falls — it starts with the sitting.","Coffee? No? Then we begin. Your grandfather never said no to the coffee, mijo."],
- who:["Sal. Fifty years at this table in Parque Central. Your grandfather sat where you sit — ask me anything about the game, I was there for most of it.","An old man with old bones — the tiles and mine both. What matters tonight is what your hands know."],
+ who:["Sal. Forty years at this table, and a childhood in Havana before that. Your grandfather sat where you sit — ask me anything about the game, I was there for most of it.","An old man with old bones — the tiles and mine both. What matters tonight is what your hands know."],
  culture:["In Cuba the dominoes are loud — we slam them so the ancestors hear. But the winning play is always the quiet one. Watch for it.","Havana taught me the game is a conversation. The tiles talk, mijo. Are you listening or just waiting your turn?"],
  gramps:["He sat there, where you are. Lost to me for two years before he won once — and when he won, he laughed so hard the table shook. Ask me what he did next.","The bones remember his hands. I watch them remember yours. That is not a small thing, mijo."],
  rules:["Match the ends, count the pips, and never marry your highest double too long. That last one — your grandfather learned it the hard way.","The rule that matters: play the tile that asks a question. Any tile that only answers is wasted. Which of yours asks something?"],
@@ -1905,6 +1970,358 @@ const PERSONAS = {
  closeloss:["...Not yet. The bones say YET. Come back — the last table keeps no calendar.","For the first time in years, I felt the game again. Return and finish it. I will be here. I am always here."],
  scorewrap:"...%s. The last table counts quietly."
 }
+};
+
+
+// ============================================================
+// FAMILY BRANCH ENGINE — "where did you learn?" conversations
+// Ask a character when they started, who taught them, why they're
+// good, about their family — they answer with a real origin story,
+// ask YOU back, react to what you say, and keep branching.
+// Drago rules: hook → twist → land, warmth never drops, the mask holds.
+// ============================================================
+const ORIGINS = {
+1:{ // ABUELO SAL
+ age:6, ageW:'six', rel:'dad', relLabel:'father',
+ start:`Six. A courtyard in Havana with a cracked tile floor. My father set a fruit crate in front of the table because my chin did not reach it.`,
+ teach:`My father. He never said the rules out loud. He slammed a bone and I was supposed to know why.`,
+ good:`Forty years at one corner table. Nobody gets good, {mijo}. You stay stubborn in the same place long enough that the game gives up and lets you in.`,
+ ask:`And you? Who put the first bone in your hands?`,
+ chain:[
+  `My father drove a delivery truck all week and played every night anyway. He said a man's hands should be tired and still know what they want.`,
+  `The week before I left Cuba he gave me his double-six, the one with the chipped corner. I keep it in my pocket. Never on the table. Pocket.`,
+  `Your grandfather noticed the chip the first Sunday. He asked where it came from. In all those years on this side nobody had asked. I talked for an hour.`,
+  `So that is why I keep this corner warm. A man who asks about the chip is a man I would have waited forty years for.`],
+ close:`That is most of it, {mijo}. The rest I save for Sundays. Now tell me about your people. Who taught you?`,
+ more:[`Ask me about the chip again if you like. It has more to tell than I do.`,`Sit. Play. The stories keep better than the tiles do.`],
+ react:{
+  parent:`Your {rel}. Good. A child learns the rhythm from a parent's hands before the rules. Mine did it with a crate and a chipped double-six. Ask me about the chip.`,
+  grand:`Your {rel}. Then you already know the table remembers. Ask me what your grandfather did the first Sunday he sat in this chair, {mijo}.`,
+  kin:`Family teaches the best habits and the worst ones. Keep the best. Ask me which of mine was which.`,
+  self:`Nobody? Then the bones taught you. Patient teachers, terrible at explaining. I respect it.`,
+  other:`A teacher is a teacher. In Havana the old men on the corner taught half the boys on the block. Same thing. Ask me what mine taught me.`,
+  unknown:`Tell me plainly, {mijo}. A name. A face. Who sat across from you the first time?`}},
+2:{ // MIA
+ age:7, ageW:'seven', rel:'grandmother', relLabel:'abuela',
+ start:`Seven. Queens, my abuela's kitchen table. I stood on a stool so I could see the whole board.`,
+ teach:`My abuela. She taught me with a wooden spoon in one hand. She tapped the table with it when I played too fast.`,
+ good:`I'm not that good yet. I'm consistent. Abuela says consistent beats brilliant by August.`,
+ ask:`Who taught you? I told you mine.`,
+ chain:[
+  `She never let me win. When I was nine I lost forty games in a row and she kept the tally on the back of an envelope.`,
+  `Game forty-one I beat her. She didn't say a word. She got up, turned the envelope over, and wrote my name on the other side.`,
+  `That envelope is in my wallet. It's soft now, like cloth.`,
+  `I call her after every game I play. Win or lose. Tonight on the walk over she asked if the tiles were behaving.`],
+ close:`So that's me. Your turn. Who put the tiles in front of you first?`,
+ more:[`Ask me about the stool. It's still in her kitchen. I'm too tall for it and I still stand on it sometimes.`,`She'd want to know you asked. I'll tell her tonight.`],
+ react:{
+  parent:`Your {rel}. I love that. Abuela says the first teacher's voice stays in your hands. You'll hear it when you hesitate.`,
+  grand:`Your {rel}! Then we're the same kind of lucky. Somebody old and patient put those tiles in front of you. Do they call?`,
+  kin:`Your {rel}. Family always teaches in a way that sounds like a fight at first. Ask me about the spoon.`,
+  self:`Nobody? Wow. I needed a stool and a spoon and you needed nothing. I don't know if I'm jealous or worried.`,
+  other:`Someone outside the family. That takes some trust. I like it.`,
+  unknown:`Say it again, slow? A name, a kitchen, a stoop. Where did you first sit down?`}},
+3:{ // QUICK CARLOS
+ age:9, ageW:'nine', rel:'uncle', relLabel:'uncle',
+ start:`Nine. South Bronx, my uncle's table by the bodega. The fastest table on the block.`,
+ teach:`My uncle. The whole block called him the Metronome. He never paused between tiles. Decide fast, hit the bone hard, never let them watch you think.`,
+ good:`Everybody says speed. It's not speed. My uncle made me play two hundred games a summer. You get fast when you stop being afraid.`,
+ ask:`What about you? Who showed you?`,
+ chain:[
+  `He played every Saturday for twenty years. Then five years ago the table was empty one Saturday and he was inside with the radio on.`,
+  `I asked him what happened. He said, "I finished." That's the whole conversation. Nobody in the family has gotten more out of him.`,
+  `So I play for both of us. Faster than I should. If I slow down, the quiet catches up with me.`,
+  `Some nights I walk past his window and the radio is still on. I never knock. Maybe I knock when I beat somebody honest.`],
+ close:`That's the Bronx story, star. Now you. Who taught you?`,
+ more:[`Ask me about the radio. It plays the same station it did five years ago.`,`He'd say slow down. I'd say I know. We'd both be lying.`],
+ react:{
+  parent:`Your {rel}, huh. That's real. Parents teach you the rules and then the rules get tested on you. Ask me what my uncle tested.`,
+  grand:`Your {rel}. Old school. They don't hurry. I could stand to learn that.`,
+  kin:`Your {rel}. Then you know. A family member teaching you means they can still hurt you with a look.`,
+  self:`Self-taught. Respect. Nobody to blame but you. That's a mean way to learn.`,
+  other:`Somebody outside the family. Good. They'll tell you the truth. Mine only told me the speed.`,
+  unknown:`Come on, star. A name. Somebody taught you.`}},
+4:{ // POPS BEAUMONT
+ age:5, ageW:'five', rel:'dad', relLabel:'daddy',
+ start:`Five, baby. Treme, on the porch steps, my daddy's big hands over mine on the bones.`,
+ teach:`My daddy. He played trumpet at night and dominoes on the porch in between. He said the game and the horn teach the same lesson: listen before you play.`,
+ good:`Seventy years, baby. Nobody is born good. You just get old in the right chair.`,
+ ask:`Now you. Who taught you?`,
+ chain:[
+  `My daddy played behind the funeral bands, second line, then came home and washed up and set out the bones. Same hands, both jobs.`,
+  `The year they built the interstate over Claiborne, half our porches went quiet. Daddy said the music has to go somewhere, so it went into the tiles.`,
+  `He gave me his horn when I was sixteen. I played it fifty years. Then my lip went, and I took up humming the changes instead.`,
+  `I still hum his changes at the table. You listen close, baby, and you'll hear which bone I'm about to play.`],
+ close:`That's my daddy, baby. Tell Pops about yours. Who taught you?`,
+ more:[`Ask me about the horn. It's on my wall. I don't touch it. I look.`,`Sit down, baby. There's always another porch story.`],
+ react:{
+  parent:`Your {rel}. Mm. That's how it's supposed to go, baby. The first lesson comes from the same pair of hands that made you breakfast. Ask me about my daddy's horn.`,
+  grand:`Your {rel}. Baby, that's a long line. Somebody gave you something older than both of us.`,
+  kin:`Your {rel}. Family teaches you with love and pressure, all at once. I know that one.`,
+  self:`Taught yourself? Baby, nobody does that. Somebody was in the room. You just didn't see them.`,
+  other:`A friend, a neighbor. That's how most of us learned in Treme. A porch is a school.`,
+  unknown:`Say it plain, baby. A name. A porch. Somebody sat you down.`}},
+5:{ // JOY
+ age:8, ageW:'eight', rel:'mom', relLabel:'mama',
+ start:`Eight. Our kitchen table, Sundays after church. My mama dealing with one hand and stirring the greens with the other.`,
+ teach:`My mama. She said dominoes is just talking with your hands while your mouth is busy eating.`,
+ good:`I'm not the best player in my neighborhood. I'm the best at getting everybody to the table. That's a skill too.`,
+ ask:`And who taught you?!`,
+ chain:[
+  `Sunday dinner was my mama's whole life. Eleven people, every week, forty years.`,
+  `Then she got too sick to host. Nobody said anything, and the next Sunday the house was quiet. I dragged the card table out to the lawn and said, we're playing.`,
+  `Half the neighborhood showed up with their own food. That was nine summers ago. Mama sits in a lawn chair and calls the scores.`,
+  `She can't deal anymore. But she still says, "Joy, you're holding your tiles like a nervous bride." Every Sunday.`],
+ close:`That's why I run the tournament! Now it's your turn. Who taught you?`,
+ more:[`Ask me about the lawn chair. I'll tell you what she's wearing. She dresses for it.`,`Come Sunday. I mean it.`],
+ react:{
+  parent:`Your {rel}! Stop, I'm already emotional. A parent teaching you is the best start. Ask me what my mama's rule is for the table.`,
+  grand:`Your {rel}. Oh, that's tender. Somebody who had time to teach you right.`,
+  kin:`Your {rel}! Family teaching family. That's every Sunday I've ever loved.`,
+  self:`Nobody?! Oh, honey. You need a table. I'll give you one.`,
+  other:`A friend or a neighbor. That's the best kind of teacher. They teach you and then you eat together.`,
+  unknown:`Tell me, tell me! Who sat you down the first time?`}},
+6:{ // PROFESSOR CHEN
+ age:10, ageW:'ten', rel:'grandfather', relLabel:'grandfather',
+ start:`Ten. A small apartment, my grandfather with the 32-tile set from Guangzhou. He taught me to read each tile as a throw of two dice before he let me touch a single rule.`,
+ teach:`My grandfather. He taught me the numbers. How many ways to throw a six. Which tile is common, which is rare. He said a player who knows the odds is never surprised, only disappointed.`,
+ good:`Preparation. Eleven years of logged data. But that is the dull answer. The truer one is that I am afraid of the set at home, and so I study around it.`,
+ ask:`And you? Who taught you?`,
+ chain:[
+  `He died the spring I started graduate school. I inherited the set. I have not played one hand with it.`,
+  `I tell people it is for research. A set with a crack from a fall in 1949 should be protected.`,
+  `The truth is that when I play with it, I will finally be playing his game, and not analyzing it. I am not ready for the difference.`,
+  `Tonight, watching you, I am a little closer. Do not tell my students.`],
+ close:`That is my confession. Now yours. Who taught you?`,
+ more:[`Ask me about the crack. The date is on the underside, in his handwriting.`,`I will answer more once I have lost this game. I fear that is soon.`],
+ react:{
+  parent:`Your {rel}. Parents transmit habits the way they transmit genes. Not always usefully. Ask me what my grandfather transmitted.`,
+  grand:`Your {rel}. Then we share a lineage of a sort. Someone old put the tiles in our hands and expected us to understand. Ask me about mine.`,
+  kin:`Your {rel}. A teacher who is also family. The data on that is complicated.`,
+  self:`Self-taught. The most efficient method and the loneliest one. I do not recommend it. I did it for the second half of my life.`,
+  other:`A teacher outside the family. That is statistically the most common case. It works.`,
+  unknown:`Please be specific. A name or a relation. The model is incomplete without it.`}},
+7:{ // ISABELLE
+ age:6, ageW:'six', rel:'grandmother', relLabel:'grandmother',
+ start:`Six. Martinique. A porch facing the sea. I did not play. I sat on the step and watched.`,
+ teach:`My grandmother. She never explained a single rule. She played, and I learned by watching her hands.`,
+ good:`I listen. Most people at a table are talking to themselves, loudly, inside their heads.`,
+ ask:`...And you?`,
+ chain:[
+  `Her porch had a view of the water. She never once looked at it during a game. She said the sea did not need her attention.`,
+  `When I was twelve she pushed a tile toward me without a word. That was the whole lesson. I had been learning for six years.`,
+  `She stopped speaking the year my grandfather died. She played for two more years in complete silence. It was the best I have ever seen.`,
+  `I speak little because the tiles say it better. You will have noticed how seldom I talk. And yet here we are.`],
+ close:`...That is all of it. Now yours. Who taught you?`,
+ more:[`...Ask about the sea. It is easier than asking about her.`,`...I have said more tonight than all summer. Do not spend it.`],
+ react:{
+  parent:`...Your {rel}. Yes. A parent's hands. I understand.`,
+  grand:`...Your {rel}. Then you know. The old ones teach without saying.`,
+  kin:`...Your {rel}. Family. It is always louder than they say.`,
+  self:`...Nobody. ...No. Someone was in the room, even if you did not see them.`,
+  other:`...A friend. That is a gift. Not everyone has one at the table.`,
+  unknown:`...Say it plainly. I will listen.`}},
+8:{ // JOKER JAY
+ age:7, ageW:'seven', rel:'brother', relLabel:'big brother Delroy',
+ start:`Seven! Kingston, a roadside table behind my big brother's shop. Soundsystem on one side, a stack of crates on the other.`,
+ teach:`My big brother Delroy! He had a table, a sound system, and a rule: if the crowd isn't laughing, you're doing it wrong.`,
+ good:`The show and the skill are the same thing, star. Distract with the left hand, win with the right.`,
+ ask:`And you? Who made you the player you are?`,
+ chain:[
+  `Delroy taught me sleight of hand to get me through losing streaks. Hide the fear inside the trick.`,
+  `He left for Toronto when I was twenty. The table had a gap on the left side for a month. I filled it with noise.`,
+  `That's the secret. The noise is for him. Somewhere a man at a roadside table in Kingston is still making a racket.`,
+  `If you ever meet a man named Delroy laughing too loud in a Toronto barbershop, tell him his little brother kept the table.`],
+ close:`AHAHA, that's the show! Now yours. Who taught you?`,
+ more:[`Ask me about the sound system. Biggest bass in the parish.`,`Delroy used to say you only lose when you stop making noise.`],
+ react:{
+  parent:`Your {rel}! Respect. Mine was my brother, but a parent teaching you? That's a serious start, star. Ask me about Delroy.`,
+  grand:`Your {rel}. Old school, quiet, patient. I couldn't do it. Respect.`,
+  kin:`Your {rel}! Family! Then you know what it's like to learn from somebody who also teases you. Ask me about Delroy.`,
+  self:`Nobody?! You taught yourself?! You need a crowd. I'll be your crowd.`,
+  other:`A friend! A stranger! Best kind. Somebody picks you off the street and that's your teacher. That's how Delroy found me.`,
+  unknown:`Who, star? Give me a name!`}},
+9:{ // DOÑA ESPERANZA
+ age:7, ageW:'seven', rel:'mom', relLabel:'mi madre',
+ start:`Seven. Santo Domingo, a porch at dusk. Rain or no rain, there was a game.`,
+ teach:`Mi madre. She said the tiles remember every hand that touches them, so I had better wash mine first.`,
+ good:`Seventy-one years of listening. At seventy-eight you stop being good and start being correct.`,
+ ask:`And you, {mijo}? Who taught you?`,
+ chain:[
+  `My mother played every night for sixty years. The night before she died she asked me to set out the bones. We played one hand. She won.`,
+  `She said, "Now you keep them." I have. They are older than me.`,
+  `I have carried them to every table since. Tonight is the first time I have set them down in front of someone they might choose.`,
+  `So when I say the tiles chose you, I am not being sweet. I am reporting.`],
+ close:`That is my mother's story. Now tell me yours, {mijo}. Who taught you?`,
+ more:[`Ask me about her chair. It is still on the porch, facing the street.`,`The rest of the story is not mine to tell. It is hers.`],
+ react:{
+  parent:`Your {rel}. Then you know. A parent's voice is the first one the tiles hear in you. Ask me about my mother's last hand.`,
+  grand:`Your {rel}. The old ones always come back through the hands, {mijo}. Ask me what my mother said about that.`,
+  kin:`Your {rel}. Family teaches us. And then the tiles finish the lesson.`,
+  self:`No one? Then your grandfather's tiles taught you from the inside. It happens, {mijo}. It happens.`,
+  other:`A friend teaches a different way, {mijo}. Looser. Warmer. I approve.`,
+  unknown:`Say a name, {mijo}. The tiles like names.`}},
+10:{ // THE ARCHITECT
+ age:12, ageW:'twelve', rel:'dad', relLabel:'father',
+ start:`Twelve. My father was a structural engineer. He taught me the game as load distribution.`,
+ teach:`My father. He drew diagrams on graph paper. Which tiles bear weight. Which are decoration.`,
+ good:`Data. Six thousand hands, fourteen countries, one spreadsheet. Everything is a pattern until it isn't.`,
+ ask:`And you? Who taught you?`,
+ chain:[
+  `He never asked how I felt about a game. Only what the structure was. I did the same for thirty years.`,
+  `My spreadsheet has a column for tile sequence and a column for opponent tell. No column for how it felt. He would not have wanted one.`,
+  `He died while I was in Lagos winning a tournament. I logged the match that night. Then I logged his death. Same format.`,
+  `Tonight I opened a second column. It is empty. I do not know what to write in it.`],
+ close:`That is the file on me. Now yours. Who taught you?`,
+ more:[`Ask me what the second column is called. I have not decided.`,`The graph paper is in a drawer. I do not open it.`],
+ react:{
+  parent:`Your {rel}. A parent. The earliest data. Ask me what I learned from mine.`,
+  grand:`Your {rel}. A generation removed. Interesting. Less pressure, I suspect.`,
+  kin:`Your {rel}. Family. Variables I have not controlled for.`,
+  self:`Self-taught. I log that as the highest-risk method. And the most original.`,
+  other:`A teacher outside the family. Efficient. Likely objective.`,
+  unknown:`I need a specific. A person. A place. Not a category.`}},
+11:{ // LA REINA
+ age:5, ageW:'five', rel:'other', relLabel:'governess',
+ start:`Five. A drawing room with velvet curtains and a governess with a ruler.`,
+ teach:`My governess, Madame Aurelio. The ruler was for my elbows, never the tiles.`,
+ good:`Poise. I was taught to win without being seen to try.`,
+ ask:`And you? Who instructed you?`,
+ chain:[
+  `No one in my house ever raised a voice at a table. Not for winning. Not for losing.`,
+  `At nine I laughed out loud at a lucky draw. Madame set the ruler down on the table, very gently, and I never laughed at a game again.`,
+  `I came to this park to prove the old tradition superior. I am quietly discovering that I was lonely in it.`,
+  `Do not tell the court I said so.`],
+ close:`There. That is more than the court ever heard. Now you. Who taught you?`,
+ more:[`Ask me about the ruler. It hangs in my study. I have never put it away.`,`Madame used to hum when she thought nobody listened. I have started to hum.`],
+ react:{
+  parent:`Your {rel}. A parent teaching. How unguarded. Ask me about the ruler.`,
+  grand:`Your {rel}. A grandparent's lessons last longest. I suspect they were gentler than mine.`,
+  kin:`Your {rel}. Family. I was never allowed to learn from mine.`,
+  self:`No teacher at all? How... free. I envy it more than I can say.`,
+  other:`A teacher outside the family. Ours, I think, were not so different.`,
+  unknown:`Please. A name. I was taught to ask properly.`}},
+12:{ // EL REY
+ age:6, ageW:'six', rel:'other', relLabel:'Mister Ray',
+ start:`Six. A barbershop on a Saturday. The old men played in the back while the clippers ran.`,
+ teach:`A man called Mister Ray who cut hair and never charged a boy who could count. And later your grandfather. He taught me the only thing that mattered.`,
+ good:`Fifty years of sitting where I am sitting. And one man who taught me how to lose.`,
+ ask:`...And you. Who taught you?`,
+ chain:[
+  `Your grandfather and I played more hands than either of us counted. I won most of them.`,
+  `The last one, I let him win. He had less time than I did and he knew it, and I thought I was giving him something. He looked at me across the table and said, "You owe me one."`,
+  `I never learned what he meant. I decided it meant: wait for whoever carries the bones, and play them honestly.`,
+  `You have been looking at me like you already know that. You don't. But your hands do.`],
+ close:`...That is the debt. Now tell me yours. Who taught you?`,
+ more:[`...Ask me what Mister Ray said to me the day I left the barbershop.`,`...Play. The rest is in the tiles.`],
+ react:{
+  parent:`...Your {rel}. Yes. I have been waiting to hear that. Ask me what I owe.`,
+  grand:`...Your {rel}. ...Then I know exactly whose hands taught yours. Ask me what I owe your family.`,
+  kin:`...Your {rel}. Family. The debt always runs through family.`,
+  self:`...Nobody. ...No. Someone was there. I can see him in your hands.`,
+  other:`...A friend or a stranger. The best teachers are. Mister Ray was.`,
+  unknown:`...A name. I have been waiting years for a name.`}}
+};
+
+const FAM = {
+  mem:{},
+  RELS:[
+    ['grandfather',/\b(grandfather|grandpa|granddad|grandad|abuelo|pawpaw)\b/],
+    ['grandmother',/\b(grandmother|grandma|granny|abuela|nana|nonna|mamaw)\b/],
+    ['uncle',/\b(uncle|tio)\b/],
+    ['aunt',/\b(aunt|auntie|tia)\b/],
+    ['brother',/\b(brother|bro)\b/],
+    ['sister',/\b(sister|sis)\b/],
+    ['mom',/\b(mom|mother|mama|mommy|mum|madre|mami)\b/],
+    ['dad',/\b(dad|father|daddy|papa|padre|pop|pops)\b/],
+    ['self',/\b(nobody|no one|myself|self.?taught|on my own|figured it out)\b/],
+    ['other',/\b(teacher|tutor|coach|friend|neighbou?r|cousin|stranger|old man|old men)\b/]
+  ],
+  GROUP:{mom:'parent',dad:'parent',grandfather:'grand',grandmother:'grand',uncle:'kin',aunt:'kin',brother:'kin',sister:'kin',self:'self',other:'other'},
+  NUM:{one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,eighteen:18,twenty:20,thirty:30,forty:40},
+  relOf(x){
+    for(const [k,re] of this.RELS){ const m=x.match(re); if(m) return {key:k,word:m[0]}; }
+    return null;
+  },
+  ageOf(x){
+    let m=x.match(/\b(?:since|at|age|was|when i was|started at)\s+(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|eighteen|twenty|thirty|forty)\b/);
+    if(!m) m=x.match(/\b(\d{1,2}|six|seven|eight|nine|ten)\s*(?:years? old|yrs? old|y\/o)\b/);
+    if(!m) return null;
+    const v=m[1]; return /^\d+$/.test(v)?parseInt(v,10):(this.NUM[v]||null);
+  },
+  P:{
+    me:/\b(my story|my family|about me\b|about myself|tell.{0,12}my (own )?story|my background)\b/,
+    teach:/\b(who|what).{0,30}\b(taught|teach|showed|learn)\w*|\b(did|do|does)\s+(your|ur)\s+\w+\s+(teach|show|train)|\btaught you\b|\bteach you\b|\bshowed you\b|\blearn(ed)? (it |this |the game |dominoes )?from\b/,
+    start:/\bhow long (have|did|has)\b|\bsince when\b|\bwhen did you (start|begin|first|learn|pick)|\bhow old were you\b|\bhow young\b|\bwhat age\b|\bfirst time you (played|touched|picked|sat)|\byears? (have you|you been)|\bhow many years\b|\bwhen did you get (into|started)/,
+    good:/\b(why|how)\b.{0,25}\b(so good|good at|great at|that good|so skilled|so strong|so sharp)\b|\bwhat makes you (so )?(good|great|strong)\b|\byour secret\b|\bhow do you win\b|\bwhen did you (get|become|really get)\s*(so |really )?good\b|\bgood at (this|the game|dominoes|it)\b/,
+    family:/\b(your|ur) (family|mom|mother|dad|father|parents|uncle|aunt|brother|sister|grand\w*|abuel\w*|wife|husband|kids?|children|childhood|home|story|life|background|past|people)\b|\btell me about (yourself|you|your)\b|\bwhere (did you|are you|were you) (grow|from|raised|born)|\bgrew up\b|\bgrowing up\b|\bfamily history\b|\bhistory of (the|your) family\b|\bwhere you from\b/,
+    vol:/\b(taught me|showed me|teach me|learned (it |this |the game )?from|i learned|i learnt|i started|i played|i've played|ive played|played since|play since|been playing|since i was|started playing)\b/,
+    yn:/^(yes|yeah|yep|no|nope|nah|same|me too|i did|i do)\b/,
+    more:/^(why|how|what|who|when|where|did|do|does|was|were|is|are|and|so|then|really|tell|go|keep|more|ok|okay|continue)\b|\?\s*$/,
+    skip:/\b(score|winning|losing|ahead|tiles? (left|in)|hint|stuck|which tile|what should i play|rule|boneyard)\b/
+  },
+  mm(opp){ return this.mem[opp.id]||(this.mem[opp.id]={step:0,ask:false,live:0,told:{},more:0}); },
+  fill(s,rel){ return s.replace(/\{rel\}/g,rel?rel.word:'teacher'); },
+  beat(opp,d,mem){
+    mem.live=4;
+    if(mem.step<d.chain.length) return d.chain[mem.step++];
+    if(mem.step===d.chain.length){ mem.step++; mem.ask=true; return d.close; }
+    const l=d.more[mem.more%d.more.length]; mem.more++; return l;
+  },
+  react(opp,d,mem,x,rel){
+    const g=rel?this.GROUP[rel.key]:'unknown';
+    const age=this.ageOf(x);
+    let out='';
+    if(age!=null){
+      if(age<d.age) out=`At ${age}? You started before I did. I was ${d.ageW}. `;
+      else if(age===d.age) out=`${age}! Same as me. `;
+      else out=`Since ${age}. A later start than mine. I was ${d.ageW}. A grown mind learns what a child can't. `;
+    }
+    if(!rel && age!=null){ mem.ask=false; mem.live=4; return out+`Who sat you down at that age?`; }
+    mem.ask=false; mem.live=4;
+    return out+this.fill(d.react[g]||d.react.unknown,rel);
+  },
+  playerStory(opp,d,mem){
+    const c=GS.player; if(!c||!c.story) return null;
+    CONV.post(c.name,c.story,true);
+    const rel={key:c.rel,word:c.relWord||c.rel};
+    mem.ask=false; mem.live=4;
+    return this.react(opp,d,mem,'',rel);
+  },
+  handle(opp,t,intent){
+    const d=ORIGINS[opp.id]; if(!d) return null;
+    const mem=this.mm(opp), x=t.toLowerCase().trim(), rel=this.relOf(x), P=this.P;
+    if(mem.live>0) mem.live--;
+    const told=k=>{ const again=!!mem.told[k]; mem.told[k]=true; return again; };
+    const withAsk=txt=>{ if(!mem.ask && !mem.told._asked){ mem.told._asked=true; mem.ask=true; mem.live=4; return txt+' '+d.ask; } mem.live=4; return txt; };
+    if(P.me.test(x)) return this.playerStory(opp,d,mem);
+    if(P.teach.test(x)){
+      const again=told('teach'); mem.live=4;
+      if(again && !rel) return `I told you. ${d.teach.split('. ')[0]}. Ask me what came after.`;
+      if(rel){
+        const yes=(rel.key===d.rel)||(d.rel==='other'&&rel.key==='other');
+        return withAsk((yes?`Yes. `:`No, not my ${rel.word}. `)+d.teach);
+      }
+      return withAsk(d.teach);
+    }
+    if(P.start.test(x)){
+      const again=told('start'); mem.live=4;
+      if(again) return `As I said, ${d.ageW}. Ask me what I did with it.`;
+      return withAsk(d.start);
+    }
+    if(P.good.test(x)){ told('good'); mem.live=4; return withAsk(d.good); }
+    if(P.family.test(x)){
+      if(!mem.told.start){ told('start'); return withAsk(d.start+' '+d.teach); }
+      return this.beat(opp,d,mem);
+    }
+    if(mem.ask && (rel || P.yn.test(x))){
+      if(!rel){ mem.live=4; return `Tell me who. A name or a relation, not just yes.`; }
+      return this.react(opp,d,mem,x,rel);
+    }
+    if(P.vol.test(x)){ return this.react(opp,d,mem,x,rel); }
+    if(mem.live>0 && intent!=='offdomain' && !P.skip.test(x) && P.more.test(x) && x.length<90){ return this.beat(opp,d,mem); }
+    return null;
+  }
 };
 
 // ---------- hooks ----------

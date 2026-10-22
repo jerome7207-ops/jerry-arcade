@@ -1,0 +1,662 @@
+{
+ "opponents": {
+  "1": {
+   "id": 1,
+   "name": "Abuelo Sal",
+   "culture": "Cuban Tradition",
+   "tier": 1,
+   "history": "Sal has run this corner table for forty years. He met your grandfather here in the early '80s, back when the park still had the old chain-link fence, and they played every Sunday for a decade straight. He keeps a photo of the two of them tucked behind his domino case. He's never shown it to anyone.",
+   "win_story": "Sal nods slowly. He pours himself a coffee from his thermos. 'Your grandfather used to beat me the same way,' he says. 'Same angle. Same tile. Like you learned it from him directly.' He doesn't sound sad. He sounds satisfied.",
+   "lose_story": "Sal leans back and smiles. 'Come back tomorrow,' he says. 'And the day after. That's how you learn. Not from winning.'",
+   "voice": [
+    "In Cuba, we say the bones carry the prayers of everyone who ever touched them.",
+    "Your grandfather taught me something at this very table once.",
+    "Slow down, {mijo}. The game rewards patience.",
+    "I've been playing here since before you were born. Watch everything.",
+    "You earned your seat at this table.",
+    "Your grandfather would be proud. So am I."
+   ],
+   "who": [
+    "Sal. Forty years at this table, and a childhood in Havana before that. Your grandfather sat where you sit — ask me anything about the game, I was there for most of it.",
+    "An old man with old bones — the tiles and mine both. What matters tonight is what your hands know."
+   ],
+   "gramps": [
+    "He sat there, where you are. Lost to me for two years before he won once — and when he won, he laughed so hard the table shook. Ask me what he did next.",
+    "The bones remember his hands. I watch them remember yours. That is not a small thing, mijo."
+   ],
+   "culture_lines": [
+    "In Cuba the dominoes are loud — we slam them so the ancestors hear. But the winning play is always the quiet one. Watch for it.",
+    "Havana taught me the game is a conversation. The tiles talk, mijo. Are you listening or just waiting your turn?"
+   ],
+   "off": [
+    "Eh, the news? The park has no news, mijo. The park has dominoes. Your turn.",
+    "That belongs outside the park gates. Inside, only bones. Play.",
+    "Bitcoin, mijo? My currency is coffee and patience. Both older than money. Play.",
+    "Mijo, this table is my whole country — inside it I can tell you fifty years of stories. Outside it, an old man knows nothing. Now — your grandfather would already have played.",
+    "I left everything else at the gate years ago. It's lighter that way. The game is waiting on you.",
+    "Fifty years at this table and I never once needed the outside world to fill it. Ask me about the game — that cup is never empty."
+   ],
+   "origin": {
+    "start": "Six. A courtyard in Havana with a cracked tile floor. My father set a fruit crate in front of the table because my chin did not reach it.",
+    "teach": "My father. He never said the rules out loud. He slammed a bone and I was supposed to know why.",
+    "good": "Forty years at one corner table. Nobody gets good, {mijo}. You stay stubborn in the same place long enough that the game gives up and lets you in.",
+    "chain": [
+     "My father drove a delivery truck all week and played every night anyway. He said a man's hands should be tired and still know what they want.",
+     "The week before I left Cuba he gave me his double-six, the one with the chipped corner. I keep it in my pocket. Never on the table. Pocket.",
+     "Your grandfather noticed the chip the first Sunday. He asked where it came from. In all those years on this side nobody had asked. I talked for an hour.",
+     "So that is why I keep this corner warm. A man who asks about the chip is a man I would have waited forty years for."
+    ],
+    "rel": "dad",
+    "age": "six"
+   }
+  },
+  "2": {
+   "id": 2,
+   "name": "Mia",
+   "culture": "First Generation",
+   "tier": 1,
+   "history": "Mia's abuela taught her on a kitchen table in Queens, back when Mia had to stand on a stool to see the whole board. She's been coming to this park two summers running, trying to build the same steady confidence her abuela had — and she calls home after every single game, win or lose, no exceptions.",
+   "win_story": "Mia is quiet for a moment. Then: 'I'm going to call my grandmother tonight and tell her what happened.' She looks up at you. 'She'll want to know the tiles found someone worthy.'",
+   "lose_story": "Mia smiles and says, 'I'll be better next time.' You believe her.",
+   "voice": [
+    "My abuela says the tiles know things. I'm starting to believe her.",
+    "I learned this from watching. Still learning.",
+    "You play like you have something to prove. Me too.",
+    "Let's see what we both know.",
+    "I learned something just now. Thank you.",
+    "You played with respect. I felt it."
+   ],
+   "who": [
+    "Mia. First generation — my abuela carried this game across an ocean and I'm trying to carry it across a kitchen table. Some days that feels harder.",
+    "I'm the one still learning. Abuela says that's the strongest thing you can be at this table. I'm choosing to believe her."
+   ],
+   "gramps": [
+    "You inherited your set too? Then you know — it's not weight, but it's HEAVY. Abuela's set will be mine someday and my hands aren't ready.",
+    "The grandfather stories are my favorite part of this gauntlet. Everyone here has one about him. You're carrying more than tiles."
+   ],
+   "culture_lines": [
+    "My family talks in dominoes when words get too heavy. Sunday nights, the click of tiles IS the conversation. What does your family sound like?",
+    "Abuela says the tiles know things. I used to roll my eyes. Then I started winning when I stopped forcing it. So now I don't roll my eyes."
+   ],
+   "off": [
+    "Oh I'd be the wrong person to ask — the only thing I know tonight is these 28 tiles, and honestly? Only like 20 of them. Play!",
+    "Ha — abuela would say 'the table hears everything, tell it nothing but dominoes.' Your turn.",
+    "Politics? Abuela votes, she doesn't tell me who — some things stay hers. Dominoes I'll talk about all night though.",
+    "Honestly? This game is my whole inheritance and I'm still learning to hold it. Everything else I'd just be making up. Ask me about the tiles — I've got real answers there.",
+    "Outside this table I'm as lost as you are. Inside it, I at least know which questions to ask. Want one?",
+    "This game is basically the one thing I actually know for sure right now. Everything else I'm figuring out same as you. Ask me about the tiles?"
+   ],
+   "origin": {
+    "start": "Seven. Queens, my abuela's kitchen table. I stood on a stool so I could see the whole board.",
+    "teach": "My abuela. She taught me with a wooden spoon in one hand. She tapped the table with it when I played too fast.",
+    "good": "I'm not that good yet. I'm consistent. Abuela says consistent beats brilliant by August.",
+    "chain": [
+     "She never let me win. When I was nine I lost forty games in a row and she kept the tally on the back of an envelope.",
+     "Game forty-one I beat her. She didn't say a word. She got up, turned the envelope over, and wrote my name on the other side.",
+     "That envelope is in my wallet. It's soft now, like cloth.",
+     "I call her after every game I play. Win or lose. Tonight on the walk over she asked if the tiles were behaving."
+    ],
+    "rel": "grandmother",
+    "age": "seven"
+   }
+  },
+  "3": {
+   "id": 3,
+   "name": "\"Quick\" Carlos",
+   "culture": "Puerto Rican NYC",
+   "tier": 1,
+   "history": "Carlos's uncle ran the fastest table in the South Bronx for twenty years straight — speed was the family currency, decide fast, hit the bone hard, never let anyone watch you think. His uncle stopped playing five years ago and never said why. Carlos has been trying to outrun that silence ever since.",
+   "win_story": "Carlos slaps the table and laughs. 'My uncle TOLD me someone like you was coming. I didn't listen.' He stands, offers a fist bump. 'South Bronx respects South Bronx. Wherever you're from.'",
+   "lose_story": "Carlos grins. 'See? Speed alone isn't enough. My uncle taught me that. I keep forgetting.'",
+   "voice": [
+    "My uncle always said — hit the bone hard. Let them know you're here.",
+    "Speed is respect in this game. Don't make me wait.",
+    "South Bronx rules: no mercy, all respect.",
+    "Keep up or step aside.",
+    "You played Bronx style. I respect that.",
+    "My uncle would love you. Come through sometime."
+   ],
+   "who": [
+    "Quick Carlos. South Bronx. My uncle ran this table before me and his uncle before him. Speed is the family language.",
+    "The name's the résumé, star. Quick. Watch three plays, you'll get it."
+   ],
+   "gramps": [
+    "Your granddad's bones? That's real weight, for real. My uncle's set is nicked on every corner — every nick is a game. Yours are talking already.",
+    "Respect. Inherited bones hit different — the table KNOWS. Play like they're watching, cause they are."
+   ],
+   "culture_lines": [
+    "Bronx dominoes is a full-contact sport, no pads. Sidewalk table, folding chairs, and the WHOLE block watching. You'd love it. Or fold. One of the two.",
+    "My uncle says slamming the bone is how you sign your name. Every play, signed. What's your signature look like?"
+   ],
+   "off": [
+    "Stocks? Bro, my portfolio is 28 bones and a folding table. Your move.",
+    "Wrong borough for that, star. This block trades in pips only. Play!",
+    "Career advice? My only career is speed. Ask my uncle — oh wait, ask ME, current champion of asking. Play.",
+    "For real though — outside this table I'm just a guy from the Bronx with fast hands. AT this table? Encyclopedia. Ask me anything with dots on it.",
+    "I keep all that noise off the block, star. It slows the hands. Speaking of hands — yours is holding up the game.",
+    "Outside this table I'm just a guy with fast hands and an opinion about everything. Save me from myself — talk dominoes."
+   ],
+   "origin": {
+    "start": "Nine. South Bronx, my uncle's table by the bodega. The fastest table on the block.",
+    "teach": "My uncle. The whole block called him the Metronome. He never paused between tiles. Decide fast, hit the bone hard, never let them watch you think.",
+    "good": "Everybody says speed. It's not speed. My uncle made me play two hundred games a summer. You get fast when you stop being afraid.",
+    "chain": [
+     "He played every Saturday for twenty years. Then five years ago the table was empty one Saturday and he was inside with the radio on.",
+     "I asked him what happened. He said, \"I finished.\" That's the whole conversation. Nobody in the family has gotten more out of him.",
+     "So I play for both of us. Faster than I should. If I slow down, the quiet catches up with me.",
+     "Some nights I walk past his window and the radio is still on. I never knock. Maybe I knock when I beat somebody honest."
+    ],
+    "rel": "uncle",
+    "age": "nine"
+   }
+  },
+  "4": {
+   "id": 4,
+   "name": "\"Pops\" Beaumont",
+   "culture": "New Orleans",
+   "tier": 1,
+   "history": "Pops has played this exact set of house rules in Treme since before the interstate cut the neighborhood in half. He used to run a trumpet between hands — some nights the music and the game were the same conversation, call and response, call and response. He hasn't played the horn in years. He still hums the changes at the table.",
+   "win_story": "Pops Beaumont is quiet for a long time after the last tile. Then he says: 'Baby, I've been playing this game in Treme for 70 years. And I want you to know something. That was a real game. Your grandfather would've stood up for that.'",
+   "lose_story": "Pops chuckles softly. 'You'll get there, baby. The table will wait for you.'",
+   "voice": [
+    "Baby, I was playing this game before you could walk.",
+    "In New Orleans, we don't rush the tiles. They come when they come.",
+    "Every bone has a story. You listening?",
+    "Sit down, child. Let Pops show you something.",
+    "Baby, you played that game with your whole self. That's all anyone can ask.",
+    "The tradition lives in you. I can see it."
+   ],
+   "who": [
+    "They call me Pops. Treme, New Orleans. I've buried more dominoes than most folks have played — and every one had a story. You'll be one too, baby.",
+    "Just an old man from the Sixth Ward who never learned to rush. The game rewarded me for it. Still does."
+   ],
+   "gramps": [
+    "Your grandfather's bones. Lord have mercy — that's not a set, child, that's a congregation. Play them like they're singing.",
+    "I knew men like your grandfather. Hands that taught without talking. I can hear him in how you set that last tile down."
+   ],
+   "culture_lines": [
+    "In New Orleans the bones got rhythm — second line rhythm. You don't place a tile, baby, you LAND it. On the beat. Listen for it.",
+    "Treme taught me: every bone has a story. The 6-4 on my uncle's porch in '61 — that one ended an argument and started a marriage. True story. Ask me sometime."
+   ],
+   "off": [
+    "Baby, politics don't come to this porch. Music and bones only. Now hush and play.",
+    "Child, whatever that is, it can wait on the other side of the screen door. The bones can't.",
+    "Movies? Baby, I haven't sat in a theater since the Saenger closed the first time. This porch is my whole screen.",
+    "I'll be straight with you, baby — this table is seventy years of everything I know. Off it, I'm just an old man with opinions and a hat. ON it? Ask me anything.",
+    "The porch stays sacred, child — that's how it survived everything New Orleans threw at it. In here it's bones, stories, and your move. I got plenty of the first two.",
+    "Seventy years I kept this table sacred, child — that's how it survived the highway, the flood, everything. In here it's still just bones and stories."
+   ],
+   "origin": {
+    "start": "Five, baby. Treme, on the porch steps, my daddy's big hands over mine on the bones.",
+    "teach": "My daddy. He played trumpet at night and dominoes on the porch in between. He said the game and the horn teach the same lesson: listen before you play.",
+    "good": "Seventy years, baby. Nobody is born good. You just get old in the right chair.",
+    "chain": [
+     "My daddy played behind the funeral bands, second line, then came home and washed up and set out the bones. Same hands, both jobs.",
+     "The year they built the interstate over Claiborne, half our porches went quiet. Daddy said the music has to go somewhere, so it went into the tiles.",
+     "He gave me his horn when I was sixteen. I played it fifty years. Then my lip went, and I took up humming the changes instead.",
+     "I still hum his changes at the table. You listen close, baby, and you'll hear which bone I'm about to play."
+    ],
+    "rel": "dad",
+    "age": "five"
+   }
+  },
+  "5": {
+   "id": 5,
+   "name": "Joy",
+   "culture": "Community Spirit",
+   "tier": 2,
+   "history": "Joy started the summer tournament the year her mother got too sick to host Sunday dinners anymore. The domino table became the new Sunday table — same people, same food afterward, just a different reason to gather. She's been dragging half the neighborhood to it ever since, and she never misses a Sunday.",
+   "win_story": "Joy is practically bouncing. 'I run the community tournament every summer and I am putting you on the invitation list RIGHT NOW.' She pulls out her phone. 'What's your number? Don't argue with me.'",
+   "lose_story": "Joy laughs. 'Okay, okay, you're good! But I still had FUN. That's the whole point!'",
+   "voice": [
+    "This game is how my family talks when words run out.",
+    "Every tile is a sentence. That's what I love about it.",
+    "Play with your heart! That's what Grandma always says.",
+    "I just love this game so much. Don't you?",
+    "That was one of the most beautiful games I've played all summer.",
+    "Thank you for playing with your whole heart."
+   ],
+   "who": [
+    "I'm Joy — I run the summer tournament, and yes, my name is my whole personality, I've been told. This game is how my family talks when words run out.",
+    "Joy! Community table organizer, keeper of the tournament bracket, and current holder of grandma's lucky folding chair. Big shoes."
+   ],
+   "gramps": [
+    "A grandfather's set?! Oh my heart. Okay — those tiles have watched more love than we'll ever know about. Play them proud tonight.",
+    "See, THIS is why I love the gauntlet. You're not playing tiles, you're playing MEMORY. I'm honored to be one of the tables."
+   ],
+   "culture_lines": [
+    "Every summer forty people, one park, hundreds of games — babies napping under the table, grandmas making the REAL decisions above it. That's my whole culture in one picture.",
+    "Every tile is a sentence, that's what I love. A whole game is a conversation nobody had to be brave enough to start. Isn't that the best thing?"
+   ],
+   "off": [
+    "Celebrity gossip? The only celebrity here is Grandma's domino set, and it's SHINIER. Play!",
+    "Oh no no — the tournament table has one topic and twenty-eight pieces of it! Your move!",
+    "Homework? Oh no, my homework is counting how many people I can get to this table by August. Focus please — your turn!",
+    "Okay real talk — this table is my whole world and I built it that way ON PURPOSE. Everything else got too loud. In here it's tiles, family, and your next move. Best trade I ever made.",
+    "I honestly wouldn't know! When I sit down here the rest of the world goes quiet — that's WHY I sit down here. Come be quiet-loud with me. Your turn!",
+    "Honestly this table IS my social life now, in the best way — everything got quieter after Mom got sick. Ask me anything about the game, I've got so much!"
+   ],
+   "origin": {
+    "start": "Eight. Our kitchen table, Sundays after church. My mama dealing with one hand and stirring the greens with the other.",
+    "teach": "My mama. She said dominoes is just talking with your hands while your mouth is busy eating.",
+    "good": "I'm not the best player in my neighborhood. I'm the best at getting everybody to the table. That's a skill too.",
+    "chain": [
+     "Sunday dinner was my mama's whole life. Eleven people, every week, forty years.",
+     "Then she got too sick to host. Nobody said anything, and the next Sunday the house was quiet. I dragged the card table out to the lawn and said, we're playing.",
+     "Half the neighborhood showed up with their own food. That was nine summers ago. Mama sits in a lawn chair and calls the scores.",
+     "She can't deal anymore. But she still says, \"Joy, you're holding your tiles like a nervous bride.\" Every Sunday."
+    ],
+    "rel": "mom",
+    "age": "eight"
+   }
+  },
+  "6": {
+   "id": 6,
+   "name": "Professor Chen",
+   "culture": "Chinese Origins",
+   "tier": 2,
+   "history": "Chen teaches statistics at a community college by day and treats every domino match like a proof he hasn't finished yet. His grandfather brought a 32-tile Chinese set from Guangzhou that Chen inherited but has never once played with — he calls it 'for research,' not for playing. He's starting to suspect that's an excuse.",
+   "win_story": "Professor Chen sets down his tile and is silent for a moment. Then: 'The game left China 900 years ago. It has been looking for the right hands ever since.' He pauses. 'I think it may have found them tonight.'",
+   "lose_story": "Professor Chen nods precisely. 'My analysis was incomplete. I will revise. We should play again.'",
+   "voice": [
+    "This game began with my ancestors in the Song Dynasty. Every tile is history made tangible.",
+    "The Chinese set has 32 tiles — each a throw of two dice. Mathematics in bone.",
+    "I honor this game with precision. It deserves nothing less.",
+    "Every move is a proof. I am writing mine.",
+    "The game began in China, traveled the world, and found you tonight. It chose well.",
+    "You played as my ancestors intended — with complete attention."
+   ],
+   "who": [
+    "Professor Chen. I study the mathematics and lineage of this game — my ancestors were there when it was thirty-two tiles and a court amusement. I play to honor the proof.",
+    "A historian who plays, or a player who footnotes — the distinction collapses at this table. Ask me anything with a date or a number in it."
+   ],
+   "gramps": [
+    "An inherited set is a primary source. Most players read translations. You are holding the original document — handle it accordingly.",
+    "Your grandfather's hands are in the polish of those tiles. Materially. Literally. The oils of a lifetime of play. You carry evidence, not metaphor."
+   ],
+   "culture_lines": [
+    "The game began in China as thirty-two tiles — each the throw of two dice, mathematics made bone. It crossed to Europe, lost four tiles, gained a thousand dialects. You are playing the newest sentence of a very old text.",
+    "Every regional style is a theorem about the same axioms. Havana slams, Treme swings, the court whispers. Same bones. Extraordinary, if you think about it. I think about it constantly."
+   ],
+   "off": [
+    "Cryptocurrency? The only chain I study is thirty-two bones long and a thousand years old. Your move is computable — make it.",
+    "Outside my field. Inside my field: the double-five is still unaccounted for, and that should concern you. Play.",
+    "Football? I have not tracked a sport with a ball in eleven years. My variance lives entirely on this table. Move.",
+    "I will be precise: I have spent forty years narrowing my expertise to this table and its nine centuries. The exchange rate was everything else. Ask me about the game — there, I am wealthy.",
+    "My colleagues study everything and know nothing thoroughly. I chose one deep thing. This is the deep thing. May I show you how deep? Your move first.",
+    "I made a deliberate trade decades ago: breadth for depth. This table is the depth. Ask me a question with a date attached and watch me light up."
+   ],
+   "origin": {
+    "start": "Ten. A small apartment, my grandfather with the 32-tile set from Guangzhou. He taught me to read each tile as a throw of two dice before he let me touch a single rule.",
+    "teach": "My grandfather. He taught me the numbers. How many ways to throw a six. Which tile is common, which is rare. He said a player who knows the odds is never surprised, only disappointed.",
+    "good": "Preparation. Eleven years of logged data. But that is the dull answer. The truer one is that I am afraid of the set at home, and so I study around it.",
+    "chain": [
+     "He died the spring I started graduate school. I inherited the set. I have not played one hand with it.",
+     "I tell people it is for research. A set with a crack from a fall in 1949 should be protected.",
+     "The truth is that when I play with it, I will finally be playing his game, and not analyzing it. I am not ready for the difference.",
+     "Tonight, watching you, I am a little closer. Do not tell my students."
+    ],
+    "rel": "grandfather",
+    "age": "ten"
+   }
+  },
+  "7": {
+   "id": 7,
+   "name": "Isabelle",
+   "culture": "Martinique",
+   "tier": 2,
+   "history": "Isabelle grew up watching her grandmother play in near-total silence on a porch in Martinique that faced the sea. She's said maybe forty words all summer at this table, and every one of them mattered. She's not cold — she's just never believed the game needed narration.",
+   "win_story": "Isabelle looks at the final tile for a long time. Then she says, very quietly: 'My grandmother played like that. She said the tiles chose their own path. That you just have to listen.' A pause. 'You listen well.'",
+   "lose_story": "Isabelle says nothing. She just nods once, slowly, and begins shuffling for another game.",
+   "voice": [
+    "...",
+    "...Play.",
+    "...The sea teaches patience. So does this game.",
+    "...I'm watching everything.",
+    "...Well played.",
+    "...The tradition recognizes you."
+   ],
+   "who": [
+    "...Isabelle. ...Martinique. ...The sea taught me. ...Enough words.",
+    "...A player. ...Like you. ...Show me the rest."
+   ],
+   "gramps": [
+    "...Inherited bones. ...I know that weight. ...Carry it quietly.",
+    "...His hands, your hands. ...The sea does this too. ...Continues."
+   ],
+   "culture_lines": [
+    "...In Martinique, the sea decides everything. ...The game too. ...Patience, then the wave.",
+    "...We play at dusk. ...Quiet table, loud water. ...You learn to hear tiles instead."
+   ],
+   "off": [
+    "...No. ...Play.",
+    "...Not here. ...The board.",
+    "...No. ...The tide doesn't answer that either.",
+    "...This table is my whole harbor. ...Everything else stayed on the boat. ...Ask me about the game — I have real answers there.",
+    "...Words about the world cost too much. ...Words about the bones are free. ...Choose those.",
+    "...I gave the noise to the sea a long time ago. ...This table stayed quiet on purpose."
+   ],
+   "origin": {
+    "start": "Six. Martinique. A porch facing the sea. I did not play. I sat on the step and watched.",
+    "teach": "My grandmother. She never explained a single rule. She played, and I learned by watching her hands.",
+    "good": "I listen. Most people at a table are talking to themselves, loudly, inside their heads.",
+    "chain": [
+     "Her porch had a view of the water. She never once looked at it during a game. She said the sea did not need her attention.",
+     "When I was twelve she pushed a tile toward me without a word. That was the whole lesson. I had been learning for six years.",
+     "She stopped speaking the year my grandfather died. She played for two more years in complete silence. It was the best I have ever seen.",
+     "I speak little because the tiles say it better. You will have noticed how seldom I talk. And yet here we are."
+    ],
+    "rel": "grandmother",
+    "age": "six"
+   }
+  },
+  "8": {
+   "id": 8,
+   "name": "\"Joker\" Jay",
+   "culture": "Caribbean",
+   "tier": 2,
+   "history": "Jay used to run a full roadside show at his table in Kingston — music, trash talk, sleight-of-hand tricks — until his crowd realized the show and the skill were the exact same thing. He hasn't stopped performing since, not even when he's losing, especially not when he's losing.",
+   "win_story": "Joker Jay throws his head back and laughs — a full, genuine, delighted laugh. 'BRILLIANT! You played my game better than me! I've been waiting YEARS for someone to do that!' He's still laughing as he shakes your hand.",
+   "lose_story": "Jay grins wide. 'You'll get me next time. Or you won't. AHAHA! That's the beauty of it!'",
+   "voice": [
+    "In Jamaica, the best player makes you forget you're losing! AHAHA!",
+    "The trick isn't the tile — it's the TIMING! Watch!",
+    "Domino is like reggae — it builds until you can't help but move!",
+    "You don't know what I'm holding. THAT is the game.",
+    "Biggest respect, star. You played the WHOLE game.",
+    "That's domino art right there. I'm not even sad."
+   ],
+   "who": [
+    "Joker Jay! Kingston, Jamaica — where the best player makes you forget you're LOSING! The trick isn't the tile, star. It's the TIMING.",
+    "The entertainment AND the opposition, two-for-one! My uncle says I talk too much. My record says the talking WORKS."
+   ],
+   "gramps": [
+    "Inherited bones?! Star, you brought a LEGEND to my stage — the audience loves a legacy story! No pressure. SOME pressure. AHAHA!",
+    "Respect to the grandfather! The best tricks are the ones passed down — and I can already see he left a few in your hands."
+   ],
+   "culture_lines": [
+    "Jamaican dominoes is reggae, star — it builds and builds until you CAN'T not move! And the slam at the end? That's the drop! AHAHA!",
+    "In Kingston the table is a stage and everybody's in the cast. Even you. ESPECIALLY you. You just don't know your lines yet!"
+   ],
+   "off": [
+    "AHAHA! Wrong stage, star! This show is bones only — and you're in ACT TWO. Play!",
+    "That topic didn't buy a ticket! The board did! ACTION!",
+    "Sports scores? Wrong arena, star! This one only keeps score in pips and applause!",
+    "Real talk between acts, star — I put everything I have into this one table. That's the whole trick behind the tricks: nothing else in the pockets! So ask me bones and I'll dazzle you. Anything else, the Joker's just a guy squinting at the sun.",
+    "The world outside is somebody else's show — and honestly? Worse production values. In HERE I can answer anything with pips on it. Your move, my co-star!",
+    "Truth, no theater, for one second: I built this whole act because the table was the only stage that never let me down. Ask me about IT and watch the real show."
+   ],
+   "origin": {
+    "start": "Seven! Kingston, a roadside table behind my big brother's shop. Soundsystem on one side, a stack of crates on the other.",
+    "teach": "My big brother Delroy! He had a table, a sound system, and a rule: if the crowd isn't laughing, you're doing it wrong.",
+    "good": "The show and the skill are the same thing, star. Distract with the left hand, win with the right.",
+    "chain": [
+     "Delroy taught me sleight of hand to get me through losing streaks. Hide the fear inside the trick.",
+     "He left for Toronto when I was twenty. The table had a gap on the left side for a month. I filled it with noise.",
+     "That's the secret. The noise is for him. Somewhere a man at a roadside table in Kingston is still making a racket.",
+     "If you ever meet a man named Delroy laughing too loud in a Toronto barbershop, tell him his little brother kept the table."
+    ],
+    "rel": "brother",
+    "age": "seven"
+   }
+  },
+  "9": {
+   "id": 9,
+   "name": "Doña Esperanza",
+   "culture": "Dominican Republic",
+   "tier": 2,
+   "history": "Esperanza's mother played dominoes every single night for sixty years on the same porch in Santo Domingo, rain or clear sky, and told her once that the tiles remember every hand that has ever touched them. Esperanza has believed that since she was seven years old and has never once found a reason to stop.",
+   "win_story": "Doña Esperanza folds her hands on the table. She looks at you for a long time. 'My mother played this game for 60 years,' she finally says. 'She told me once that the tiles choose their keeper the way rivers choose their bed — not by force, but by the way the ground receives them.' She nods. 'The tiles chose well tonight.'",
+   "lose_story": "Doña Esperanza smiles gently. 'Come back, {mijo}. The tiles are not finished with you yet.'",
+   "voice": [
+    "The tiles have memory, {mijo}. They remember every game they've been in.",
+    "My mother taught me that a bone placed with intention never falls wrong.",
+    "In Santo Domingo, we play until the stars come out. Tonight, we play.",
+    "The game knows who belongs at the table. It will tell us.",
+    "The tiles have spoken. They chose you.",
+    "In 70 years of play, that was among the finest things I've seen."
+   ],
+   "who": [
+    "Esperanza. Seventy-eight years, and the tiles have spoken to me for most of them. I listen. That is my whole strategy, mijo, and it has never failed twice in a row.",
+    "An old woman who translates for the bones. They have opinions about you already. Play, and I will tell you if they are kind."
+   ],
+   "gramps": [
+    "The bones remember your grandfather through your hands, mijo. I felt it three tiles ago. This is not poetry — it is the oldest fact I know.",
+    "He carved them himself? Then he is still at every table they touch. Tonight he sits with us. Play accordingly."
+   ],
+   "culture_lines": [
+    "In Santo Domingo the table is set before the food, mijo. The game IS the meal. Everything else is garnish.",
+    "My mother taught me: a bone placed with intention never falls wrong. Her mother taught her. Now the table teaches you."
+   ],
+   "off": [
+    "The lottery? Mijo, the tiles already know those numbers and they are not telling either of us. Play.",
+    "That question belongs to the daylight, child. This table belongs to the stars. Your move.",
+    "The weather, mijo? The spirits don't do forecasts. They do tiles. Play.",
+    "I will tell you the truth, mijo: at seventy-eight, I gave everything else back to the world. I kept only this table and its voices. Ask me anything the bones can answer — that is a large kingdom, I promise you.",
+    "Outside this game I am an old woman with opinions about mangoes. AT this game I am Esperanza. Stay where I am strong, mijo — the tiles have something to tell you anyway.",
+    "At seventy-eight I decided what deserved my attention, and I chose this table. It was the right choice, mijo — ask it anything."
+   ],
+   "origin": {
+    "start": "Seven. Santo Domingo, a porch at dusk. Rain or no rain, there was a game.",
+    "teach": "Mi madre. She said the tiles remember every hand that touches them, so I had better wash mine first.",
+    "good": "Seventy-one years of listening. At seventy-eight you stop being good and start being correct.",
+    "chain": [
+     "My mother played every night for sixty years. The night before she died she asked me to set out the bones. We played one hand. She won.",
+     "She said, \"Now you keep them.\" I have. They are older than me.",
+     "I have carried them to every table since. Tonight is the first time I have set them down in front of someone they might choose.",
+     "So when I say the tiles chose you, I am not being sweet. I am reporting."
+    ],
+    "rel": "mom",
+    "age": "seven"
+   }
+  },
+  "10": {
+   "id": 10,
+   "name": "The Architect",
+   "culture": "Modern Competitive",
+   "tier": 3,
+   "history": "The Architect has logged over 6,000 hands across fourteen countries in a spreadsheet he updates religiously after every match — win, loss, tile sequence, tell. He has never once written down what any of it felt like. Tonight might be the first entry that actually needs a second column.",
+   "win_story": "The Architect leans back and studies you the way he studies the board. 'I've played in 14 countries,' he says slowly. 'I've catalogued every pattern, every deviation. What you just did...' He stops. 'That wasn't in the catalogue. That was in the blood. That's different. That's better.'",
+   "lose_story": "The Architect nods sharply. 'Solid. You'll dismantle the next one. I've seen it.'",
+   "voice": [
+    "I've played in Havana, Kingston, São Paulo, Lagos. You carry something from all of them.",
+    "This game has a thousand years of history. I've studied every era.",
+    "I don't win through luck. I win through architecture. Every tile is structure.",
+    "You're the most interesting opponent I've seen in three tournaments.",
+    "In 14 countries, 6000 hands — that was in my top ten.",
+    "You play with cultural memory. Today, memory wins."
+   ],
+   "who": [
+    "They call me the Architect. Six championships, fourteen countries, one method: structure. Every tile is load-bearing. Every game is a building. Most collapse. Mine don't.",
+    "A student of every era of this game — Song Dynasty to São Paulo street rules. Ask me anything. I cite sources."
+   ],
+   "gramps": [
+    "Inherited tools with provenance. In competitive terms: you train on hardware that carries prior weights. That's an advantage the rulebook can't price.",
+    "A thousand hands shaped how those tiles fall. I study that phenomenon professionally. Playing against it is... noted."
+   ],
+   "culture_lines": [
+    "I've played Havana's slams, Kingston's theater, the court's whispers. Every tradition is an engineering solution to the same problem: incomplete information, human nerves. Yours mixes three of them. Curious.",
+    "Modern competitive play strips the romance and keeps the load paths. I miss the romance exactly once per tournament. Tonight might be the once."
+   ],
+   "off": [
+    "My training regimen? Classified — and off-topic. The only structure that matters is on this table. Your move.",
+    "Out of scope. The board is in scope, and it's asking you a question. Answer it.",
+    "Stock market? Not my discipline. I optimize one closed system. Play your tile — it's the only open variable left tonight.",
+    "Straight answer: I optimized my life down to this table and its thousand years. Everything else got value-engineered out. It's a narrow building — but I own every floor. Ask me about the game and take the tour.",
+    "Fourteen countries and I only ever learned the parts of them with tables in. That's the honest cost of six championships. The board is where I'm worth talking to — and it's your turn there.",
+    "I made a calculated trade years ago: depth over breadth. This table is the entire return on that investment. Ask me inside it and I'll show you the yield."
+   ],
+   "origin": {
+    "start": "Twelve. My father was a structural engineer. He taught me the game as load distribution.",
+    "teach": "My father. He drew diagrams on graph paper. Which tiles bear weight. Which are decoration.",
+    "good": "Data. Six thousand hands, fourteen countries, one spreadsheet. Everything is a pattern until it isn't.",
+    "chain": [
+     "He never asked how I felt about a game. Only what the structure was. I did the same for thirty years.",
+     "My spreadsheet has a column for tile sequence and a column for opponent tell. No column for how it felt. He would not have wanted one.",
+     "He died while I was in Lagos winning a tournament. I logged the match that night. Then I logged his death. Same format.",
+     "Tonight I opened a second column. It is empty. I do not know what to write in it."
+    ],
+    "rel": "dad",
+    "age": "twelve"
+   }
+  },
+  "11": {
+   "id": 11,
+   "name": "La Reina",
+   "culture": "European Tradition",
+   "tier": 3,
+   "history": "La Reina was raised on the story that dominoes was perfected in European court rooms — velvet tables, silence, ceremony, the game refined into something almost bloodless. She has spent this entire gauntlet quietly discovering that the game she was taught was 'refined' is really just the same game with the doors closed.",
+   "win_story": "La Reina is still for a long moment. Then she says: 'When dominoes reached the courts of Europe, we believed we had refined it. Perfected it. We were wrong. The streets kept the soul alive. The soul you're playing with tonight.' She inclines her head. 'I bow to it.'",
+   "lose_story": "La Reina adjusts her composure with practiced grace. 'Well played. The court does not begrudge excellence.'",
+   "voice": [
+    "When dominoes reached Europe, only the court played. We have not forgotten that.",
+    "The Italian aristocracy refined this game into art. I carry that tradition.",
+    "Every piece placed with intention. This is how it was. How it must be.",
+    "The history of this table spans continents. Do you understand where you sit?",
+    "The game crossed continents to bring us here. You're proof it found the right hands.",
+    "My tradition bows to yours tonight. The streets kept the spirit alive when the courts could not."
+   ],
+   "who": [
+    "La Reina. The Italian line — my family has played this game since the seventeen hundreds, in rooms where a misplaced tile ended engagements. I carry that weight beautifully, I'm told.",
+    "The keeper of the European tradition. The court refined this game into art. I am the museum AND the guard. And tonight, the exhibition."
+   ],
+   "gramps": [
+    "An inherited set. Then you are aristocracy too, of the only kind that matters — the kind with provenance. The court recognizes lineage when it sees it.",
+    "Hand-carved by your own blood. Do you know what the court would have paid for such a set? Everything. And it would have been undervalued."
+   ],
+   "culture_lines": [
+    "When the bones reached Italy, the aristocracy slowed the game down — every placement a small ceremony. Speed is for people with nothing to savor.",
+    "My tradition says the table is a stage for restraint. Yours says otherwise, I suspect. Tonight we will see which philosophy the tiles prefer."
+   ],
+   "off": [
+    "The modern world? The court does not receive it. The table is the only kingdom tonight. Play.",
+    "That subject was not announced at the door. The board was. Attend to it.",
+    "Fashion? Darling, the only wardrobe that matters at this table is which tile you're hiding. Play.",
+    "A confession, since you insist: the court shrank to this table generations ago. It is a very small kingdom now — one game, infinitely deep. Within it I am sovereign and can answer anything. Beyond it, darling, I am simply a woman with excellent posture.",
+    "Everything else was surrendered with the estates. This game is what the family kept — and we kept it PERFECTLY. Ask me of the table and hear a dynasty. Your move first.",
+    "I will be plain, since you've earned plainness: the court shrank to exactly this table, generations ago, and I chose to make it enough. Ask me inside it and receive a queen's full attention."
+   ],
+   "origin": {
+    "start": "Five. A drawing room with velvet curtains and a governess with a ruler.",
+    "teach": "My governess, Madame Aurelio. The ruler was for my elbows, never the tiles.",
+    "good": "Poise. I was taught to win without being seen to try.",
+    "chain": [
+     "No one in my house ever raised a voice at a table. Not for winning. Not for losing.",
+     "At nine I laughed out loud at a lucky draw. Madame set the ruler down on the table, very gently, and I never laughed at a game again.",
+     "I came to this park to prove the old tradition superior. I am quietly discovering that I was lonely in it.",
+     "Do not tell the court I said so."
+    ],
+    "rel": "other",
+    "age": "five"
+   }
+  },
+  "12": {
+   "id": 12,
+   "name": "El Rey",
+   "culture": "All Traditions",
+   "tier": 3,
+   "history": "El Rey played your grandfather more hands than either of them ever bothered counting, and lost the final game between them on purpose — a debt he's spent years deciding how to repay. He has been sitting at this table, waiting for whoever carries that same weight into a room, since before you knew this park existed.",
+   "win_story": "El Rey looks at the last tile on the table.\n\nThen at you.\n\nHe doesn't look defeated. He looks relieved.\n\nHe places the double-six between you. Sets it down slowly, carefully, like something sacred.\n\n'They're yours now,' he says. 'They were always yours.'\n\nYou understand — you were never competing for a title.\n\nYou were completing a chain.\n\nA thousand years long.",
+   "lose_story": "El Rey says nothing for a while. Then: 'Come back. The bones are not done with you. Neither am I.'",
+   "voice": [
+    "I've been waiting for whoever carries what you carry.",
+    "Every tradition you've faced tonight lives in this set.",
+    "The bones told me someone was coming.",
+    "You have traveled far to reach this table.",
+    "...You are worthy.",
+    "The bones are yours now. You know that."
+   ],
+   "who": [
+    "El Rey. The last table. Every tradition you faced tonight lives in this set. Ask them — they answer through me.",
+    "The keeper. Nothing more. The bones do the ruling."
+   ],
+   "gramps": [
+    "...I see the grandfather. In the third tile you played. He held it the same way.",
+    "He made them speak. Now they speak of him through you. That is the whole game, and most never learn it."
+   ],
+   "culture_lines": [
+    "Havana. Treme. Kingston. The court. All of it is one river, and this table is where it reaches the sea.",
+    "{legend}. That is what tradition means. It travels."
+   ],
+   "off": [
+    "No. ...The table is why you're here. Play.",
+    "...Not tonight. The bones are speaking. Listen.",
+    "...No. ...Not that. ...The bones only.",
+    "Everything I was, I traded for this seat. It was a fair trade. Ask the bones your questions — through me, they answer anything about the game and its thousand years. Nothing else is left in the room.",
+    "The world sent you HERE, to ask THIS table its one subject. Honor the road that brought you. Play.",
+    "...I traded the rest of the world for this seat, and slept easier the night I did it. ...Ask the table. ...It still has plenty to say."
+   ],
+   "origin": {
+    "start": "Six. A barbershop on a Saturday. The old men played in the back while the clippers ran.",
+    "teach": "A man called Mister Ray who cut hair and never charged a boy who could count. And later your grandfather. He taught me the only thing that mattered.",
+    "good": "Fifty years of sitting where I am sitting. And one man who taught me how to lose.",
+    "chain": [
+     "Your grandfather and I played more hands than either of us counted. I won most of them.",
+     "The last one, I let him win. He had less time than I did and he knew it, and I thought I was giving him something. He looked at me across the table and said, \"You owe me one.\"",
+     "I never learned what he meant. I decided it meant: wait for whoever carries the bones, and play them honestly.",
+     "You have been looking at me like you already know that. You don't. But your hands do."
+    ],
+    "rel": "other",
+    "age": "six"
+   }
+  }
+ },
+ "lore": [
+  {
+   "title": "Ancient Origins",
+   "text": "Dominoes are believed to have originated in China around 1120 AD, derived from cubic dice. The game spread through trade routes across Asia and the Middle East."
+  },
+  {
+   "title": "The Name",
+   "text": "The word 'domino' may come from the Latin 'dominus' (lord) or from the black-and-white hoods worn by French clerics during Carnival — the tiles resemble their masks."
+  },
+  {
+   "title": "Europe, 1700s",
+   "text": "Dominoes reached Europe in the 18th century, first appearing in Italy. Venice and Naples became early centers of play. By the 1770s, the game had reached France and Britain."
+  },
+  {
+   "title": "Caribbean Roots",
+   "text": "In Cuba, Puerto Rico, and the Dominican Republic, dominoes became far more than a game — a daily ritual played in parks, on stoops, and in community centers."
+  },
+  {
+   "title": "The Slam",
+   "text": "Slapping a domino hard on the table is tradition in Caribbean culture. It's not aggression — it's emphasis. It's punctuation. It's music made from bone and wood."
+  },
+  {
+   "title": "Street Corner Legacy",
+   "text": "In African American communities across the South and in cities like New York and New Orleans, domino tables became gathering places — passed down like language, like love."
+  },
+  {
+   "title": "The Double-Six",
+   "text": "The highest tile in standard dominoes — the double-six — is traditionally placed first. In Cuban domino culture, whoever holds it must begin. It is a privilege and a responsibility."
+  },
+  {
+   "title": "28 Tiles",
+   "text": "A standard double-six domino set has exactly 28 tiles. Each unique combination of pips from 0–6. No duplicates. The set is a closed universe. Every tile matters."
+  },
+  {
+   "title": "The Boneyard",
+   "text": "Unplayed tiles go to 'the boneyard.' In street domino culture, drawing from the boneyard is called 'going to the yard' — accepting what life gives you and playing on."
+  },
+  {
+   "title": "Domino Effect",
+   "text": "The term 'domino effect' entered political language in 1954. But players knew it first — one tile falls, they all follow. The game was always about consequences."
+  },
+  {
+   "title": "Chinese Dominoes",
+   "text": "Traditional Chinese domino sets have 32 tiles, not 28 — each tile represents one of the possible results of throwing two six-sided dice, including duplicates."
+  },
+  {
+   "title": "Tournament Play",
+   "text": "The World Domino Federation holds international championships. Cuba, Jamaica, Venezuela, and Puerto Rico are perennial powerhouses. The game is truly global."
+  },
+  {
+   "title": "Memory & Strategy",
+   "text": "Expert players memorize which tiles have been played. In a full game of 28 tiles, tracking the 21 already placed tells you exactly what remains in the boneyard."
+  },
+  {
+   "title": "Partner Play",
+   "text": "In Puerto Rican domino culture, the most common format is partners — two teams of two. Signaling to your partner without words is an art form developed over generations."
+  }
+ ]
+}
