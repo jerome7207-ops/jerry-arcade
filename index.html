@@ -2275,7 +2275,7 @@ const FAM = {
     if(age!=null){
       if(age<d.age) out=`At ${age}? You started before I did. I was ${d.ageW}. `;
       else if(age===d.age) out=`${age}! Same as me. `;
-      else out=`Since ${age}. A later start than mine. I was ${d.ageW}. A grown mind learns what a child can't. `;
+      else out=`Since ${age}. A later start than mine. I was ${d.ageW}. ${age>=16?"A grown mind learns what a child can't.":"Still a kid either way. You had time."} `;
     }
     if(!rel && age!=null){ mem.ask=false; mem.live=4; return out+`Who sat you down at that age?`; }
     mem.ask=false; mem.live=4;
